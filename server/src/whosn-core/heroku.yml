@@ -1,5 +1,5 @@
 build:
   docker:
-    web: app/server/src/whosn-core/Dockerfile
+    web: Dockerfile
     worker:
        dockerfile: Dockerfile

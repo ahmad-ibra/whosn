@@ -13,3 +13,12 @@ You can then test the server using curl or postman:
 ❯ curl localhost:8080/api/ping
 {"message":"pong"}%
 ```
+
+## Creating The App
+Run the following to first deploy to heroku:
+```
+❯ heroku create
+❯ heroku stack:set container
+```
+
+## Deploying The App
