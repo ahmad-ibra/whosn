@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -21,11 +22,13 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 func handleRequests() {
 	http.HandleFunc("/", homePage)
 
-	address := ""
-	port := "8080"
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 	log.Infof("Starting http server on port %v", port)
 
-	log.Fatal(http.ListenAndServe(address+":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func main() {
