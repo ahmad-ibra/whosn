@@ -12,7 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var Groups []data.Group
+var Events []data.Event
 
 func homePage(w http.ResponseWriter, r *http.Request) {
 	ll := log.WithFields(log.Fields{"endpoint": "homePage"})
@@ -25,15 +25,15 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func returnAllGroups(w http.ResponseWriter, r *http.Request) {
-	ll := log.WithFields(log.Fields{"endpoint": "returnAllGroups"})
+func returnAllEvents(w http.ResponseWriter, r *http.Request) {
+	ll := log.WithFields(log.Fields{"endpoint": "returnAllEvents"})
 	ll.Println("Endpoint Hit")
-	json.NewEncoder(w).Encode(Groups)
+	json.NewEncoder(w).Encode(Events)
 }
 
 func handleRequests() {
 	http.HandleFunc("/", homePage)
-	http.HandleFunc("/api/v1/groups", returnAllGroups)
+	http.HandleFunc("/api/v1/events", returnAllEvents)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -45,29 +45,47 @@ func handleRequests() {
 }
 
 func main() {
-	Groups = []data.Group{
+
+	Events = []data.Event{
 		{
-			ID:        1,
-			Name:      "bobcorn",
-			OwnerID:   1,
-			CreatedAt: time.Time{},
-			UpdatedAt: time.Time{},
+			ID:         1,
+			Name:       "Volleyball",
+			StartTime:  time.Time{},
+			Location:   "6Pack",
+			MinUsers:   10,
+			MaxUsers:   12,
+			Price:      120.00,
+			IsFlatRate: false,
+			OwnerID:    1,
+			CreatedAt:  time.Time{},
+			UpdatedAt:  time.Time{},
 		},
 		{
-			ID:        2,
-			Name:      "balbooliches",
-			OwnerID:   1,
-			CreatedAt: time.Time{},
-			UpdatedAt: time.Time{},
+			ID:         1,
+			Name:       "Soccer",
+			StartTime:  time.Time{},
+			Location:   "Tom binnie",
+			MinUsers:   10,
+			MaxUsers:   22,
+			Price:      155.00,
+			IsFlatRate: false,
+			OwnerID:    1,
+			CreatedAt:  time.Time{},
+			UpdatedAt:  time.Time{},
 		},
 		{
-			ID:        3,
-			Name:      "jiggers",
-			OwnerID:   2,
-			CreatedAt: time.Time{},
-			UpdatedAt: time.Time{},
+			ID:         1,
+			Name:       "Movie",
+			StartTime:  time.Time{},
+			Location:   "Landmarks Guildford",
+			MinUsers:   1,
+			MaxUsers:   10,
+			Price:      12,
+			IsFlatRate: true,
+			OwnerID:    2,
+			CreatedAt:  time.Time{},
+			UpdatedAt:  time.Time{},
 		},
 	}
-
 	handleRequests()
 }
