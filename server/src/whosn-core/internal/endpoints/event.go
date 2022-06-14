@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -60,6 +61,7 @@ var (
 )
 
 func ListEvents(w http.ResponseWriter, r *http.Request) {
+	// TODO: Break up ListEvents into ListJoinedEvents and ListOwnedEvents
 	ll := log.WithFields(log.Fields{"endpoint": "ListEvents"})
 	ll.Println("Endpoint Hit")
 	json.NewEncoder(w).Encode(events)
@@ -79,6 +81,137 @@ func GetEvent(w http.ResponseWriter, r *http.Request) {
 	for _, event := range events {
 		if event.ID == uint64(eventID) {
 			json.NewEncoder(w).Encode(event)
+			return
+		}
+	}
+
+	// TODO: return a 404
+}
+
+func CreateEvent(w http.ResponseWriter, r *http.Request) {
+	ll := log.WithFields(log.Fields{"endpoint": "CreateEvent"})
+	ll.Println("Endpoint Hit")
+
+	reqBody, _ := ioutil.ReadAll(r.Body)
+
+	var event data.Event
+	err := json.Unmarshal(reqBody, &event)
+	if err != nil {
+		ll.Warnf("Failed to unmarshall request body: %v", string(reqBody))
+		return
+	}
+
+	curTime := time.Now()
+	event.CreatedAt = curTime
+	event.UpdatedAt = curTime
+	event.ID = uint64(len(events)) + 1
+
+	// TODO: fill in the OwnerID (when jwt is implemented) and generate the link.
+	// This leaves the fields that should be passed in at:
+	// Name, StartTime, Location, MinUsers, MaxUsers, Price, IsFlatRate
+
+	events = append(events, event)
+	json.NewEncoder(w).Encode(event)
+}
+
+func UpdateEvent(w http.ResponseWriter, r *http.Request) {
+	// TODO: make this a thread safe update
+	vars := mux.Vars(r)
+
+	ll := log.WithFields(log.Fields{"endpoint": "UpdateUser", "userID": vars["id"]})
+	ll.Println("Endpoint Hit")
+
+	reqBody, _ := ioutil.ReadAll(r.Body)
+
+	var userUpdate data.User
+	err := json.Unmarshal(reqBody, &userUpdate)
+	if err != nil {
+		ll.Warnf("Failed to unmarshall request body: %v", string(reqBody))
+		return
+	}
+
+	userID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		ll.Warnf("Could not convert id %v passed into handler into an integer", vars["id"])
+		return
+	}
+
+	for i := 0; i < len(users); i++ {
+		user := &users[i]
+		if user.ID == uint64(userID) {
+			user.UpdatedAt = time.Now()
+			if userUpdate.Name != "" {
+				user.Name = userUpdate.Name
+			}
+			if userUpdate.Email != "" {
+				user.Email = userUpdate.Email
+			}
+			if userUpdate.PhoneNumber != "" {
+				user.PhoneNumber = userUpdate.PhoneNumber
+			}
+			return
+		}
+	}
+}
+
+func DeleteEvent(w http.ResponseWriter, r *http.Request) {
+	// TODO: make this a thread safe delete
+	vars := mux.Vars(r)
+
+	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "userID": vars["id"]})
+	ll.Println("Endpoint Hit")
+
+	userID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		ll.Warnf("Could not convert id %v passed into handler into an integer", vars["id"])
+		return
+	}
+
+	for i, user := range users {
+		if user.ID == uint64(userID) {
+			users = append(users[:i], users[i+1:]...)
+			return
+		}
+	}
+}
+
+func JoinEvent(w http.ResponseWriter, r *http.Request) {
+	// TODO: make this a thread safe delete
+	vars := mux.Vars(r)
+
+	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "userID": vars["id"]})
+	ll.Println("Endpoint Hit")
+
+	userID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		ll.Warnf("Could not convert id %v passed into handler into an integer", vars["id"])
+		return
+	}
+
+	for i, user := range users {
+		if user.ID == uint64(userID) {
+			users = append(users[:i], users[i+1:]...)
+			return
+		}
+	}
+}
+
+func LeaveEvent(w http.ResponseWriter, r *http.Request) {
+	// TODO: make this a thread safe delete
+	vars := mux.Vars(r)
+
+	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "userID": vars["id"]})
+	ll.Println("Endpoint Hit")
+
+	userID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		ll.Warnf("Could not convert id %v passed into handler into an integer", vars["id"])
+		return
+	}
+
+	for i, user := range users {
+		if user.ID == uint64(userID) {
+			users = append(users[:i], users[i+1:]...)
 			return
 		}
 	}
