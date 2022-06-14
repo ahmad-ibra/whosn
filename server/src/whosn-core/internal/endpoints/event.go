@@ -62,10 +62,7 @@ var (
 func ListEvents(w http.ResponseWriter, r *http.Request) {
 	ll := log.WithFields(log.Fields{"endpoint": "ListEvents"})
 	ll.Println("Endpoint Hit")
-	err := json.NewEncoder(w).Encode(events)
-	if err != nil {
-		return
-	}
+	json.NewEncoder(w).Encode(events)
 }
 
 func GetEvent(w http.ResponseWriter, r *http.Request) {
@@ -81,10 +78,7 @@ func GetEvent(w http.ResponseWriter, r *http.Request) {
 	}
 	for _, event := range events {
 		if event.ID == uint64(eventID) {
-			err := json.NewEncoder(w).Encode(event)
-			if err != nil {
-				return
-			}
+			json.NewEncoder(w).Encode(event)
 			return
 		}
 	}
