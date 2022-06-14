@@ -83,7 +83,7 @@ func main() {
 			UpdatedAt:  time.Time{},
 		},
 		{
-			ID:         1,
+			ID:         2,
 			Name:       "Soccer",
 			StartTime:  time.Time{},
 			Location:   "Tom binnie",
@@ -97,7 +97,7 @@ func main() {
 			UpdatedAt:  time.Time{},
 		},
 		{
-			ID:         1,
+			ID:         3,
 			Name:       "Movie",
 			StartTime:  time.Time{},
 			Location:   "Landmarks Guildford",
