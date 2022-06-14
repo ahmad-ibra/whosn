@@ -1,1 +1,1 @@
-web: ./server/bin/whosn-core
+web: ./server/src/whosn-core/bin/whosn-core

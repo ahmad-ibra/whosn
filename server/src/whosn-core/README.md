@@ -6,8 +6,7 @@ As a pre-req you'll need to have go installed.
 
 Once installed, run the following command to run the app locally:
 ```
-❯ go build cmd/main.go
-❯ ./main
+❯ make exec
 ```
 You can then test the server using curl or postman:
 ```

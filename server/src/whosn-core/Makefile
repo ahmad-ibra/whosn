@@ -1,10 +1,13 @@
 whosn_dir := $(abspath $(shell git rev-parse --show-toplevel))
 
+exec:
+	go run cmd/main.go
+
 build:
 	GOOS=linux go build cmd/main.go
-	mv main ../../bin/whosn-core
+	mv main bin/whosn-core
 
 deploy:
 	git push https://git.heroku.com/whosn-core.git HEAD:main
 
-.PHONY: build deploy
+.PHONY: exec build deploy
