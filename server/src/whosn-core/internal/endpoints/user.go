@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Ahmad-Ibra/whosn-core/internal/data"
+	"github.com/Ahmad-Ibra/whosn-core/internal/models"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -15,7 +15,7 @@ import (
 
 var (
 	// mock users till we get a db in place
-	users = []data.User{
+	users = []models.User{
 		{
 			ID:          "7076f342-fd08-4d44-a7ca-baeb31e581fe",
 			Name:        "Ahmad I",
@@ -66,7 +66,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	reqBody, _ := ioutil.ReadAll(r.Body)
 
-	var user data.User
+	var user models.User
 	err := json.Unmarshal(reqBody, &user)
 	if err != nil {
 		ll.Warnf("Failed to unmarshall request body: %v", string(reqBody))
@@ -92,7 +92,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	reqBody, _ := ioutil.ReadAll(r.Body)
 
-	var userUpdate data.User
+	var userUpdate models.User
 	err := json.Unmarshal(reqBody, &userUpdate)
 	if err != nil {
 		ll.Warnf("Failed to unmarshall request body: %v", string(reqBody))

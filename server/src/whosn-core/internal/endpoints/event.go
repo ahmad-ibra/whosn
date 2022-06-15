@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Ahmad-Ibra/whosn-core/internal/data"
+	"github.com/Ahmad-Ibra/whosn-core/internal/models"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -15,7 +15,7 @@ import (
 
 var (
 	// mock events till we get a db in place
-	events = []data.Event{
+	events = []models.Event{
 		{
 			ID:         "f503857c-5334-450d-be87-15bdcde50341",
 			Name:       "Volleyball",
@@ -91,7 +91,7 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 
 	reqBody, _ := ioutil.ReadAll(r.Body)
 
-	var event data.Event
+	var event models.Event
 	err := json.Unmarshal(reqBody, &event)
 	if err != nil {
 		ll.Warnf("Failed to unmarshall request body: %v", string(reqBody))
@@ -121,7 +121,7 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 
 	reqBody, _ := ioutil.ReadAll(r.Body)
 
-	var eventUpdate data.Event
+	var eventUpdate models.Event
 	err := json.Unmarshal(reqBody, &eventUpdate)
 	if err != nil {
 		ll.Warnf("Failed to unmarshall request body: %v", string(reqBody))
