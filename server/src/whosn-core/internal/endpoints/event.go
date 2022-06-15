@@ -118,36 +118,50 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	// TODO: make this a thread safe update
 	vars := mux.Vars(r)
 
-	ll := log.WithFields(log.Fields{"endpoint": "UpdateUser", "userID": vars["id"]})
+	ll := log.WithFields(log.Fields{"endpoint": "UpdateEvent", "eventID": vars["id"]})
 	ll.Println("Endpoint Hit")
 
 	reqBody, _ := ioutil.ReadAll(r.Body)
 
-	var userUpdate data.User
-	err := json.Unmarshal(reqBody, &userUpdate)
+	var eventUpdate data.Event
+	err := json.Unmarshal(reqBody, &eventUpdate)
 	if err != nil {
 		ll.Warnf("Failed to unmarshall request body: %v", string(reqBody))
 		return
 	}
 
-	userID, err := strconv.Atoi(vars["id"])
+	eventID, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		ll.Warnf("Could not convert id %v passed into handler into an integer", vars["id"])
 		return
 	}
 
 	for i := 0; i < len(users); i++ {
-		user := &users[i]
-		if user.ID == uint64(userID) {
-			user.UpdatedAt = time.Now()
-			if userUpdate.Name != "" {
-				user.Name = userUpdate.Name
+		event := &events[i]
+		if event.ID == uint64(eventID) {
+			event.UpdatedAt = time.Now()
+			if eventUpdate.Name != "" {
+				event.Name = eventUpdate.Name
 			}
-			if userUpdate.Email != "" {
-				user.Email = userUpdate.Email
+			if !eventUpdate.StartTime.IsZero() {
+				event.StartTime = eventUpdate.StartTime
 			}
-			if userUpdate.PhoneNumber != "" {
-				user.PhoneNumber = userUpdate.PhoneNumber
+			if eventUpdate.Location != "" {
+				event.Location = eventUpdate.Location
+			}
+			// TODO: dont allow setting MinUsers above MaxUsers
+			if eventUpdate.MinUsers != 0 {
+				event.MinUsers = eventUpdate.MinUsers
+			}
+			if eventUpdate.MaxUsers != 0 {
+				event.MaxUsers = eventUpdate.MaxUsers
+			}
+			if eventUpdate.Price != 0 {
+				event.Price = eventUpdate.Price
+			}
+			// Note: frontend needs to make sure that its always passing this value through
+			if eventUpdate.IsFlatRate != event.IsFlatRate {
+				event.IsFlatRate = eventUpdate.IsFlatRate
 			}
 			return
 		}
