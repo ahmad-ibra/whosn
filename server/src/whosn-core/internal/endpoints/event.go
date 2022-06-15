@@ -177,7 +177,7 @@ func JoinEvent(ctx *gin.Context) {
 	ll.Println("Endpoint Hit")
 
 	ll.Print("TODO: implement")
-
+	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
 }
 
 func LeaveEvent(ctx *gin.Context) {
@@ -186,4 +186,5 @@ func LeaveEvent(ctx *gin.Context) {
 	ll.Println("Endpoint Hit")
 
 	ll.Print("TODO: implement")
+	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
 }
