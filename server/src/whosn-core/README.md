@@ -14,7 +14,7 @@ You can then test the server using curl or postman:
 
 [
   {
-    "id": 1,
+    "id": "f503857c-5334-450d-be87-15bdcde50341",
     "name": "Volleyball",
     "owner_id": 1,
     "start_time": "0001-01-01T00:00:00Z",
@@ -28,7 +28,7 @@ You can then test the server using curl or postman:
     "updated_at": "0001-01-01T00:00:00Z"
   },
   {
-    "id": 1,
+    "id": "50262b10-3d8e-4134-9869-1e0ed5cfe9f7",
     "name": "Soccer",
     "owner_id": 1,
     "start_time": "0001-01-01T00:00:00Z",
@@ -42,7 +42,7 @@ You can then test the server using curl or postman:
     "updated_at": "0001-01-01T00:00:00Z"
   },
   {
-    "id": 1,
+    "id": "45de396a-4880-4c52-9689-f8812bf67a51",
     "name": "Movie",
     "owner_id": 2,
     "start_time": "0001-01-01T00:00:00Z",
