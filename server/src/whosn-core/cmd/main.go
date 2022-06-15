@@ -5,19 +5,14 @@ import (
 	"os"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/endpoints"
-	"github.com/gorilla/mux"
 
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
 
 func handleRequests() {
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/_hc", endpoints.Ping)
-
-	router.HandleFunc("/api/v1/user/{id}", endpoints.DeleteUser).Methods("DELETE")
-	router.HandleFunc("/api/v1/user/{id}", endpoints.UpdateUser).Methods("PUT")
-	router.HandleFunc("/api/v1/user/{id}", endpoints.GetUser)
-	router.HandleFunc("/api/v1/user", endpoints.CreateUser).Methods("POST")
 
 	router.HandleFunc("/api/v1/events", endpoints.ListEvents)
 	router.HandleFunc("/api/v1/event/{id}", endpoints.DeleteEvent).Methods("DELETE")
@@ -37,5 +32,31 @@ func handleRequests() {
 }
 
 func main() {
-	handleRequests()
+	router := initRouter()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	router.Run(":" + port)
+}
+
+func initRouter() *gin.Engine {
+	router := gin.Default()
+
+	router.GET("/_hc", endpoints.Ping)
+	apiV1 := router.Group("/api/v1")
+	{
+		apiV1.DELETE("/user/:id", endpoints.DeleteUser)
+		apiV1.PUT("/user/:id", endpoints.UpdateUser)
+		apiV1.GET("/user/:id", endpoints.GetUser)
+		apiV1.POST("/user", endpoints.CreateUser)
+		//apiV1.POST("/token", controllers.GenerateToken)
+		//apiV1.POST("/user/register", controllers.RegisterUser)
+		//secured := apiV1.Group("/secured").Use(middlewares.Auth())
+		//{
+		//	secured.GET("/ping", controllers.Ping)
+		//}
+	}
+	return router
+
 }
