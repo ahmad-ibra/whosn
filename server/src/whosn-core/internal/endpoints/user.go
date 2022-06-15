@@ -1,15 +1,13 @@
 package endpoints
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"time"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/models"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -19,6 +17,8 @@ var (
 		{
 			ID:          "7076f342-fd08-4d44-a7ca-baeb31e581fe",
 			Name:        "Ahmad I",
+			Username:    "aibra",
+			Password:    "abc123",
 			Email:       "email1@whosn.xyz.com",
 			PhoneNumber: "604-534-6333",
 			CreatedAt:   time.Time{},
@@ -27,6 +27,8 @@ var (
 		{
 			ID:          "b1be816f-fb34-4ab4-a1de-d3a08eca5217",
 			Name:        "Karrar A",
+			Username:    "karol-a",
+			Password:    "qwerty",
 			Email:       "email23234234@whosn.xyz.com",
 			PhoneNumber: "778-111-6333",
 			CreatedAt:   time.Time{},
@@ -35,6 +37,8 @@ var (
 		{
 			ID:          "489c800e-034b-4225-bfb1-3327652b63cb",
 			Name:        "Wael A",
+			Username:    "waelus-ice-wizard",
+			Password:    "999888777",
 			Email:       "anotherEmail@whosn.xyz.com",
 			PhoneNumber: "123-345-4567",
 			CreatedAt:   time.Time{},
@@ -43,33 +47,37 @@ var (
 	}
 )
 
-func GetUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	userID := vars["id"]
+// ListUsers is a temporary endpoint created for dev purposes. It will eventually be removed
+func ListUsers(ctx *gin.Context) {
+	ll := log.WithFields(log.Fields{"endpoint": "ListUsers"})
+	ll.Println("Endpoint Hit")
+	ctx.JSON(http.StatusOK, users)
+}
 
+func GetUser(ctx *gin.Context) {
+	userID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "GetUser", "userID": userID})
 	ll.Println("Endpoint Hit")
 
 	for _, user := range users {
 		if user.ID == userID {
-			json.NewEncoder(w).Encode(user)
+			ctx.JSON(http.StatusOK, user)
 			return
 		}
 	}
 
-	// TODO: return a 404
+	ll.Warn("User not found")
+	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func CreateUser(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "CreateUser"})
 	ll.Println("Endpoint Hit")
 
-	reqBody, _ := ioutil.ReadAll(r.Body)
-
 	var user models.User
-	err := json.Unmarshal(reqBody, &user)
-	if err != nil {
-		ll.Warnf("Failed to unmarshall request body: %v", string(reqBody))
+	if err := ctx.BindJSON(&user); err != nil {
+		ll.Warn("Failed to unmarshall request body")
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Failed to unmarshall request body"})
 		return
 	}
 
@@ -79,23 +87,19 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	user.ID = uuid.New().String()
 
 	users = append(users, user)
-	json.NewEncoder(w).Encode(user)
+	ctx.JSON(http.StatusOK, user)
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
+func UpdateUser(ctx *gin.Context) {
 	// TODO: make this a thread safe update
-	vars := mux.Vars(r)
-	userID := vars["id"]
-
+	userID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "UpdateUser", "userID": userID})
 	ll.Println("Endpoint Hit")
 
-	reqBody, _ := ioutil.ReadAll(r.Body)
-
 	var userUpdate models.User
-	err := json.Unmarshal(reqBody, &userUpdate)
-	if err != nil {
-		ll.Warnf("Failed to unmarshall request body: %v", string(reqBody))
+	if err := ctx.BindJSON(&userUpdate); err != nil {
+		ll.Warn("Failed to unmarshall request body")
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Failed to unmarshall request body"})
 		return
 	}
 
@@ -112,23 +116,33 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 			if userUpdate.PhoneNumber != "" {
 				user.PhoneNumber = userUpdate.PhoneNumber
 			}
+			if userUpdate.Username != "" {
+				user.Username = userUpdate.Username
+			}
+			if userUpdate.Password != "" {
+				user.Password = userUpdate.Password
+			}
+			ctx.JSON(http.StatusOK, user)
 			return
 		}
 	}
+	ll.Warn("User not found")
+	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
 }
 
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
+func DeleteUser(ctx *gin.Context) {
 	// TODO: make this a thread safe delete
-	vars := mux.Vars(r)
-	userID := vars["id"]
-
+	userID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "userID": userID})
 	ll.Println("Endpoint Hit")
 
 	for i, user := range users {
 		if user.ID == userID {
 			users = append(users[:i], users[i+1:]...)
+			ctx.JSON(http.StatusOK, "{}")
 			return
 		}
 	}
+	ll.Warn("User not found")
+	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
 }

@@ -1,14 +1,15 @@
 package endpoints
 
 import (
-	"fmt"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
-func Ping(w http.ResponseWriter, r *http.Request) {
+func Ping(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "Ping"})
 	ll.Println("Endpoint Hit")
-	fmt.Fprintf(w, "Im still alive!!!")
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "healthy"})
 }

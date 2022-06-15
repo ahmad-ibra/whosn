@@ -1,15 +1,13 @@
 package endpoints
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"time"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/models"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -61,40 +59,37 @@ var (
 	}
 )
 
-func ListEvents(w http.ResponseWriter, r *http.Request) {
+func ListEvents(ctx *gin.Context) {
 	// TODO: Break up ListEvents into ListJoinedEvents and ListOwnedEvents
 	ll := log.WithFields(log.Fields{"endpoint": "ListEvents"})
 	ll.Println("Endpoint Hit")
-	json.NewEncoder(w).Encode(events)
+	ctx.JSON(http.StatusOK, events)
 }
 
-func GetEvent(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	eventID := vars["id"]
-
+func GetEvent(ctx *gin.Context) {
+	eventID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "GetEvent", "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
 	for _, event := range events {
 		if event.ID == eventID {
-			json.NewEncoder(w).Encode(event)
+			ctx.JSON(http.StatusOK, event)
 			return
 		}
 	}
 
-	// TODO: return a 404
+	ll.Warn("User not found")
+	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
 }
 
-func CreateEvent(w http.ResponseWriter, r *http.Request) {
+func CreateEvent(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "CreateEvent"})
 	ll.Println("Endpoint Hit")
 
-	reqBody, _ := ioutil.ReadAll(r.Body)
-
 	var event models.Event
-	err := json.Unmarshal(reqBody, &event)
-	if err != nil {
-		ll.Warnf("Failed to unmarshall request body: %v", string(reqBody))
+	if err := ctx.BindJSON(&event); err != nil {
+		ll.Warn("Failed to unmarshall request body")
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Failed to unmarshall request body"})
 		return
 	}
 
@@ -108,23 +103,19 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	// Name, StartTime, Location, MinUsers, MaxUsers, Price, IsFlatRate
 
 	events = append(events, event)
-	json.NewEncoder(w).Encode(event)
+	ctx.JSON(http.StatusOK, event)
 }
 
-func UpdateEvent(w http.ResponseWriter, r *http.Request) {
+func UpdateEvent(ctx *gin.Context) {
 	// TODO: make this a thread safe update
-	vars := mux.Vars(r)
-	eventID := vars["id"]
-
+	eventID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "UpdateEvent", "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
-	reqBody, _ := ioutil.ReadAll(r.Body)
-
 	var eventUpdate models.Event
-	err := json.Unmarshal(reqBody, &eventUpdate)
-	if err != nil {
-		ll.Warnf("Failed to unmarshall request body: %v", string(reqBody))
+	if err := ctx.BindJSON(&eventUpdate); err != nil {
+		ll.Warn("Failed to unmarshall request body")
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Failed to unmarshall request body"})
 		return
 	}
 
@@ -155,46 +146,45 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 			if eventUpdate.IsFlatRate != event.IsFlatRate {
 				event.IsFlatRate = eventUpdate.IsFlatRate
 			}
+			ctx.JSON(http.StatusOK, event)
 			return
 		}
 	}
+	ll.Warn("Event not found")
+	ctx.JSON(http.StatusNotFound, gin.H{"message": "Event not found"})
 }
 
-func DeleteEvent(w http.ResponseWriter, r *http.Request) {
+func DeleteEvent(ctx *gin.Context) {
 	// TODO: make this a thread safe delete
-	vars := mux.Vars(r)
-	eventID := vars["id"]
-
+	eventID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "DeleteEvent", "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
 	for i, event := range events {
 		if event.ID == eventID {
 			events = append(events[:i], events[i+1:]...)
+			ctx.JSON(http.StatusOK, "{}")
 			return
 		}
 	}
+	ll.Warn("Event not found")
+	ctx.JSON(http.StatusNotFound, gin.H{"message": "Event not found"})
 }
 
-func JoinEvent(w http.ResponseWriter, r *http.Request) {
-	// TODO: make this a thread safe delete
-	vars := mux.Vars(r)
-	eventID := vars["id"]
-
+func JoinEvent(ctx *gin.Context) {
+	eventID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "JoinEvent", "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
 	ll.Print("TODO: implement")
-
+	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
 }
 
-func LeaveEvent(w http.ResponseWriter, r *http.Request) {
-	// TODO: make this a thread safe delete
-	vars := mux.Vars(r)
-	eventID := vars["id"]
-
+func LeaveEvent(ctx *gin.Context) {
+	eventID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
 	ll.Print("TODO: implement")
+	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
 }
