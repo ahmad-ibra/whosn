@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/endpoints"
+	"github.com/Ahmad-Ibra/whosn-core/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +20,7 @@ func main() {
 
 func initRouter() *gin.Engine {
 	router := gin.Default()
+	router.Use(middleware.CORS())
 
 	router.GET("/_hc", endpoints.Ping)
 	apiV1 := router.Group("/api/v1") //.Use(middlewares.Auth()).
