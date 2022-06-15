@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/models"
-	"github.com/gin-gonic/gin"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 )
@@ -17,6 +17,8 @@ var (
 		{
 			ID:          "7076f342-fd08-4d44-a7ca-baeb31e581fe",
 			Name:        "Ahmad I",
+			Username:    "aibra",
+			Password:    "abc123",
 			Email:       "email1@whosn.xyz.com",
 			PhoneNumber: "604-534-6333",
 			CreatedAt:   time.Time{},
@@ -25,6 +27,8 @@ var (
 		{
 			ID:          "b1be816f-fb34-4ab4-a1de-d3a08eca5217",
 			Name:        "Karrar A",
+			Username:    "karol-a",
+			Password:    "qwerty",
 			Email:       "email23234234@whosn.xyz.com",
 			PhoneNumber: "778-111-6333",
 			CreatedAt:   time.Time{},
@@ -33,6 +37,8 @@ var (
 		{
 			ID:          "489c800e-034b-4225-bfb1-3327652b63cb",
 			Name:        "Wael A",
+			Username:    "waelus-ice-wizard",
+			Password:    "999888777",
 			Email:       "anotherEmail@whosn.xyz.com",
 			PhoneNumber: "123-345-4567",
 			CreatedAt:   time.Time{},
@@ -40,6 +46,13 @@ var (
 		},
 	}
 )
+
+// ListUsers is a temporary endpoint created for dev purposes. It will eventually be removed
+func ListUsers(ctx *gin.Context) {
+	ll := log.WithFields(log.Fields{"endpoint": "ListUsers"})
+	ll.Println("Endpoint Hit")
+	ctx.JSON(http.StatusOK, users)
+}
 
 func GetUser(ctx *gin.Context) {
 	userID := ctx.Param("id")
