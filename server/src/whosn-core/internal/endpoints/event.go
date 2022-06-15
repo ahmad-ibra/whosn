@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/data"
+
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
@@ -16,7 +17,7 @@ var (
 	// mock events till we get a db in place
 	events = []data.Event{
 		{
-			ID:         1,
+			ID:         "f503857c-5334-450d-be87-15bdcde50341",
 			Name:       "Volleyball",
 			StartTime:  time.Time{},
 			Location:   "6Pack",
@@ -30,7 +31,7 @@ var (
 			UpdatedAt:  time.Time{},
 		},
 		{
-			ID:         2,
+			ID:         "50262b10-3d8e-4134-9869-1e0ed5cfe9f7",
 			Name:       "Soccer",
 			StartTime:  time.Time{},
 			Location:   "Tom binnie",
@@ -44,7 +45,7 @@ var (
 			UpdatedAt:  time.Time{},
 		},
 		{
-			ID:         3,
+			ID:         "45de396a-4880-4c52-9689-f8812bf67a51",
 			Name:       "Movie",
 			StartTime:  time.Time{},
 			Location:   "Landmarks Guildford",
@@ -69,17 +70,13 @@ func ListEvents(w http.ResponseWriter, r *http.Request) {
 
 func GetEvent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+	eventID := vars["id"]
 
-	ll := log.WithFields(log.Fields{"endpoint": "GetEvent", "eventID": vars["id"]})
+	ll := log.WithFields(log.Fields{"endpoint": "GetEvent", "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
-	eventID, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		ll.Warnf("Could not convert id %v passed into handler into an integer", vars["id"])
-		return
-	}
 	for _, event := range events {
-		if event.ID == uint64(eventID) {
+		if event.ID == eventID {
 			json.NewEncoder(w).Encode(event)
 			return
 		}
@@ -104,7 +101,7 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	curTime := time.Now()
 	event.CreatedAt = curTime
 	event.UpdatedAt = curTime
-	event.ID = uint64(len(events)) + 1
+	event.ID = uuid.New().String()
 
 	// TODO: fill in the OwnerID (when jwt is implemented) and generate the link.
 	// This leaves the fields that should be passed in at:
@@ -117,8 +114,9 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	// TODO: make this a thread safe update
 	vars := mux.Vars(r)
+	eventID := vars["id"]
 
-	ll := log.WithFields(log.Fields{"endpoint": "UpdateEvent", "eventID": vars["id"]})
+	ll := log.WithFields(log.Fields{"endpoint": "UpdateEvent", "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
 	reqBody, _ := ioutil.ReadAll(r.Body)
@@ -130,15 +128,9 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	eventID, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		ll.Warnf("Could not convert id %v passed into handler into an integer", vars["id"])
-		return
-	}
-
 	for i := 0; i < len(users); i++ {
 		event := &events[i]
-		if event.ID == uint64(eventID) {
+		if event.ID == eventID {
 			event.UpdatedAt = time.Now()
 			if eventUpdate.Name != "" {
 				event.Name = eventUpdate.Name
@@ -171,19 +163,14 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 func DeleteEvent(w http.ResponseWriter, r *http.Request) {
 	// TODO: make this a thread safe delete
 	vars := mux.Vars(r)
+	eventID := vars["id"]
 
-	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "userID": vars["id"]})
+	ll := log.WithFields(log.Fields{"endpoint": "DeleteEvent", "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
-	userID, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		ll.Warnf("Could not convert id %v passed into handler into an integer", vars["id"])
-		return
-	}
-
-	for i, user := range users {
-		if user.ID == uint64(userID) {
-			users = append(users[:i], users[i+1:]...)
+	for i, event := range events {
+		if event.ID == eventID {
+			events = append(events[:i], events[i+1:]...)
 			return
 		}
 	}
@@ -192,41 +179,22 @@ func DeleteEvent(w http.ResponseWriter, r *http.Request) {
 func JoinEvent(w http.ResponseWriter, r *http.Request) {
 	// TODO: make this a thread safe delete
 	vars := mux.Vars(r)
+	eventID := vars["id"]
 
-	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "userID": vars["id"]})
+	ll := log.WithFields(log.Fields{"endpoint": "JoinEvent", "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
-	userID, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		ll.Warnf("Could not convert id %v passed into handler into an integer", vars["id"])
-		return
-	}
+	ll.Print("TODO: implement")
 
-	for i, user := range users {
-		if user.ID == uint64(userID) {
-			users = append(users[:i], users[i+1:]...)
-			return
-		}
-	}
 }
 
 func LeaveEvent(w http.ResponseWriter, r *http.Request) {
 	// TODO: make this a thread safe delete
 	vars := mux.Vars(r)
+	eventID := vars["id"]
 
-	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "userID": vars["id"]})
+	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
-	userID, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		ll.Warnf("Could not convert id %v passed into handler into an integer", vars["id"])
-		return
-	}
-
-	for i, user := range users {
-		if user.ID == uint64(userID) {
-			users = append(users[:i], users[i+1:]...)
-			return
-		}
-	}
+	ll.Print("TODO: implement")
 }

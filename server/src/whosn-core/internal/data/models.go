@@ -6,7 +6,7 @@ import (
 
 // Event holds data coming from the events table
 type Event struct {
-	ID         uint64    `json:"id"`
+	ID         string    `json:"id"`
 	Name       string    `json:"name"`
 	OwnerID    uint64    `json:"owner_id"`
 	StartTime  time.Time `json:"start_time"`
@@ -22,7 +22,7 @@ type Event struct {
 
 // User holds data coming from the users table
 type User struct {
-	ID          uint64    `json:"id"`
+	ID          string    `json:"id"`
 	Name        string    `json:"name"`
 	Email       string    `json:"email"`
 	PhoneNumber string    `json:"phone_number"`
@@ -32,7 +32,7 @@ type User struct {
 
 // EventUser holds data coming from the event_users table
 type EventUser struct {
-	ID         uint64    `json:"id"`
+	ID         string    `json:"id"`
 	EventID    uint64    `json:"event_id"`
 	UserID     uint64    `json:"user_id"`
 	TotalOwed  float64   `json:"total_owed"`
