@@ -7,7 +7,6 @@ import (
 	"github.com/Ahmad-Ibra/whosn-core/internal/models"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -80,6 +79,7 @@ func GetEvent(ctx *gin.Context) {
 
 	ll.Warn("User not found")
 	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
+	ctx.Abort()
 }
 
 func CreateEvent(ctx *gin.Context) {
@@ -89,14 +89,11 @@ func CreateEvent(ctx *gin.Context) {
 	var event models.Event
 	if err := ctx.BindJSON(&event); err != nil {
 		ll.Warn("Failed to unmarshall request body")
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Failed to unmarshall request body"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.Abort()
 		return
 	}
-
-	curTime := time.Now()
-	event.CreatedAt = curTime
-	event.UpdatedAt = curTime
-	event.ID = uuid.New().String()
+	event.Construct()
 
 	// TODO: fill in the OwnerID (when jwt is implemented) and generate the link.
 	// This leaves the fields that should be passed in at:
@@ -115,7 +112,8 @@ func UpdateEvent(ctx *gin.Context) {
 	var eventUpdate models.Event
 	if err := ctx.BindJSON(&eventUpdate); err != nil {
 		ll.Warn("Failed to unmarshall request body")
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Failed to unmarshall request body"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.Abort()
 		return
 	}
 
@@ -152,6 +150,7 @@ func UpdateEvent(ctx *gin.Context) {
 	}
 	ll.Warn("Event not found")
 	ctx.JSON(http.StatusNotFound, gin.H{"message": "Event not found"})
+	ctx.Abort()
 }
 
 func DeleteEvent(ctx *gin.Context) {
@@ -169,6 +168,7 @@ func DeleteEvent(ctx *gin.Context) {
 	}
 	ll.Warn("Event not found")
 	ctx.JSON(http.StatusNotFound, gin.H{"message": "Event not found"})
+	ctx.Abort()
 }
 
 func JoinEvent(ctx *gin.Context) {

@@ -5,9 +5,7 @@ import (
 	"time"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/models"
-
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -47,6 +45,29 @@ var (
 	}
 )
 
+func CreateUser(ctx *gin.Context) {
+	ll := log.WithFields(log.Fields{"endpoint": "CreateUser"})
+	ll.Println("Endpoint Hit")
+
+	var user models.User
+	if err := ctx.BindJSON(&user); err != nil {
+		ll.Warn("Failed to unmarshall request body")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+	if err := user.HashPassword(user.Password); err != nil {
+		ll.Warn("Failed to hash password")
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+	user.Construct()
+
+	users = append(users, user)
+	ctx.JSON(http.StatusOK, user)
+}
+
 // ListUsers is a temporary endpoint created for dev purposes. It will eventually be removed
 func ListUsers(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "ListUsers"})
@@ -68,26 +89,7 @@ func GetUser(ctx *gin.Context) {
 
 	ll.Warn("User not found")
 	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
-}
-
-func CreateUser(ctx *gin.Context) {
-	ll := log.WithFields(log.Fields{"endpoint": "CreateUser"})
-	ll.Println("Endpoint Hit")
-
-	var user models.User
-	if err := ctx.BindJSON(&user); err != nil {
-		ll.Warn("Failed to unmarshall request body")
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Failed to unmarshall request body"})
-		return
-	}
-
-	curTime := time.Now()
-	user.CreatedAt = curTime
-	user.UpdatedAt = curTime
-	user.ID = uuid.New().String()
-
-	users = append(users, user)
-	ctx.JSON(http.StatusOK, user)
+	ctx.Abort()
 }
 
 func UpdateUser(ctx *gin.Context) {
@@ -99,7 +101,8 @@ func UpdateUser(ctx *gin.Context) {
 	var userUpdate models.User
 	if err := ctx.BindJSON(&userUpdate); err != nil {
 		ll.Warn("Failed to unmarshall request body")
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Failed to unmarshall request body"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.Abort()
 		return
 	}
 
@@ -128,6 +131,7 @@ func UpdateUser(ctx *gin.Context) {
 	}
 	ll.Warn("User not found")
 	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
+	ctx.Abort()
 }
 
 func DeleteUser(ctx *gin.Context) {
@@ -145,4 +149,5 @@ func DeleteUser(ctx *gin.Context) {
 	}
 	ll.Warn("User not found")
 	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
+	ctx.Abort()
 }

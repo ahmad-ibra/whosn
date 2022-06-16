@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // Event holds data coming from the events table
@@ -18,4 +20,11 @@ type Event struct {
 	Link       string    `json:"link"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+func (event *Event) Construct() {
+	curTime := time.Now()
+	event.CreatedAt = curTime
+	event.UpdatedAt = curTime
+	event.ID = uuid.New().String()
 }
