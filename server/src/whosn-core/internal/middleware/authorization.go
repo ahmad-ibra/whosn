@@ -2,8 +2,12 @@ package middleware
 
 import (
 	"github.com/Ahmad-Ibra/whosn-core/internal/auth"
+	"github.com/Ahmad-Ibra/whosn-core/internal/models"
+
 	"github.com/gin-gonic/gin"
 )
+
+var ds = models.GetDataStore()
 
 func Auth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -15,6 +19,13 @@ func Auth() gin.HandlerFunc {
 		}
 
 		actorID, err := auth.ValidateToken(tokenString)
+		if err != nil {
+			ctx.JSON(401, gin.H{"error": err.Error()})
+			ctx.Abort()
+			return
+		}
+
+		_, err = ds.GetUserByID(actorID)
 		if err != nil {
 			ctx.JSON(401, gin.H{"error": err.Error()})
 			ctx.Abort()
