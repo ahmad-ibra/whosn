@@ -8,7 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// TODO: store this in a .env
 var jwtSigningKey = []byte("supersecretkey")
 
 type JWTClaim struct {

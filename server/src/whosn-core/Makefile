@@ -1,5 +1,8 @@
 whosn_dir := $(abspath $(shell git rev-parse --show-toplevel))
 
+mocks:
+	mockery --case underscore --name=DataStorer --dir ./internal/models --output ./internal/models/mocks
+
 test:
 	go test ./...
 

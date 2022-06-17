@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var ds = models.GetDataStore()
+
 type TokenRequest struct {
 	Username string `json:"user_name"`
 	Password string `json:"password"`
@@ -21,29 +23,20 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	var curUser models.User
-	foundUser := false
-
-	// get user with same username
-	for _, user := range users {
-		if user.Username == request.Username {
-			curUser = user
-			foundUser = true
-		}
-	}
-
-	if !foundUser {
+	user, err := ds.GetUserByUsername(request.Username)
+	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		ctx.Abort()
 		return
 	}
-	credentialError := curUser.CheckPassword(request.Password)
+
+	credentialError := user.CheckPassword(request.Password)
 	if credentialError != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		ctx.Abort()
 		return
 	}
-	tokenString, err := auth.GenerateJWT(curUser.ID)
+	tokenString, err := auth.GenerateJWT(user.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		ctx.Abort()

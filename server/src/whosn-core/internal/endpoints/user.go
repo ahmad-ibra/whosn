@@ -2,48 +2,49 @@ package endpoints
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/models"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
-var (
-	// mock users till we get a db in place
-	users = []models.User{
-		{
-			ID:          "7076f342-fd08-4d44-a7ca-baeb31e581fe",
-			Name:        "Ahmad I",
-			Username:    "aibra",
-			Password:    "abc123",
-			Email:       "email1@whosn.xyz.com",
-			PhoneNumber: "604-534-6333",
-			CreatedAt:   time.Time{},
-			UpdatedAt:   time.Time{},
-		},
-		{
-			ID:          "b1be816f-fb34-4ab4-a1de-d3a08eca5217",
-			Name:        "Karrar A",
-			Username:    "karol-a",
-			Password:    "qwerty",
-			Email:       "email23234234@whosn.xyz.com",
-			PhoneNumber: "778-111-6333",
-			CreatedAt:   time.Time{},
-			UpdatedAt:   time.Time{},
-		},
-		{
-			ID:          "489c800e-034b-4225-bfb1-3327652b63cb",
-			Name:        "Wael A",
-			Username:    "waelus-ice-wizard",
-			Password:    "999888777",
-			Email:       "anotherEmail@whosn.xyz.com",
-			PhoneNumber: "123-345-4567",
-			CreatedAt:   time.Time{},
-			UpdatedAt:   time.Time{},
-		},
+// ListUsers is a temporary endpoint created for dev purposes. It will eventually be removed
+func ListUsers(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
+	ll := log.WithFields(log.Fields{"endpoint": "ListUsers", "actorID": actorID})
+	ll.Println("Endpoint Hit")
+
+	users, err := ds.ListAllUsers()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
 	}
-)
+	ctx.JSON(http.StatusOK, users)
+}
+
+func GetUser(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
+	userID := ctx.Param("id")
+	ll := log.WithFields(log.Fields{"endpoint": "GetUser", "actorID": actorID, "userID": userID})
+	ll.Println("Endpoint Hit")
+
+	if actorID != userID {
+		ll.Warn("Unauthorized")
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to view user"})
+		ctx.Abort()
+		return
+	}
+
+	user, err := ds.GetUserByID(userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+	ctx.JSON(http.StatusOK, user)
+	return
+}
 
 func CreateUser(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "CreateUser"})
@@ -64,45 +65,17 @@ func CreateUser(ctx *gin.Context) {
 	}
 	user.Construct()
 
-	users = append(users, user)
-	ctx.JSON(http.StatusOK, user)
-}
-
-// ListUsers is a temporary endpoint created for dev purposes. It will eventually be removed
-func ListUsers(ctx *gin.Context) {
-	actorID := ctx.GetString("actorID")
-	ll := log.WithFields(log.Fields{"endpoint": "ListUsers", "actorID": actorID})
-	ll.Println("Endpoint Hit")
-	ctx.JSON(http.StatusOK, users)
-}
-
-func GetUser(ctx *gin.Context) {
-	actorID := ctx.GetString("actorID")
-	userID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "GetUser", "actorID": actorID, "userID": userID})
-	ll.Println("Endpoint Hit")
-
-	if actorID != userID {
-		ll.Warn("Unauthorized")
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to view user"})
+	err := ds.InsertUser(user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		ctx.Abort()
 		return
 	}
 
-	for _, user := range users {
-		if user.ID == userID {
-			ctx.JSON(http.StatusOK, user)
-			return
-		}
-	}
-
-	ll.Warn("User not found")
-	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
-	ctx.Abort()
+	ctx.JSON(http.StatusOK, user)
 }
 
 func UpdateUser(ctx *gin.Context) {
-	// TODO: make this a thread safe update
 	actorID := ctx.GetString("actorID")
 	userID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "UpdateUser", "actorID": actorID, "userID": userID})
@@ -123,36 +96,17 @@ func UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	for i := 0; i < len(users); i++ {
-		user := &users[i]
-		if user.ID == userID {
-			user.UpdatedAt = time.Now()
-			if userUpdate.Name != "" {
-				user.Name = userUpdate.Name
-			}
-			if userUpdate.Email != "" {
-				user.Email = userUpdate.Email
-			}
-			if userUpdate.PhoneNumber != "" {
-				user.PhoneNumber = userUpdate.PhoneNumber
-			}
-			if userUpdate.Username != "" {
-				user.Username = userUpdate.Username
-			}
-			if userUpdate.Password != "" {
-				user.Password = userUpdate.Password
-			}
-			ctx.JSON(http.StatusOK, user)
-			return
-		}
+	user, err := ds.UpdateUserByID(userUpdate, userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
 	}
-	ll.Warn("User not found")
-	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
-	ctx.Abort()
+
+	ctx.JSON(http.StatusOK, user)
 }
 
 func DeleteUser(ctx *gin.Context) {
-	// TODO: make this a thread safe delete
 	actorID := ctx.GetString("actorID")
 	userID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "actorID": actorID, "userID": userID})
@@ -165,14 +119,12 @@ func DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	for i, user := range users {
-		if user.ID == userID {
-			users = append(users[:i], users[i+1:]...)
-			ctx.JSON(http.StatusOK, "{}")
-			return
-		}
+	err := ds.DeleteUserByID(userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
 	}
-	ll.Warn("User not found")
-	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
-	ctx.Abort()
+
+	ctx.JSON(http.StatusOK, "{}")
 }
