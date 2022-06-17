@@ -33,11 +33,14 @@ func GetConfig() *Config {
 // InitConfig returns the whosn-core configuration
 // Remember to update .env_example if more env vars have been added
 func initConfig() *Config {
-	err := godotenv.Load(".env")
-	if err != nil {
-		ll := log.WithFields(log.Fields{"function": "InitConfig", "error": err})
-		ll.Error("Failed to init config")
-		panic(err)
+	env := os.Getenv("ENV")
+	if env != "prod" {
+		err := godotenv.Load(".env")
+		if err != nil {
+			ll := log.WithFields(log.Fields{"function": "InitConfig", "error": err})
+			ll.Error("Failed to init config")
+			panic(err)
+		}
 	}
 
 	return &Config{
