@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/auth"
+	"github.com/Ahmad-Ibra/whosn-core/internal/config"
 	"github.com/Ahmad-Ibra/whosn-core/internal/data"
 	"github.com/gin-gonic/gin"
 )
@@ -36,7 +37,8 @@ func Login(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
-	tokenString, err := auth.GenerateJWT(user.ID)
+	cfg := config.GetConfig()
+	tokenString, err := auth.GenerateJWT(user.ID, cfg.JWTKey)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		ctx.Abort()

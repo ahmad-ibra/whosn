@@ -1,8 +1,7 @@
 package main
 
 import (
-	"os"
-
+	"github.com/Ahmad-Ibra/whosn-core/internal/config"
 	"github.com/Ahmad-Ibra/whosn-core/internal/endpoints"
 	"github.com/Ahmad-Ibra/whosn-core/internal/middleware"
 
@@ -10,13 +9,9 @@ import (
 )
 
 func main() {
-	// TODO: implement a setup config method which sets values of the port, hostname, servicename, etc based on env vars
+	cfg := config.GetConfig()
 	router := initRouter()
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	router.Run(":" + port)
+	router.Run(":" + cfg.Port)
 }
 
 func initRouter() *gin.Engine {

@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/Ahmad-Ibra/whosn-core/internal/auth"
+	"github.com/Ahmad-Ibra/whosn-core/internal/config"
 	"github.com/Ahmad-Ibra/whosn-core/internal/data"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,8 @@ func Auth() gin.HandlerFunc {
 			return
 		}
 
-		actorID, err := auth.ValidateToken(tokenString)
+		cfg := config.GetConfig()
+		actorID, err := auth.ValidateToken(tokenString, cfg.JWTKey)
 		if err != nil {
 			ctx.JSON(401, gin.H{"error": err.Error()})
 			ctx.Abort()

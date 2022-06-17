@@ -4,32 +4,33 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Ahmad-Ibra/whosn-core/internal/config"
 	"github.com/golang-jwt/jwt"
 	log "github.com/sirupsen/logrus"
 )
-
-var jwtSigningKey = []byte("supersecretkey")
 
 type JWTClaim struct {
 	UserID string `json:"user_id"`
 	jwt.StandardClaims
 }
 
-func GenerateJWT(userID string) (string, error) {
+func GenerateJWT(userID string, jwtKey string) (string, error) {
 	expirationTime := time.Now().Add(1 * time.Hour)
 	jwtClaim := JWTClaim{
 		userID,
 		jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
-			Issuer:    "whosn-core",
+			Issuer:    config.SvcName,
 		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtClaim)
-	return token.SignedString(jwtSigningKey)
+	return token.SignedString([]byte(jwtKey))
 }
 
-func ValidateToken(signedToken string) (string, error) {
+func ValidateToken(signedToken string, jwtKey string) (string, error) {
+	jwtSigningKey := []byte(jwtKey)
+
 	token, err := jwt.ParseWithClaims(signedToken, &JWTClaim{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtSigningKey, nil
 	})
