@@ -70,15 +70,24 @@ func CreateUser(ctx *gin.Context) {
 
 // ListUsers is a temporary endpoint created for dev purposes. It will eventually be removed
 func ListUsers(ctx *gin.Context) {
-	ll := log.WithFields(log.Fields{"endpoint": "ListUsers"})
+	actorID := ctx.GetString("actorID")
+	ll := log.WithFields(log.Fields{"endpoint": "ListUsers", "actorID": actorID})
 	ll.Println("Endpoint Hit")
 	ctx.JSON(http.StatusOK, users)
 }
 
 func GetUser(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
 	userID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "GetUser", "userID": userID})
+	ll := log.WithFields(log.Fields{"endpoint": "GetUser", "actorID": actorID, "userID": userID})
 	ll.Println("Endpoint Hit")
+
+	if actorID != userID {
+		ll.Warn("Unauthorized")
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to view user"})
+		ctx.Abort()
+		return
+	}
 
 	for _, user := range users {
 		if user.ID == userID {
@@ -94,9 +103,17 @@ func GetUser(ctx *gin.Context) {
 
 func UpdateUser(ctx *gin.Context) {
 	// TODO: make this a thread safe update
+	actorID := ctx.GetString("actorID")
 	userID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "UpdateUser", "userID": userID})
+	ll := log.WithFields(log.Fields{"endpoint": "UpdateUser", "actorID": actorID, "userID": userID})
 	ll.Println("Endpoint Hit")
+
+	if actorID != userID {
+		ll.Warn("Unauthorized")
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to view user"})
+		ctx.Abort()
+		return
+	}
 
 	var userUpdate models.User
 	if err := ctx.BindJSON(&userUpdate); err != nil {
@@ -136,9 +153,17 @@ func UpdateUser(ctx *gin.Context) {
 
 func DeleteUser(ctx *gin.Context) {
 	// TODO: make this a thread safe delete
+	actorID := ctx.GetString("actorID")
 	userID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "userID": userID})
+	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "actorID": actorID, "userID": userID})
 	ll.Println("Endpoint Hit")
+
+	if actorID != userID {
+		ll.Warn("Unauthorized")
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to view user"})
+		ctx.Abort()
+		return
+	}
 
 	for i, user := range users {
 		if user.ID == userID {
