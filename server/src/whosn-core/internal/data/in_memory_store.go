@@ -10,84 +10,13 @@ import (
 
 var (
 	// mock events till we get a db in place
-	events = []models.Event{
-		{
-			ID:         "f503857c-5334-450d-be87-15bdcde50341",
-			Name:       "Volleyball",
-			StartTime:  time.Time{},
-			Location:   "6Pack",
-			MinUsers:   10,
-			MaxUsers:   12,
-			Price:      120.00,
-			IsFlatRate: false,
-			OwnerID:    "f503857c-5334-450d-be87-15bdcde50342",
-			Link:       "www.somepage.com/abasdcasdfasdf/1",
-			CreatedAt:  time.Time{},
-			UpdatedAt:  time.Time{},
-		},
-		{
-			ID:         "50262b10-3d8e-4134-9869-1e0ed5cfe9f7",
-			Name:       "Soccer",
-			StartTime:  time.Time{},
-			Location:   "Tom binnie",
-			MinUsers:   10,
-			MaxUsers:   22,
-			Price:      155.00,
-			IsFlatRate: false,
-			OwnerID:    "f503857c-5334-450d-be87-15bdcde50343",
-			Link:       "www.somepage.com/abasdcasdfasdf/2",
-			CreatedAt:  time.Time{},
-			UpdatedAt:  time.Time{},
-		},
-		{
-			ID:         "45de396a-4880-4c52-9689-f8812bf67a51",
-			Name:       "Movie",
-			StartTime:  time.Time{},
-			Location:   "Landmarks Guildford",
-			MinUsers:   1,
-			MaxUsers:   10,
-			Price:      12,
-			IsFlatRate: true,
-			OwnerID:    "f503857c-5334-450d-be87-15bdcde50344",
-			Link:       "www.somepage.com/abasdcasdfasdf/3",
-			CreatedAt:  time.Time{},
-			UpdatedAt:  time.Time{},
-		},
-	}
+	events = []models.Event{}
 
 	// mock users till we get a db in place
-	users = []models.User{
-		{
-			ID:          "7076f342-fd08-4d44-a7ca-baeb31e581fe",
-			Name:        "Ahmad I",
-			Username:    "aibra",
-			Password:    "abc123",
-			Email:       "email1@whosn.xyz.com",
-			PhoneNumber: "604-534-6333",
-			CreatedAt:   time.Time{},
-			UpdatedAt:   time.Time{},
-		},
-		{
-			ID:          "b1be816f-fb34-4ab4-a1de-d3a08eca5217",
-			Name:        "Karrar A",
-			Username:    "karol-a",
-			Password:    "qwerty",
-			Email:       "email23234234@whosn.xyz.com",
-			PhoneNumber: "778-111-6333",
-			CreatedAt:   time.Time{},
-			UpdatedAt:   time.Time{},
-		},
-		{
-			ID:          "489c800e-034b-4225-bfb1-3327652b63cb",
-			Name:        "Wael A",
-			Username:    "waelus-ice-wizard",
-			Password:    "999888777",
-			Email:       "anotherEmail@whosn.xyz.com",
-			PhoneNumber: "123-345-4567",
-			CreatedAt:   time.Time{},
-			UpdatedAt:   time.Time{},
-		},
-	}
+	users = []models.User{}
+
+	// mock eventUsers till we get a db in place
+	eventUsers = []models.EventUser{}
 )
 
 type inMemoryStore struct{}
@@ -241,4 +170,19 @@ func (d *inMemoryStore) DeleteUserByID(userID string) error {
 		}
 	}
 	return errors.New("user not found")
+}
+
+func (d *inMemoryStore) GetEventUserByEventIDUserID(eventID string, userID string) (*models.EventUser, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (d *inMemoryStore) InsertEventUser(eventUser models.EventUser) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (d *inMemoryStore) DeleteEventUserByEventIDUserID(eventUser models.EventUser) error {
+	//TODO implement me
+	panic("implement me")
 }

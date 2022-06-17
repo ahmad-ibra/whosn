@@ -146,19 +146,24 @@ func DeleteEvent(ctx *gin.Context) {
 }
 
 func JoinEvent(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
 	eventID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "JoinEvent", "eventID": eventID})
+	ll := log.WithFields(log.Fields{"endpoint": "JoinEvent", "actorID": actorID, "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
-	ll.Print("TODO: implement")
-	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
+	// - GetEventUserByEventIDUserID
+	// - if no result, construct EventUser and add it (InsertEventUser), then return it
+	// - else, return found UserEvent -> ctx.JSON(http.StatusOK, userEvent)
 }
 
 func LeaveEvent(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
 	eventID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "LeaveEvent", "eventID": eventID})
+	ll := log.WithFields(log.Fields{"endpoint": "LeaveEvent", "actorID": actorID, "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
-	ll.Print("TODO: implement")
-	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
+	// - GetEventUserByEventIDUserID
+	// - if found result, remove the UserEvent (DeleteEventUserByEventIDUserID)
+	// - else, return -> ctx.JSON(http.StatusOK, "{}")
+
 }
