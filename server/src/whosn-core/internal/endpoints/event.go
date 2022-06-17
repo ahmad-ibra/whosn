@@ -22,7 +22,7 @@ var (
 			MaxUsers:   12,
 			Price:      120.00,
 			IsFlatRate: false,
-			OwnerID:    1,
+			OwnerID:    "f503857c-5334-450d-be87-15bdcde50342",
 			Link:       "www.somepage.com/abasdcasdfasdf/1",
 			CreatedAt:  time.Time{},
 			UpdatedAt:  time.Time{},
@@ -36,7 +36,7 @@ var (
 			MaxUsers:   22,
 			Price:      155.00,
 			IsFlatRate: false,
-			OwnerID:    1,
+			OwnerID:    "f503857c-5334-450d-be87-15bdcde50343",
 			Link:       "www.somepage.com/abasdcasdfasdf/2",
 			CreatedAt:  time.Time{},
 			UpdatedAt:  time.Time{},
@@ -50,7 +50,7 @@ var (
 			MaxUsers:   10,
 			Price:      12,
 			IsFlatRate: true,
-			OwnerID:    2,
+			OwnerID:    "f503857c-5334-450d-be87-15bdcde50344",
 			Link:       "www.somepage.com/abasdcasdfasdf/3",
 			CreatedAt:  time.Time{},
 			UpdatedAt:  time.Time{},
@@ -60,14 +60,16 @@ var (
 
 func ListEvents(ctx *gin.Context) {
 	// TODO: Break up ListEvents into ListJoinedEvents and ListOwnedEvents
-	ll := log.WithFields(log.Fields{"endpoint": "ListEvents"})
+	actorID := ctx.GetString("actorID")
+	ll := log.WithFields(log.Fields{"endpoint": "ListEvents", "actorID": actorID})
 	ll.Println("Endpoint Hit")
 	ctx.JSON(http.StatusOK, events)
 }
 
 func GetEvent(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
 	eventID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "GetEvent", "eventID": eventID})
+	ll := log.WithFields(log.Fields{"endpoint": "GetEvent", "actorID": actorID, "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
 	for _, event := range events {
@@ -77,13 +79,14 @@ func GetEvent(ctx *gin.Context) {
 		}
 	}
 
-	ll.Warn("User not found")
-	ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
+	ll.Warn("Event not found")
+	ctx.JSON(http.StatusNotFound, gin.H{"message": "Event not found"})
 	ctx.Abort()
 }
 
 func CreateEvent(ctx *gin.Context) {
-	ll := log.WithFields(log.Fields{"endpoint": "CreateEvent"})
+	actorID := ctx.GetString("actorID")
+	ll := log.WithFields(log.Fields{"endpoint": "CreateEvent", "actorID": actorID})
 	ll.Println("Endpoint Hit")
 
 	var event models.Event
@@ -93,11 +96,7 @@ func CreateEvent(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
-	event.Construct()
-
-	// TODO: fill in the OwnerID (when jwt is implemented) and generate the link.
-	// This leaves the fields that should be passed in at:
-	// Name, StartTime, Location, MinUsers, MaxUsers, Price, IsFlatRate
+	event.Construct(actorID)
 
 	events = append(events, event)
 	ctx.JSON(http.StatusOK, event)
@@ -105,8 +104,9 @@ func CreateEvent(ctx *gin.Context) {
 
 func UpdateEvent(ctx *gin.Context) {
 	// TODO: make this a thread safe update
+	actorID := ctx.GetString("actorID")
 	eventID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "UpdateEvent", "eventID": eventID})
+	ll := log.WithFields(log.Fields{"endpoint": "UpdateEvent", "actorID": actorID, "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
 	var eventUpdate models.Event
@@ -117,9 +117,15 @@ func UpdateEvent(ctx *gin.Context) {
 		return
 	}
 
-	for i := 0; i < len(users); i++ {
+	for i := 0; i < len(events); i++ {
 		event := &events[i]
 		if event.ID == eventID {
+			if event.OwnerID != actorID {
+				ll.Warn("Unauthorized")
+				ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to update event"})
+				ctx.Abort()
+				return
+			}
 			event.UpdatedAt = time.Now()
 			if eventUpdate.Name != "" {
 				event.Name = eventUpdate.Name
@@ -155,12 +161,19 @@ func UpdateEvent(ctx *gin.Context) {
 
 func DeleteEvent(ctx *gin.Context) {
 	// TODO: make this a thread safe delete
+	actorID := ctx.GetString("actorID")
 	eventID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "DeleteEvent", "eventID": eventID})
+	ll := log.WithFields(log.Fields{"endpoint": "DeleteEvent", "actorID": actorID, "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
 	for i, event := range events {
 		if event.ID == eventID {
+			if event.OwnerID != actorID {
+				ll.Warn("Unauthorized")
+				ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to delete event"})
+				ctx.Abort()
+				return
+			}
 			events = append(events[:i], events[i+1:]...)
 			ctx.JSON(http.StatusOK, "{}")
 			return
@@ -182,7 +195,7 @@ func JoinEvent(ctx *gin.Context) {
 
 func LeaveEvent(ctx *gin.Context) {
 	eventID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "eventID": eventID})
+	ll := log.WithFields(log.Fields{"endpoint": "LeaveEvent", "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
 	ll.Print("TODO: implement")

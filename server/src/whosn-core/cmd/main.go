@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	// TODO: implement a setup config method which sets values of the port, hostname, servicename, etc based on env vars
 	router := initRouter()
 	port := os.Getenv("PORT")
 	if port == "" {

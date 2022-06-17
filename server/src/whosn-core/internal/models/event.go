@@ -10,7 +10,7 @@ import (
 type Event struct {
 	ID         string    `json:"id"`
 	Name       string    `json:"name"`
-	OwnerID    uint64    `json:"owner_id"`
+	OwnerID    string    `json:"owner_id"`
 	StartTime  time.Time `json:"start_time"`
 	Location   string    `json:"location"`
 	MinUsers   uint64    `json:"min_users"`
@@ -22,9 +22,16 @@ type Event struct {
 	UpdatedAt  time.Time `json:"updated_at"`
 }
 
-func (event *Event) Construct() {
+func (event *Event) Construct(ownerID string) {
+	event.ID = uuid.New().String()
+
 	curTime := time.Now()
 	event.CreatedAt = curTime
 	event.UpdatedAt = curTime
-	event.ID = uuid.New().String()
+
+	event.OwnerID = ownerID
+
+	// TODO: validate that we have the right link
+	// link should be something from the frontend that can get data from https://host/api/v1/secured/event/{eventID}
+	event.Link = "https://whosn.xyz/event/" + event.ID
 }
