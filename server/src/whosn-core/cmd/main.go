@@ -23,23 +23,31 @@ func initRouter() *gin.Engine {
 	router.Use(middleware.CORS())
 
 	router.GET("/_hc", endpoints.Ping)
-	apiV1 := router.Group("/api/v1") //.Use(middlewares.Auth()).
+	apiV1 := router.Group("/api/v1")
 	{
-		// user endpoints
-		apiV1.GET("/users", endpoints.ListUsers)
-		apiV1.DELETE("/user/:id", endpoints.DeleteUser)
-		apiV1.PUT("/user/:id", endpoints.UpdateUser)
-		apiV1.GET("/user/:id", endpoints.GetUser)
+		// login endpoint
+		apiV1.POST("/login", endpoints.Login)
+
+		// register endpoints
 		apiV1.POST("/user", endpoints.CreateUser)
 
-		// event endpoints
-		apiV1.GET("/events", endpoints.ListEvents)
-		apiV1.DELETE("event/:id", endpoints.DeleteEvent)
-		apiV1.PUT("/event/:id", endpoints.UpdateEvent)
-		apiV1.GET("/event/:id", endpoints.GetEvent)
-		apiV1.GET("/event/:id/join", endpoints.JoinEvent)
-		apiV1.GET("/event/:id/leave", endpoints.LeaveEvent)
-		apiV1.POST("/event", endpoints.CreateEvent)
+		apiV1Secured := apiV1.Group("/secured").Use(middleware.Auth())
+		{
+			// user endpoints
+			apiV1Secured.GET("/users", endpoints.ListUsers).Use(middleware.Auth())
+			apiV1Secured.DELETE("/user/:id", endpoints.DeleteUser).Use(middleware.Auth())
+			apiV1Secured.PUT("/user/:id", endpoints.UpdateUser).Use(middleware.Auth())
+			apiV1Secured.GET("/user/:id", endpoints.GetUser).Use(middleware.Auth())
+
+			// event endpoints
+			apiV1Secured.GET("/events", endpoints.ListEvents).Use(middleware.Auth())
+			apiV1Secured.DELETE("event/:id", endpoints.DeleteEvent).Use(middleware.Auth())
+			apiV1Secured.PUT("/event/:id", endpoints.UpdateEvent).Use(middleware.Auth())
+			apiV1Secured.GET("/event/:id", endpoints.GetEvent).Use(middleware.Auth())
+			apiV1Secured.GET("/event/:id/join", endpoints.JoinEvent).Use(middleware.Auth())
+			apiV1Secured.GET("/event/:id/leave", endpoints.LeaveEvent).Use(middleware.Auth())
+			apiV1Secured.POST("/event", endpoints.CreateEvent).Use(middleware.Auth())
+		}
 	}
 	return router
 }
