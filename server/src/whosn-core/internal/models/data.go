@@ -88,12 +88,29 @@ var (
 	}
 )
 
+// Storer is an interface for our datasource
+type Storer interface {
+	ListAllEvents() (*[]Event, error)
+	GetEventByID(eventID string) (*Event, error)
+	InsertEvent(event Event) error
+	UpdateEventByID(eventUpdate Event, eventID string) (*Event, error)
+	DeleteEventByID(eventID string) error
+	ListAllUsers() (*[]User, error)
+	GetUserByID(userID string) (*User, error)
+	GetUserByUsername(username string) (*User, error)
+	InsertUser(user User) error
+	UpdateUserByID(userUpdate User, userID string) (*User, error)
+	DeleteUserByID(userID string) error
+}
+
 // DataStore holds a database connection
 type DataStore struct{}
 
-var dataStore *DataStore
+// Compile time check that DataStore implements the Storer interface
+var _ Storer = (*DataStore)(nil)
 
 var lock = &sync.Mutex{}
+var dataStore *DataStore
 
 func GetDataStore() *DataStore {
 	lock.Lock()
