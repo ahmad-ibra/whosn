@@ -3,7 +3,7 @@ package endpoints
 import (
 	"net/http"
 
-	"github.com/Ahmad-Ibra/whosn-core/internal/models"
+	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )

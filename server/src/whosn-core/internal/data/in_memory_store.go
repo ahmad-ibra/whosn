@@ -1,14 +1,16 @@
-package models
+package data
 
 import (
 	"errors"
 	"sync"
 	"time"
+
+	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
 )
 
 var (
 	// mock events till we get a db in place
-	events = []Event{
+	events = []models.Event{
 		{
 			ID:         "f503857c-5334-450d-be87-15bdcde50341",
 			Name:       "Volleyball",
@@ -54,7 +56,7 @@ var (
 	}
 
 	// mock users till we get a db in place
-	users = []User{
+	users = []models.User{
 		{
 			ID:          "7076f342-fd08-4d44-a7ca-baeb31e581fe",
 			Name:        "Ahmad I",
@@ -88,35 +90,19 @@ var (
 	}
 )
 
-// Storer is an interface for our datasource
-type Storer interface {
-	ListAllEvents() (*[]Event, error)
-	GetEventByID(eventID string) (*Event, error)
-	InsertEvent(event Event) error
-	UpdateEventByID(eventUpdate Event, eventID string) (*Event, error)
-	DeleteEventByID(eventID string) error
-	ListAllUsers() (*[]User, error)
-	GetUserByID(userID string) (*User, error)
-	GetUserByUsername(username string) (*User, error)
-	InsertUser(user User) error
-	UpdateUserByID(userUpdate User, userID string) (*User, error)
-	DeleteUserByID(userID string) error
-}
-
-// DataStore holds a database connection
-type DataStore struct{}
+type inMemoryStore struct{}
 
 // Compile time check that DataStore implements the Storer interface
-var _ Storer = (*DataStore)(nil)
+var _ Storer = (*inMemoryStore)(nil)
 
 var lock = &sync.Mutex{}
-var dataStore *DataStore
+var dataStore *inMemoryStore
 
-func GetDataStore() *DataStore {
+func GetInMemoryStore() *inMemoryStore {
 	lock.Lock()
 	defer lock.Unlock()
 	if dataStore == nil {
-		dataStore = &DataStore{}
+		dataStore = &inMemoryStore{}
 	}
 	return dataStore
 }
@@ -124,12 +110,12 @@ func GetDataStore() *DataStore {
 // TODO: Ensure all db changing functions are thread safe
 
 // ListAllEvents gets every event in our datasource
-func (d *DataStore) ListAllEvents() (*[]Event, error) {
+func (d *inMemoryStore) ListAllEvents() (*[]models.Event, error) {
 	return &events, nil
 }
 
 // GetEventByID gets a single event in our datasource
-func (d *DataStore) GetEventByID(eventID string) (*Event, error) {
+func (d *inMemoryStore) GetEventByID(eventID string) (*models.Event, error) {
 	for _, event := range events {
 		if event.ID == eventID {
 			return &event, nil
@@ -139,13 +125,13 @@ func (d *DataStore) GetEventByID(eventID string) (*Event, error) {
 }
 
 // InsertEvent inserts the event into the datasource
-func (d *DataStore) InsertEvent(event Event) error {
+func (d *inMemoryStore) InsertEvent(event models.Event) error {
 	events = append(events, event)
 	return nil
 }
 
 // UpdateEventByID updates the event in the datasource
-func (d *DataStore) UpdateEventByID(eventUpdate Event, eventID string) (*Event, error) {
+func (d *inMemoryStore) UpdateEventByID(eventUpdate models.Event, eventID string) (*models.Event, error) {
 	for i := 0; i < len(events); i++ {
 		event := &events[i]
 		if event.ID == eventID {
@@ -180,7 +166,7 @@ func (d *DataStore) UpdateEventByID(eventUpdate Event, eventID string) (*Event, 
 }
 
 // DeleteEventByID deletes the event in the datasource
-func (d *DataStore) DeleteEventByID(eventID string) error {
+func (d *inMemoryStore) DeleteEventByID(eventID string) error {
 	for i, event := range events {
 		if event.ID == eventID {
 			events = append(events[:i], events[i+1:]...)
@@ -191,12 +177,12 @@ func (d *DataStore) DeleteEventByID(eventID string) error {
 }
 
 // ListAllUsers gets every event in our datasource
-func (d *DataStore) ListAllUsers() (*[]User, error) {
+func (d *inMemoryStore) ListAllUsers() (*[]models.User, error) {
 	return &users, nil
 }
 
 // GetUserByID gets a single user in our datasource
-func (d *DataStore) GetUserByID(userID string) (*User, error) {
+func (d *inMemoryStore) GetUserByID(userID string) (*models.User, error) {
 	for _, user := range users {
 		if user.ID == userID {
 			return &user, nil
@@ -206,7 +192,7 @@ func (d *DataStore) GetUserByID(userID string) (*User, error) {
 }
 
 // GetUserByUsername gets a single user in our datasource
-func (d *DataStore) GetUserByUsername(username string) (*User, error) {
+func (d *inMemoryStore) GetUserByUsername(username string) (*models.User, error) {
 	for _, user := range users {
 		if user.Username == username {
 			return &user, nil
@@ -216,13 +202,13 @@ func (d *DataStore) GetUserByUsername(username string) (*User, error) {
 }
 
 // InsertUser inserts the user into the datasource
-func (d *DataStore) InsertUser(user User) error {
+func (d *inMemoryStore) InsertUser(user models.User) error {
 	users = append(users, user)
 	return nil
 }
 
 // UpdateUserByID updates the user in the datasource
-func (d *DataStore) UpdateUserByID(userUpdate User, userID string) (*User, error) {
+func (d *inMemoryStore) UpdateUserByID(userUpdate models.User, userID string) (*models.User, error) {
 	for i := 0; i < len(users); i++ {
 		user := &users[i]
 		if user.ID == userID {
@@ -249,7 +235,7 @@ func (d *DataStore) UpdateUserByID(userUpdate User, userID string) (*User, error
 }
 
 // DeleteUserByID deletes the user in the datasource
-func (d *DataStore) DeleteUserByID(userID string) error {
+func (d *inMemoryStore) DeleteUserByID(userID string) error {
 	for i, user := range users {
 		if user.ID == userID {
 			users = append(users[:i], users[i+1:]...)

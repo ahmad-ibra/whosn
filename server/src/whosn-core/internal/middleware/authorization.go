@@ -2,12 +2,12 @@ package middleware
 
 import (
 	"github.com/Ahmad-Ibra/whosn-core/internal/auth"
-	"github.com/Ahmad-Ibra/whosn-core/internal/models"
+	"github.com/Ahmad-Ibra/whosn-core/internal/data"
 
 	"github.com/gin-gonic/gin"
 )
 
-var ds = models.GetDataStore()
+var ds = data.GetInMemoryStore()
 
 func Auth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {

@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/auth"
-	"github.com/Ahmad-Ibra/whosn-core/internal/models"
+	"github.com/Ahmad-Ibra/whosn-core/internal/data"
 	"github.com/gin-gonic/gin"
 )
 
-var ds = models.GetDataStore()
+var ds = data.GetInMemoryStore()
 
 type TokenRequest struct {
 	Username string `json:"user_name"`
