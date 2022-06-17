@@ -10,52 +10,9 @@ Once installed, run the following command to run the app locally:
 ```
 You can then test the server using curl or postman:
 ```
-❯ curl localhost:8080/api/v1/events
+❯ curl localhost:8080/_hc
 
-[
-  {
-    "id": "f503857c-5334-450d-be87-15bdcde50341",
-    "name": "Volleyball",
-    "owner_id": 1,
-    "start_time": "0001-01-01T00:00:00Z",
-    "location": "6Pack",
-    "min_users": 10,
-    "max_users": 12,
-    "price": 120,
-    "is_flat_rate": false,
-    "link": "www.somepage.com/abasdcasdfasdf/1",
-    "created_at": "0001-01-01T00:00:00Z",
-    "updated_at": "0001-01-01T00:00:00Z"
-  },
-  {
-    "id": "50262b10-3d8e-4134-9869-1e0ed5cfe9f7",
-    "name": "Soccer",
-    "owner_id": 1,
-    "start_time": "0001-01-01T00:00:00Z",
-    "location": "Tom binnie",
-    "min_users": 10,
-    "max_users": 22,
-    "price": 155,
-    "is_flat_rate": false,
-    "link": "www.somepage.com/abasdcasdfasdf/2",
-    "created_at": "0001-01-01T00:00:00Z",
-    "updated_at": "0001-01-01T00:00:00Z"
-  },
-  {
-    "id": "45de396a-4880-4c52-9689-f8812bf67a51",
-    "name": "Movie",
-    "owner_id": 2,
-    "start_time": "0001-01-01T00:00:00Z",
-    "location": "Landmarks Guildford",
-    "min_users": 1,
-    "max_users": 10,
-    "price": 12,
-    "is_flat_rate": true,
-    "link": "www.somepage.com/abasdcasdfasdf/3",
-    "created_at": "0001-01-01T00:00:00Z",
-    "updated_at": "0001-01-01T00:00:00Z"
-  }
-]
+{"status":"healthy"}
 ```
 
 ## Creating The App
@@ -79,3 +36,23 @@ Finally, run the following command to deploy the app:
 ```
 ❯ make deploy
 ```
+
+## Endpoints
+Below is a list of all the available endpoints:
+```
+GET    /_hc
+POST   /api/v1/login
+POST   /api/v1/user
+GET    /api/v1/secured/users
+DELETE /api/v1/secured/user/:id
+PUT    /api/v1/secured/user/:id
+GET    /api/v1/secured/user/:id
+GET    /api/v1/secured/events
+DELETE /api/v1/secured/event/:id
+PUT    /api/v1/secured/event/:id
+GET    /api/v1/secured/event/:id
+GET    /api/v1/secured/event/:id/join
+GET    /api/v1/secured/event/:id/leave
+POST   /api/v1/secured/event
+```
+All endpoints under `/api/v1/secured/` require an `Authorization` header with a valid token. This token is provided on login.
