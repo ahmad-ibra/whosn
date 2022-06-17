@@ -89,8 +89,7 @@ var (
 )
 
 // DataStore holds a database connection
-type DataStore struct {
-}
+type DataStore struct{}
 
 var dataStore *DataStore
 
