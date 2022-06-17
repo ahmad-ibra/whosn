@@ -145,7 +145,6 @@ func (d *inMemoryStore) UpdateEventByID(eventUpdate models.Event, eventID string
 			if eventUpdate.Location != "" {
 				event.Location = eventUpdate.Location
 			}
-			// TODO: dont allow setting MinUsers above MaxUsers
 			if eventUpdate.MinUsers != 0 {
 				event.MinUsers = eventUpdate.MinUsers
 			}
@@ -155,7 +154,6 @@ func (d *inMemoryStore) UpdateEventByID(eventUpdate models.Event, eventID string
 			if eventUpdate.Price != 0 {
 				event.Price = eventUpdate.Price
 			}
-			// Note: frontend needs to make sure that its always passing this value through
 			if eventUpdate.IsFlatRate != event.IsFlatRate {
 				event.IsFlatRate = eventUpdate.IsFlatRate
 			}

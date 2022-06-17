@@ -53,6 +53,13 @@ func CreateEvent(ctx *gin.Context) {
 	}
 	event.Construct(actorID)
 
+	if event.MinUsers > event.MaxUsers {
+		ll.Warn("MinUsers must be less than MaxUser")
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "MinUsers must be less than MaxUser"})
+		ctx.Abort()
+		return
+	}
+
 	err := ds.InsertEvent(event)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -87,6 +94,13 @@ func UpdateEvent(ctx *gin.Context) {
 	if err := ctx.BindJSON(&eventUpdate); err != nil {
 		ll.Warn("Failed to unmarshall request body")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	if eventUpdate.MinUsers > eventUpdate.MaxUsers {
+		ll.Warn("MinUsers must be less than MaxUser")
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "MinUsers must be less than MaxUser"})
 		ctx.Abort()
 		return
 	}
