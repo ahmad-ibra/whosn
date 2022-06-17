@@ -40,11 +40,9 @@ func initConfig() *Config {
 		panic(err)
 	}
 
-	cfg := &Config{
+	return &Config{
 		Env:    os.Getenv("ENV"),
 		Port:   os.Getenv("PORT"),
 		JWTKey: os.Getenv("JWT_KEY"),
 	}
-
-	return cfg
 }
