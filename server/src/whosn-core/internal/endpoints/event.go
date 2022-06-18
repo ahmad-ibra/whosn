@@ -23,6 +23,24 @@ func ListEvents(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, events)
 }
 
+func ListJoinedEvents(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
+	ll := log.WithFields(log.Fields{"endpoint": "ListJoinedEvents", "actorID": actorID})
+	ll.Println("Endpoint Hit")
+
+	ll.Print("TODO: implement")
+	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
+}
+
+func ListOwnedEvents(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
+	ll := log.WithFields(log.Fields{"endpoint": "ListOwnedEvents", "actorID": actorID})
+	ll.Println("Endpoint Hit")
+
+	ll.Print("TODO: implement")
+	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
+}
+
 func GetEvent(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
 	eventID := ctx.Param("id")
@@ -143,22 +161,4 @@ func DeleteEvent(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, "{}")
-}
-
-func JoinEvent(ctx *gin.Context) {
-	eventID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "JoinEvent", "eventID": eventID})
-	ll.Println("Endpoint Hit")
-
-	ll.Print("TODO: implement")
-	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
-}
-
-func LeaveEvent(ctx *gin.Context) {
-	eventID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "LeaveEvent", "eventID": eventID})
-	ll.Println("Endpoint Hit")
-
-	ll.Print("TODO: implement")
-	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
 }

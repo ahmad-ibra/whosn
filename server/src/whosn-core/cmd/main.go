@@ -30,19 +30,24 @@ func initRouter() *gin.Engine {
 		apiV1Secured := apiV1.Group("/secured").Use(middleware.Auth())
 		{
 			// user endpoints
-			apiV1Secured.GET("/users", endpoints.ListUsers).Use(middleware.Auth())
-			apiV1Secured.DELETE("/user/:id", endpoints.DeleteUser).Use(middleware.Auth())
-			apiV1Secured.PUT("/user/:id", endpoints.UpdateUser).Use(middleware.Auth())
-			apiV1Secured.GET("/user/:id", endpoints.GetUser).Use(middleware.Auth())
+			apiV1Secured.GET("/users", endpoints.ListUsers) // this is a temp endpoint for testing
+			apiV1Secured.DELETE("/user/:id", endpoints.DeleteUser)
+			apiV1Secured.PUT("/user/:id", endpoints.UpdateUser)
+			apiV1Secured.GET("/user/:id", endpoints.GetUser)
 
 			// event endpoints
-			apiV1Secured.GET("/events", endpoints.ListEvents).Use(middleware.Auth())
-			apiV1Secured.DELETE("event/:id", endpoints.DeleteEvent).Use(middleware.Auth())
-			apiV1Secured.PUT("/event/:id", endpoints.UpdateEvent).Use(middleware.Auth())
-			apiV1Secured.GET("/event/:id", endpoints.GetEvent).Use(middleware.Auth())
-			apiV1Secured.GET("/event/:id/join", endpoints.JoinEvent).Use(middleware.Auth())
-			apiV1Secured.GET("/event/:id/leave", endpoints.LeaveEvent).Use(middleware.Auth())
-			apiV1Secured.POST("/event", endpoints.CreateEvent).Use(middleware.Auth())
+			apiV1Secured.GET("/events", endpoints.ListEvents) // this is a temp endpoint for testing
+			apiV1Secured.GET("/events/owned", endpoints.ListOwnedEvents)
+			apiV1Secured.GET("/events/joined", endpoints.ListJoinedEvents)
+			apiV1Secured.DELETE("event/:id", endpoints.DeleteEvent)
+			apiV1Secured.PUT("/event/:id", endpoints.UpdateEvent)
+			apiV1Secured.GET("/event/:id", endpoints.GetEvent)
+			apiV1Secured.POST("/event", endpoints.CreateEvent)
+
+			// eventUser endpoints
+			apiV1Secured.GET("/event_users", endpoints.ListEventUsers) // this is a temp endpoint for testing
+			apiV1Secured.GET("/event/:id/join", endpoints.JoinEvent)
+			apiV1Secured.GET("/event/:id/leave", endpoints.LeaveEvent)
 		}
 	}
 	return router
