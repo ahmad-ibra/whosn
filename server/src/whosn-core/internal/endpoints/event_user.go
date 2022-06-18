@@ -39,6 +39,13 @@ func JoinEvent(ctx *gin.Context) {
 		//return
 		// }
 	}
+
+	err = ds.InsertEventUser(*eventUser)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
 	ctx.JSON(http.StatusOK, eventUser)
 }
 
