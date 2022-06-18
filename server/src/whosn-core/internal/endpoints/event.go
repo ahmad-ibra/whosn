@@ -155,12 +155,7 @@ func JoinEvent(ctx *gin.Context) {
 	if err != nil {
 		// TODO: once custom error type with status is created finish off this logic, for now assuming its NOTFOUND
 		// if error is NOTFOUND {
-		err := eventUser.Construct(eventID, actorID)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			ctx.Abort()
-			return
-		}
+		eventUser.Construct(eventID, actorID)
 		// } else {
 		// for all other error types, just return the error
 		//ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
