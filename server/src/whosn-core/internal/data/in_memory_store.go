@@ -179,8 +179,8 @@ func (d *inMemoryStore) GetEventUserByEventIDUserID(eventID string, userID strin
 }
 
 func (d *inMemoryStore) InsertEventUser(eventUser models.EventUser) error {
-	//TODO implement me
-	panic("implement me")
+	eventUsers = append(eventUsers, eventUser)
+	return nil
 }
 
 func (d *inMemoryStore) DeleteEventUserByEventUserID(eventUserID string) error {
