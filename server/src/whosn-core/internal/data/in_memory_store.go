@@ -10,13 +10,13 @@ import (
 
 var (
 	// mock events till we get a db in place
-	events = []models.Event{}
+	events []models.Event
 
 	// mock users till we get a db in place
-	users = []models.User{}
+	users []models.User
 
 	// mock eventUsers till we get a db in place
-	eventUsers = []models.EventUser{}
+	eventUsers []models.EventUser
 )
 
 type inMemoryStore struct{}
