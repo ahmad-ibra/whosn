@@ -151,9 +151,24 @@ func JoinEvent(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "JoinEvent", "actorID": actorID, "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
-	// - GetEventUserByEventIDUserID
-	// - if no result, construct EventUser and add it (InsertEventUser), then return it
-	// - else, return found UserEvent -> ctx.JSON(http.StatusOK, userEvent)
+	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
+	if err != nil {
+		// TODO: once custom error type with status is created finish off this logic
+		// if error is NOTFOUND {
+		err := eventUser.Construct(eventID, actorID)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			ctx.Abort()
+			return
+		}
+		// } else {
+		// for all other error types, just return the error
+		//ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		//ctx.Abort()
+		//return
+		// }
+	}
+	ctx.JSON(http.StatusOK, eventUser)
 }
 
 func LeaveEvent(ctx *gin.Context) {
@@ -162,8 +177,25 @@ func LeaveEvent(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "LeaveEvent", "actorID": actorID, "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
-	// - GetEventUserByEventIDUserID
-	// - if found result, remove the UserEvent (DeleteEventUserByEventIDUserID)
-	// - else, return -> ctx.JSON(http.StatusOK, "{}")
+	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
+	if err != nil {
+		// TODO: once custom error type with status is created finish off this logic
+		// if error is NOTFOUND {
+		ctx.JSON(http.StatusOK, "{}")
+		ctx.Abort()
+		return
+		// } else {
+		//ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		//ctx.Abort()
+		//return
+		// }
+	}
 
+	err = ds.DeleteEventUserByEventUserID(eventUser.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+	ctx.JSON(http.StatusOK, "{}")
 }

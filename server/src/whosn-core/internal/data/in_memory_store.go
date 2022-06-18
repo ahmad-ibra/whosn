@@ -83,9 +83,6 @@ func (d *inMemoryStore) UpdateEventByID(eventUpdate models.Event, eventID string
 			if eventUpdate.Price != 0 {
 				event.Price = eventUpdate.Price
 			}
-			if eventUpdate.IsFlatRate != event.IsFlatRate {
-				event.IsFlatRate = eventUpdate.IsFlatRate
-			}
 			return event, nil
 		}
 	}
@@ -182,7 +179,7 @@ func (d *inMemoryStore) InsertEventUser(eventUser models.EventUser) error {
 	panic("implement me")
 }
 
-func (d *inMemoryStore) DeleteEventUserByEventIDUserID(eventUser models.EventUser) error {
+func (d *inMemoryStore) DeleteEventUserByEventUserID(eventUserID string) error {
 	//TODO implement me
 	panic("implement me")
 }
