@@ -28,8 +28,13 @@ func ListJoinedEvents(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "ListJoinedEvents", "actorID": actorID})
 	ll.Println("Endpoint Hit")
 
-	ll.Print("TODO: implement")
-	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
+	events, err := ds.ListJoinedEvents(actorID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+	ctx.JSON(http.StatusOK, events)
 }
 
 func ListOwnedEvents(ctx *gin.Context) {
@@ -37,8 +42,13 @@ func ListOwnedEvents(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "ListOwnedEvents", "actorID": actorID})
 	ll.Println("Endpoint Hit")
 
-	ll.Print("TODO: implement")
-	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
+	events, err := ds.ListOwnedEvents(actorID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+	ctx.JSON(http.StatusOK, events)
 }
 
 func GetEvent(ctx *gin.Context) {
