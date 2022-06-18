@@ -23,6 +23,24 @@ func ListEvents(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, events)
 }
 
+func ListJoinedEvents(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
+	ll := log.WithFields(log.Fields{"endpoint": "ListJoinedEvents", "actorID": actorID})
+	ll.Println("Endpoint Hit")
+
+	ll.Print("TODO: implement")
+	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
+}
+
+func ListOwnedEvents(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
+	ll := log.WithFields(log.Fields{"endpoint": "ListOwnedEvents", "actorID": actorID})
+	ll.Println("Endpoint Hit")
+
+	ll.Print("TODO: implement")
+	ctx.JSON(http.StatusNotImplemented, gin.H{"message": "Not Implemented"})
+}
+
 func GetEvent(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
 	eventID := ctx.Param("id")
@@ -142,55 +160,5 @@ func DeleteEvent(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "{}")
-}
-
-func JoinEvent(ctx *gin.Context) {
-	actorID := ctx.GetString("actorID")
-	eventID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "JoinEvent", "actorID": actorID, "eventID": eventID})
-	ll.Println("Endpoint Hit")
-
-	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
-	if err != nil {
-		// TODO: once custom error type with status is created finish off this logic, for now assuming its NOTFOUND
-		// if error is NOTFOUND {
-		eventUser.Construct(eventID, actorID)
-		// } else {
-		// for all other error types, just return the error
-		//ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		//ctx.Abort()
-		//return
-		// }
-	}
-	ctx.JSON(http.StatusOK, eventUser)
-}
-
-func LeaveEvent(ctx *gin.Context) {
-	actorID := ctx.GetString("actorID")
-	eventID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "LeaveEvent", "actorID": actorID, "eventID": eventID})
-	ll.Println("Endpoint Hit")
-
-	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
-	if err != nil {
-		// TODO: once custom error type with status is created finish off this logic, for now assuming its NOTFOUND
-		// if error is NOTFOUND {
-		ctx.JSON(http.StatusOK, "{}")
-		ctx.Abort()
-		return
-		// } else {
-		//ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		//ctx.Abort()
-		//return
-		// }
-	}
-
-	err = ds.DeleteEventUserByID(eventUser.ID)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		ctx.Abort()
-		return
-	}
 	ctx.JSON(http.StatusOK, "{}")
 }

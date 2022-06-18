@@ -48,11 +48,14 @@ DELETE /api/v1/secured/user/:id
 PUT    /api/v1/secured/user/:id
 GET    /api/v1/secured/user/:id
 GET    /api/v1/secured/events
+GET    /api/v1/secured/events/owned
+GET    /api/v1/secured/events/joined
 DELETE /api/v1/secured/event/:id
 PUT    /api/v1/secured/event/:id
 GET    /api/v1/secured/event/:id
+POST   /api/v1/secured/event
+GET    /api/v1/secured/event_users
 GET    /api/v1/secured/event/:id/join
 GET    /api/v1/secured/event/:id/leave
-POST   /api/v1/secured/event
 ```
 All endpoints under `/api/v1/secured/` require an `Authorization` header with a valid token. This token is provided on login.

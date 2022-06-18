@@ -169,6 +169,12 @@ func (d *inMemoryStore) DeleteUserByID(userID string) error {
 	return errors.New("user not found")
 }
 
+// ListAllEventUsers gets every eventUser in our datasource
+func (d *inMemoryStore) ListAllEventUsers() (*[]models.EventUser, error) {
+	return &eventUsers, nil
+}
+
+// GetEventUserByEventIDUserID gets a single eventUser in our datasource
 func (d *inMemoryStore) GetEventUserByEventIDUserID(eventID string, userID string) (*models.EventUser, error) {
 	for _, eventUser := range eventUsers {
 		if eventUser.EventID == eventID && eventUser.UserID == userID {
@@ -178,11 +184,13 @@ func (d *inMemoryStore) GetEventUserByEventIDUserID(eventID string, userID strin
 	return &models.EventUser{}, errors.New("eventUser not found")
 }
 
+// InsertEventUser inserts the eventUser into the datasource
 func (d *inMemoryStore) InsertEventUser(eventUser models.EventUser) error {
 	eventUsers = append(eventUsers, eventUser)
 	return nil
 }
 
+// DeleteEventUserByID deletes the eventUser in the datasource
 func (d *inMemoryStore) DeleteEventUserByID(eventUserID string) error {
 	for i, eventUser := range eventUsers {
 		if eventUser.ID == eventUserID {
