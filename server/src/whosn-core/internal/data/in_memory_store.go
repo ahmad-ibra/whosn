@@ -170,8 +170,12 @@ func (d *inMemoryStore) DeleteUserByID(userID string) error {
 }
 
 func (d *inMemoryStore) GetEventUserByEventIDUserID(eventID string, userID string) (*models.EventUser, error) {
-	//TODO implement me
-	panic("implement me")
+	for _, eventUser := range eventUsers {
+		if eventUser.EventID == eventID && eventUser.UserID == userID {
+			return &eventUser, nil
+		}
+	}
+	return nil, errors.New("eventUser not found")
 }
 
 func (d *inMemoryStore) InsertEventUser(eventUser models.EventUser) error {

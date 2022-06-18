@@ -153,7 +153,7 @@ func JoinEvent(ctx *gin.Context) {
 
 	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
 	if err != nil {
-		// TODO: once custom error type with status is created finish off this logic
+		// TODO: once custom error type with status is created finish off this logic, for now assuming its NOTFOUND
 		// if error is NOTFOUND {
 		err := eventUser.Construct(eventID, actorID)
 		if err != nil {
@@ -179,7 +179,7 @@ func LeaveEvent(ctx *gin.Context) {
 
 	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
 	if err != nil {
-		// TODO: once custom error type with status is created finish off this logic
+		// TODO: once custom error type with status is created finish off this logic, for now assuming its NOTFOUND
 		// if error is NOTFOUND {
 		ctx.JSON(http.StatusOK, "{}")
 		ctx.Abort()
