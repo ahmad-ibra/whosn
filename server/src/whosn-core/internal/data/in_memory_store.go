@@ -50,7 +50,7 @@ func (d *inMemoryStore) GetEventByID(eventID string) (*models.Event, error) {
 			return &event, nil
 		}
 	}
-	return nil, errors.New("event not found")
+	return &models.Event{}, errors.New("event not found")
 }
 
 // InsertEvent inserts the event into the datasource
@@ -86,7 +86,7 @@ func (d *inMemoryStore) UpdateEventByID(eventUpdate models.Event, eventID string
 			return event, nil
 		}
 	}
-	return nil, errors.New("event not found")
+	return &models.Event{}, errors.New("event not found")
 }
 
 // DeleteEventByID deletes the event in the datasource
@@ -112,7 +112,7 @@ func (d *inMemoryStore) GetUserByID(userID string) (*models.User, error) {
 			return &user, nil
 		}
 	}
-	return nil, errors.New("user not found")
+	return &models.User{}, errors.New("user not found")
 }
 
 // GetUserByUsername gets a single user in our datasource
@@ -122,7 +122,7 @@ func (d *inMemoryStore) GetUserByUsername(username string) (*models.User, error)
 			return &user, nil
 		}
 	}
-	return nil, errors.New("user not found")
+	return &models.User{}, errors.New("user not found")
 }
 
 // InsertUser inserts the user into the datasource
@@ -155,7 +155,7 @@ func (d *inMemoryStore) UpdateUserByID(userUpdate models.User, userID string) (*
 			return user, nil
 		}
 	}
-	return nil, errors.New("user not found")
+	return &models.User{}, errors.New("user not found")
 }
 
 // DeleteUserByID deletes the user in the datasource
@@ -175,7 +175,7 @@ func (d *inMemoryStore) GetEventUserByEventIDUserID(eventID string, userID strin
 			return &eventUser, nil
 		}
 	}
-	return nil, errors.New("eventUser not found")
+	return &models.EventUser{}, errors.New("eventUser not found")
 }
 
 func (d *inMemoryStore) InsertEventUser(eventUser models.EventUser) error {
