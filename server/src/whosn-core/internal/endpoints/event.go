@@ -191,7 +191,7 @@ func LeaveEvent(ctx *gin.Context) {
 		// }
 	}
 
-	err = ds.DeleteEventUserByEventUserID(eventUser.ID)
+	err = ds.DeleteEventUserByID(eventUser.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		ctx.Abort()

@@ -183,7 +183,12 @@ func (d *inMemoryStore) InsertEventUser(eventUser models.EventUser) error {
 	return nil
 }
 
-func (d *inMemoryStore) DeleteEventUserByEventUserID(eventUserID string) error {
-	//TODO implement me
-	panic("implement me")
+func (d *inMemoryStore) DeleteEventUserByID(eventUserID string) error {
+	for i, eventUser := range eventUsers {
+		if eventUser.ID == eventUserID {
+			eventUsers = append(eventUsers[:i], eventUsers[i+1:]...)
+			return nil
+		}
+	}
+	return errors.New("eventUser not found")
 }
