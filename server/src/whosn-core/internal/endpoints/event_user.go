@@ -32,18 +32,18 @@ func JoinEvent(ctx *gin.Context) {
 		// TODO: once custom error type with status is created finish off this logic, for now assuming its NOTFOUND
 		// if error is NOTFOUND {
 		eventUser.Construct(eventID, actorID)
-		// } else {
-		// for all other error types, just return the error
-		//ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		//ctx.Abort()
-		//return
-		// }
 		err = ds.InsertEventUser(*eventUser)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			ctx.Abort()
 			return
 		}
+		// } else {
+		// for all other error types, just return the error
+		//ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		//ctx.Abort()
+		//return
+		// }
 	}
 
 	ctx.JSON(http.StatusOK, eventUser)
