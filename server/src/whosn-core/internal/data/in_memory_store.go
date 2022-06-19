@@ -1,11 +1,12 @@
 package data
 
 import (
-	"errors"
+	"net/http"
 	"sync"
 	"time"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
+	wnerr "github.com/Ahmad-Ibra/whosn-core/internal/errors"
 )
 
 var (
@@ -50,13 +51,10 @@ func (d *inMemoryStore) ListJoinedEvents(userID string) (*[]models.Event, error)
 	for _, event := range events {
 		_, err := d.GetEventUserByEventIDUserID(event.ID, userID)
 		if err != nil {
-			// TODO: once error tpes are returned handle the below case, for now assumin always not found
-			//if error is anything other than NOTFOUND {
-			// we ran into some actual error, return it
-			// return nil, err
-			//}
-			// we haven't joined this event, continue
-			continue
+			if err, ok := err.(wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
+				continue
+			}
+			return &[]models.Event{}, err
 		}
 		joinedEvents = append(joinedEvents, event)
 	}
@@ -65,13 +63,13 @@ func (d *inMemoryStore) ListJoinedEvents(userID string) (*[]models.Event, error)
 
 // ListOwnedEvents gets every owned event in our datasource
 func (d *inMemoryStore) ListOwnedEvents(userId string) (*[]models.Event, error) {
-	var joinedEvents []models.Event
+	var ownedEvents []models.Event
 	for _, event := range events {
 		if event.OwnerID == userId {
-			joinedEvents = append(joinedEvents, event)
+			ownedEvents = append(ownedEvents, event)
 		}
 	}
-	return &joinedEvents, nil
+	return &ownedEvents, nil
 }
 
 // GetEventByID gets a single event in our datasource
@@ -81,7 +79,7 @@ func (d *inMemoryStore) GetEventByID(eventID string) (*models.Event, error) {
 			return &event, nil
 		}
 	}
-	return &models.Event{}, errors.New("event not found")
+	return &models.Event{}, wnerr.NewError(http.StatusNotFound, "event not found")
 }
 
 // InsertEvent inserts the event into the datasource
@@ -117,7 +115,7 @@ func (d *inMemoryStore) UpdateEventByID(eventUpdate models.Event, eventID string
 			return event, nil
 		}
 	}
-	return &models.Event{}, errors.New("event not found")
+	return &models.Event{}, wnerr.NewError(http.StatusNotFound, "event not found")
 }
 
 // DeleteEventByID deletes the event in the datasource
@@ -128,7 +126,7 @@ func (d *inMemoryStore) DeleteEventByID(eventID string) error {
 			return nil
 		}
 	}
-	return errors.New("event not found")
+	return wnerr.NewError(http.StatusNotFound, "event not found")
 }
 
 // ListAllUsers gets every event in our datasource
@@ -143,7 +141,7 @@ func (d *inMemoryStore) GetUserByID(userID string) (*models.User, error) {
 			return &user, nil
 		}
 	}
-	return &models.User{}, errors.New("user not found")
+	return &models.User{}, wnerr.NewError(http.StatusNotFound, "user not found")
 }
 
 // GetUserByUsername gets a single user in our datasource
@@ -153,7 +151,7 @@ func (d *inMemoryStore) GetUserByUsername(username string) (*models.User, error)
 			return &user, nil
 		}
 	}
-	return &models.User{}, errors.New("user not found")
+	return &models.User{}, wnerr.NewError(http.StatusNotFound, "user not found")
 }
 
 // InsertUser inserts the user into the datasource
@@ -186,7 +184,7 @@ func (d *inMemoryStore) UpdateUserByID(userUpdate models.User, userID string) (*
 			return user, nil
 		}
 	}
-	return &models.User{}, errors.New("user not found")
+	return &models.User{}, wnerr.NewError(http.StatusNotFound, "user not found")
 }
 
 // DeleteUserByID deletes the user in the datasource
@@ -197,7 +195,7 @@ func (d *inMemoryStore) DeleteUserByID(userID string) error {
 			return nil
 		}
 	}
-	return errors.New("user not found")
+	return wnerr.NewError(http.StatusNotFound, "user not found")
 }
 
 // ListAllEventUsers gets every eventUser in our datasource
@@ -212,7 +210,7 @@ func (d *inMemoryStore) GetEventUserByEventIDUserID(eventID string, userID strin
 			return &eventUser, nil
 		}
 	}
-	return &models.EventUser{}, errors.New("eventUser not found")
+	return &models.EventUser{}, wnerr.NewError(http.StatusNotFound, "eventUser not found")
 }
 
 // InsertEventUser inserts the eventUser into the datasource
@@ -229,5 +227,5 @@ func (d *inMemoryStore) DeleteEventUserByID(eventUserID string) error {
 			return nil
 		}
 	}
-	return errors.New("eventUser not found")
+	return wnerr.NewError(http.StatusNotFound, "eventUser not found")
 }

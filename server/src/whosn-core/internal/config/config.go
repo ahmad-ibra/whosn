@@ -10,9 +10,10 @@ import (
 
 // Config wraps all the env variables
 type Config struct {
-	Env    string
-	Port   string
-	JWTKey string
+	Env            string
+	Port           string
+	JWTKey         string
+	FrontendDomain string
 }
 
 // SvcName returns the service name
@@ -44,8 +45,9 @@ func initConfig() *Config {
 	}
 
 	return &Config{
-		Env:    os.Getenv("ENV"),
-		Port:   os.Getenv("PORT"),
-		JWTKey: os.Getenv("JWT_KEY"),
+		Env:            os.Getenv("ENV"),
+		Port:           os.Getenv("PORT"),
+		JWTKey:         os.Getenv("JWT_KEY"),
+		FrontendDomain: os.Getenv("FRONTEND_DOMAIN"),
 	}
 }

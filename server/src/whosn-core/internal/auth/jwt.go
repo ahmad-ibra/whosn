@@ -1,10 +1,12 @@
 package auth
 
 import (
-	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/config"
+	wnerr "github.com/Ahmad-Ibra/whosn-core/internal/errors"
+
 	"github.com/golang-jwt/jwt"
 	log "github.com/sirupsen/logrus"
 )
@@ -41,7 +43,7 @@ func ValidateToken(signedToken string, jwtKey string) (string, error) {
 	} else {
 		ll := log.WithFields(log.Fields{"function": "ValidateToken", "error": err})
 		ll.Warnf("Invalid token")
-		return "", fmt.Errorf("token invalid. %v", err)
+		return "", wnerr.NewError(http.StatusInternalServerError, err.Error())
 	}
 
 	return userID, nil
