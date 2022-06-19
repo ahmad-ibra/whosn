@@ -39,7 +39,7 @@ func JoinEvent(ctx *gin.Context) {
 	// check that actor hasn't already joined the event
 	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
 	if err != nil {
-		if err, ok := err.(wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
+		if err, ok := err.(*wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
 			// actor hasn't joined the event
 			eventUser.Construct(eventID, actorID)
 			insErr := ds.InsertEventUser(*eventUser)
@@ -67,7 +67,7 @@ func LeaveEvent(ctx *gin.Context) {
 	// check that actor has joined the event
 	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
 	if err != nil {
-		if err, ok := err.(wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
+		if err, ok := err.(*wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
 			// actor not in event, no need to leave
 			ctx.JSON(http.StatusOK, "{}")
 			ctx.Abort()

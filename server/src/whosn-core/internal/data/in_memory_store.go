@@ -51,7 +51,7 @@ func (d *inMemoryStore) ListJoinedEvents(userID string) (*[]models.Event, error)
 	for _, event := range events {
 		_, err := d.GetEventUserByEventIDUserID(event.ID, userID)
 		if err != nil {
-			if err, ok := err.(wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
+			if err, ok := err.(*wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
 				continue
 			}
 			return &[]models.Event{}, err
