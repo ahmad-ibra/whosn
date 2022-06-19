@@ -3,6 +3,8 @@ package models
 import (
 	"time"
 
+	"github.com/Ahmad-Ibra/whosn-core/internal/config"
+
 	"github.com/google/uuid"
 )
 
@@ -23,14 +25,14 @@ type Event struct {
 
 func (event *Event) Construct(ownerID string) {
 	event.ID = uuid.New().String()
-
 	curTime := time.Now()
 	event.CreatedAt = curTime
 	event.UpdatedAt = curTime
-
 	event.OwnerID = ownerID
+	event.Link = generateEventLink(event.ID)
+}
 
-	// TODO: validate that we have the right link
-	// link should be something from the frontend that can get data from https://host/api/v1/secured/event/{eventID}
-	event.Link = "https://whosn.xyz/event/" + event.ID
+func generateEventLink(eventID string) string {
+	cfg := config.GetConfig()
+	return "https://" + cfg.FrontendDomain + "/event/" + eventID
 }
