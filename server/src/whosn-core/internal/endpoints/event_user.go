@@ -3,6 +3,7 @@ package endpoints
 import (
 	"net/http"
 
+	wnerr "github.com/Ahmad-Ibra/whosn-core/internal/errors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
@@ -38,22 +39,20 @@ func JoinEvent(ctx *gin.Context) {
 	// check that actor hasn't already joined the event
 	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
 	if err != nil {
-		// TODO: once custom error type with status is created finish off this logic, for now assuming its NOTFOUND
-		// if error is NOTFOUND {
-		// construct and join the event
-		eventUser.Construct(eventID, actorID)
-		err = ds.InsertEventUser(*eventUser)
-		if err != nil {
+		if err, ok := err.(wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
+			// actor hasn't joined the event
+			eventUser.Construct(eventID, actorID)
+			insErr := ds.InsertEventUser(*eventUser)
+			if insErr != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": insErr.Error()})
+				ctx.Abort()
+				return
+			}
+		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			ctx.Abort()
 			return
 		}
-		// } else {
-		// for all other error types, just return the error
-		//ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		//ctx.Abort()
-		//return
-		// }
 	}
 
 	ctx.JSON(http.StatusOK, eventUser)
@@ -65,18 +64,18 @@ func LeaveEvent(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "LeaveEvent", "actorID": actorID, "eventID": eventID})
 	ll.Println("Endpoint Hit")
 
+	// check that actor has joined the event
 	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
 	if err != nil {
-		// TODO: once custom error type with status is created finish off this logic, for now assuming its NOTFOUND
-		// if error is NOTFOUND {
-		ctx.JSON(http.StatusOK, "{}")
-		ctx.Abort()
-		return
-		// } else {
-		//ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		//ctx.Abort()
-		//return
-		// }
+		if err, ok := err.(wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
+			// actor not in event, no need to leave
+			ctx.JSON(http.StatusOK, "{}")
+			ctx.Abort()
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			ctx.Abort()
+			return
+		}
 	}
 
 	err = ds.DeleteEventUserByID(eventUser.ID)

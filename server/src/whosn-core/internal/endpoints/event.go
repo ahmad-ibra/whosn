@@ -83,7 +83,7 @@ func CreateEvent(ctx *gin.Context) {
 
 	if event.MinUsers > event.MaxUsers {
 		ll.Warn("MinUsers must be less than MaxUser")
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "MinUsers must be less than MaxUser"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "MinUsers must be less than MaxUser"})
 		ctx.Abort()
 		return
 	}
@@ -128,7 +128,7 @@ func UpdateEvent(ctx *gin.Context) {
 
 	if eventUpdate.MinUsers > eventUpdate.MaxUsers {
 		ll.Warn("MinUsers must be less than MaxUser")
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "MinUsers must be less than MaxUser"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "MinUsers must be less than MaxUser"})
 		ctx.Abort()
 		return
 	}
