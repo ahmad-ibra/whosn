@@ -43,6 +43,37 @@ func (d *inMemoryStore) ListAllEvents() (*[]models.Event, error) {
 	return &events, nil
 }
 
+// ListJoinedEvents gets every joined event in our datasource
+func (d *inMemoryStore) ListJoinedEvents(userID string) (*[]models.Event, error) {
+	var joinedEvents []models.Event
+
+	for _, event := range events {
+		_, err := d.GetEventUserByEventIDUserID(event.ID, userID)
+		if err != nil {
+			// TODO: once error tpes are returned handle the below case, for now assumin always not found
+			//if error is anything other than NOTFOUND {
+			// we ran into some actual error, return it
+			// return nil, err
+			//}
+			// we haven't joined this event, continue
+			continue
+		}
+		joinedEvents = append(joinedEvents, event)
+	}
+	return &joinedEvents, nil
+}
+
+// ListOwnedEvents gets every owned event in our datasource
+func (d *inMemoryStore) ListOwnedEvents(userId string) (*[]models.Event, error) {
+	var joinedEvents []models.Event
+	for _, event := range events {
+		if event.OwnerID == userId {
+			joinedEvents = append(joinedEvents, event)
+		}
+	}
+	return &joinedEvents, nil
+}
+
 // GetEventByID gets a single event in our datasource
 func (d *inMemoryStore) GetEventByID(eventID string) (*models.Event, error) {
 	for _, event := range events {
