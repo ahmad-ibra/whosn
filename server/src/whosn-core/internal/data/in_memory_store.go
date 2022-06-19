@@ -63,13 +63,13 @@ func (d *inMemoryStore) ListJoinedEvents(userID string) (*[]models.Event, error)
 
 // ListOwnedEvents gets every owned event in our datasource
 func (d *inMemoryStore) ListOwnedEvents(userId string) (*[]models.Event, error) {
-	var joinedEvents []models.Event
+	var ownedEvents []models.Event
 	for _, event := range events {
 		if event.OwnerID == userId {
-			joinedEvents = append(joinedEvents, event)
+			ownedEvents = append(ownedEvents, event)
 		}
 	}
-	return &joinedEvents, nil
+	return &ownedEvents, nil
 }
 
 // GetEventByID gets a single event in our datasource
