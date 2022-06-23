@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types'
-import SingleEvent from "./SingleEvent"
+import EventSingle from "./EventSingle"
 
-const Events = ({ events, includeDeleteButton }) => {
+const Events = ({ events, includeDeleteButton, onDelete }) => {
     return (
         <>
             {events.map((event) => (
-                <SingleEvent key={event.id} event={event} includeDeleteButton={includeDeleteButton} />
+                <EventSingle key={event.id} event={event}
+                    includeDeleteButton={includeDeleteButton}
+                    onDelete={onDelete} />
             ))}
         </>
     )

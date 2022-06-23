@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types'
 import { FaTimes } from 'react-icons/fa'
 
-const SingleEvent = ({ event, includeDeleteButton }) => {
+const EventSingle = ({ event, includeDeleteButton, onDelete }) => {
     return (
         <div className='event'>
             <h3>
                 {event.text}
                 {includeDeleteButton &&
-                    <FaTimes style={{ color: 'red', cursor: 'pointer' }} />
+                    <FaTimes style={{ color: 'red', cursor: 'pointer' }}
+                        onClick={() => onDelete(event.id)} />
                 }
             </h3>
             <p>{event.day}</p>
@@ -15,12 +16,12 @@ const SingleEvent = ({ event, includeDeleteButton }) => {
     )
 }
 
-SingleEvent.defaultProps = {
+EventSingle.defaultProps = {
     includeDeleteButton: false
 }
 
-SingleEvent.propTypes = {
+EventSingle.propTypes = {
     includeDeleteButton: PropTypes.bool,
 }
 
-export default SingleEvent
+export default EventSingle

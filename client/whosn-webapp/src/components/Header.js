@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types'
 import Button from './Button'
 
-const Header = ({ title, canAddEvent }) => {
-    const onClick = () => {
-        console.log('click')
-    }
+const Header = ({ title, canAddEvent, showAdd, onAdd }) => {
     return (
         <header className='header'>
             <h1>{title}</h1>
             {canAddEvent &&
-                <Button text='Add Event' onClick={onClick} />
+                <Button
+                    color={showAdd ? 'red' : 'steelblue'}
+                    text={showAdd ? 'Close' : 'Add'} onClick={onAdd}
+                />
             }
         </header>
     )
@@ -24,10 +24,5 @@ Header.propTypes = {
     title: PropTypes.string.isRequired,
     canAddEvent: PropTypes.bool,
 }
-
-// CSS in JS
-// const headingStyle = {
-//     color: 'blue', backgroundColor: 'black'
-// }
 
 export default Header

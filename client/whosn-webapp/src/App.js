@@ -1,8 +1,10 @@
 import Header from './components/Header'
 import Events from './components/Events'
+import AddEvent from './components/AddEvent'
 import { useState } from 'react'
 
 function App() {
+  const [showAddEvent, setShowAddEvent] = useState(false)
   const [events, setEvents] = useState([
     {
       id: 1,
@@ -24,14 +26,35 @@ function App() {
     }
   ])
 
+  // Add Event
+  const addEvent = (singleEvent) => {
+    // TODO: have this call the backend POST   /api/v1/secured/event
+    const id = Math.floor(Math.random() * 10000) + 1
+    const newEvent = { id, ...singleEvent }
+    console.log(newEvent)
+    setEvents([...events, newEvent])
+  }
+
+  // Delete Event
+  const deleteEvent = (id) => {
+    // TODO: have this call the backend DELETE /api/v1/secured/event/:id
+    setEvents(events.filter((event) => event.id !== id))
+  }
+
   return (
     <div className="container">
-      <Header title='My Events' canAddEvent={true} />
-      <Events includeDeleteButton={true} events={events} />
+      <Header title='My Events'
+        canAddEvent={true}
+        showAdd={showAddEvent}
+        onAdd={() => setShowAddEvent(!showAddEvent)} />
+      {showAddEvent && <AddEvent onAdd={addEvent} />}
+      {events.length > 0 ? (<Events events={events} includeDeleteButton={true} onDelete={deleteEvent} />)
+        : ('Create an event!')}
       <br />
       <br />
       <Header title='Joined Events' />
-      <Events events={events} />
+      {events.length > 0 ? (<Events events={events} />)
+        : ('Join an event!')}
     </div>
   );
 }
