@@ -74,7 +74,6 @@ func CreateEvent(ctx *gin.Context) {
 
 	var event models.Event
 	if err := ctx.BindJSON(&event); err != nil {
-		ll.Warn("Failed to unmarshall request body")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		ctx.Abort()
 		return
