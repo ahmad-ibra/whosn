@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 // import PropTypes from 'prop-types'
 
@@ -11,13 +12,18 @@ const loginUser = async (credentials) => {
         body: JSON.stringify(credentials)
     })
 
-    const data = await res.json()
-    return data
+    return await res.json()
+}
+
+const setToken = (userToken) => {
+    sessionStorage.setItem('jwt', JSON.stringify(userToken));
 }
 
 const Login = () => {
     const [user_name, setUserName] = useState('')
     const [password, setPassWord] = useState('')
+
+    const navigate = useNavigate();
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -28,9 +34,14 @@ const Login = () => {
         }
 
         // call the function which will auth with backend
-        const token = loginUser({ user_name, password })
-        console.log(`token: ${token}`)
-        // setToken(token);
+        loginUser({ user_name, password }).then(data => {
+            if ('error' in data) {
+                alert('Error logging in')
+                return
+            }
+            setToken(data)
+            navigate('/');
+        })
     }
 
     return (
@@ -55,9 +66,5 @@ const Login = () => {
         </div>
     )
 }
-
-// Login.propTypes = {
-//     setToken: PropTypes.func.isRequired
-// }
 
 export default Login

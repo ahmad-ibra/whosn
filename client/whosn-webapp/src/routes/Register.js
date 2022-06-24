@@ -13,8 +13,7 @@ const registerUser = async (user) => {
         body: JSON.stringify(user)
     })
 
-    await res.json()
-    return res.ok
+    return await res.json()
 }
 
 const Register = () => {
@@ -34,14 +33,15 @@ const Register = () => {
             return
         }
 
-        // call the function which will write to the backend
-        const success = registerUser({ name, user_name, password, email, phone_number })
-        if (!success) {
-            alert('Error registering')
-            return
-        }
+        // call the function which will register user on the backend
+        registerUser({ name, user_name, password, email, phone_number }).then(data => {
+            if ('error' in data) {
+                alert('Error registering')
+                return
+            }
 
-        navigate('/login');
+            navigate('/login');
+        })
     }
 
     return (
