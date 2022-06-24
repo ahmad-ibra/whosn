@@ -41,9 +41,7 @@ const Register = () => {
             return
         }
 
-        console.log("success, go to login page")
         navigate('/login');
-
     }
 
     return (
