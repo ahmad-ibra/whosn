@@ -28,6 +28,20 @@ func (_m *Storer) DeleteEventByID(eventID string) error {
 	return r0
 }
 
+// DeleteEventUserByID provides a mock function with given fields: eventUserID
+func (_m *Storer) DeleteEventUserByID(eventUserID string) error {
+	ret := _m.Called(eventUserID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(eventUserID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // DeleteUserByID provides a mock function with given fields: userID
 func (_m *Storer) DeleteUserByID(userID string) error {
 	ret := _m.Called(userID)
@@ -58,6 +72,29 @@ func (_m *Storer) GetEventByID(eventID string) (*models.Event, error) {
 	var r1 error
 	if rf, ok := ret.Get(1).(func(string) error); ok {
 		r1 = rf(eventID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetEventUserByEventIDUserID provides a mock function with given fields: eventID, userID
+func (_m *Storer) GetEventUserByEventIDUserID(eventID string, userID string) (*models.EventUser, error) {
+	ret := _m.Called(eventID, userID)
+
+	var r0 *models.EventUser
+	if rf, ok := ret.Get(0).(func(string, string) *models.EventUser); ok {
+		r0 = rf(eventID, userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.EventUser)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(eventID, userID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -125,6 +162,20 @@ func (_m *Storer) InsertEvent(event models.Event) error {
 	return r0
 }
 
+// InsertEventUser provides a mock function with given fields: eventUser
+func (_m *Storer) InsertEventUser(eventUser models.EventUser) error {
+	ret := _m.Called(eventUser)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(models.EventUser) error); ok {
+		r0 = rf(eventUser)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // InsertUser provides a mock function with given fields: user
 func (_m *Storer) InsertUser(user models.User) error {
 	ret := _m.Called(user)
@@ -137,6 +188,29 @@ func (_m *Storer) InsertUser(user models.User) error {
 	}
 
 	return r0
+}
+
+// ListAllEventUsers provides a mock function with given fields:
+func (_m *Storer) ListAllEventUsers() (*[]models.EventUser, error) {
+	ret := _m.Called()
+
+	var r0 *[]models.EventUser
+	if rf, ok := ret.Get(0).(func() *[]models.EventUser); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]models.EventUser)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // ListAllEvents provides a mock function with given fields:
@@ -178,6 +252,52 @@ func (_m *Storer) ListAllUsers() (*[]models.User, error) {
 	var r1 error
 	if rf, ok := ret.Get(1).(func() error); ok {
 		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ListJoinedEvents provides a mock function with given fields: userID
+func (_m *Storer) ListJoinedEvents(userID string) (*[]models.Event, error) {
+	ret := _m.Called(userID)
+
+	var r0 *[]models.Event
+	if rf, ok := ret.Get(0).(func(string) *[]models.Event); ok {
+		r0 = rf(userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]models.Event)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ListOwnedEvents provides a mock function with given fields: userID
+func (_m *Storer) ListOwnedEvents(userID string) (*[]models.Event, error) {
+	ret := _m.Called(userID)
+
+	var r0 *[]models.Event
+	if rf, ok := ret.Get(0).(func(string) *[]models.Event); ok {
+		r0 = rf(userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]models.Event)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(userID)
 	} else {
 		r1 = ret.Error(1)
 	}
