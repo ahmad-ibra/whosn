@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react'
+// import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Events from './components/Events'
 import AddEvent from './components/AddEvent'
-import { useState, useEffect } from 'react'
+// import Register from './components/Login'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
@@ -63,6 +65,7 @@ function App() {
   }
 
   return (
+    // <Router>
     <div className="container">
       <Header title='My Events'
         canAddEvent={true}
@@ -77,6 +80,7 @@ function App() {
       {joinedEvents.length > 0 ? (<Events events={joinedEvents} />)
         : ('Join an event!')}
     </div>
+    // </Router>
   );
 }
 
