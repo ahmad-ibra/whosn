@@ -13,7 +13,7 @@ type Event struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
 	OwnerID   string    `json:"owner_id"`
-	StartTime time.Time `json:"start_time"`
+	Time      string    `json:"time"`
 	Location  string    `json:"location"`
 	MinUsers  uint64    `json:"min_users"`
 	MaxUsers  uint64    `json:"max_users"`
