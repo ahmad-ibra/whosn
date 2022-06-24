@@ -16,7 +16,7 @@ const loginUser = async (credentials) => {
 }
 
 const setToken = (userToken) => {
-    sessionStorage.setItem('jwt', JSON.stringify(userToken));
+    localStorage.setItem('jwt', JSON.stringify(userToken));
 }
 
 const Login = () => {
@@ -36,6 +36,7 @@ const Login = () => {
         // call the function which will auth with backend
         loginUser({ user_name, password }).then(data => {
             if ('error' in data) {
+                console.log(data)
                 alert('Error logging in')
                 return
             }

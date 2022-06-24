@@ -4,6 +4,7 @@ import Home from './routes/Home';
 import Register from './routes/Register';
 import DetailedEvent from './routes/DetailedEvent';
 import NotFound from './routes/NotFound';
+import PrivateRoute from './routes/PrivateRoute';
 
 function App() {
   return (
@@ -11,9 +12,15 @@ function App() {
       <div className={'main-container'}>
         <Routes>
           <Route exact path='/login' element={<Login />} />
-          <Route exact path='/' element={<Home />} />
           <Route exact path='/register' element={<Register />} />
-          <Route exact path='/event/*' element={<DetailedEvent />} />
+          <Route exact path='/' element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>} />
+          <Route exact path='/event/*' element={
+            <PrivateRoute>
+              <DetailedEvent />
+            </PrivateRoute>} />
           <Route path='*' element={<NotFound />} />
         </Routes>
       </div>
