@@ -5,13 +5,14 @@ const EventSingle = ({ event, includeDeleteButton, onDelete }) => {
     return (
         <div className='event'>
             <h3>
-                {event.text}
+                {event.name}
                 {includeDeleteButton &&
                     <FaTimes style={{ color: 'red', cursor: 'pointer' }}
                         onClick={() => onDelete(event.id)} />
                 }
             </h3>
-            <p>{event.day}</p>
+            <p>{event.location}</p>
+            <p>{event.time}</p>
         </div>
     )
 }

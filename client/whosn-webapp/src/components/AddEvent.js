@@ -1,43 +1,63 @@
 import { useState } from 'react'
 
 const AddEvent = ({ onAdd }) => {
-    const [text, setText] = useState('')
-    const [day, setDay] = useState('')
-    const [reminder, setReminder] = useState(false)
+    const [name, setName] = useState('')
+    const [time, setTime] = useState('')
+    const [location, setLocation] = useState('')
+    const [minUsers, setMinUsers] = useState('')
+    const [maxUsers, setMaxUsers] = useState('')
+    const [price, setPrice] = useState('')
 
     const onSubmit = (e) => {
         e.preventDefault()
 
-        if (!text) {
-            alert('Please add an event')
+        if (!name || !time || !location || !minUsers || !maxUsers || !price) {
+            alert('Please fill out missing event fields')
             return
         }
 
         // call the function which will write to the backend
-        onAdd({ text, day, reminder })
+        onAdd({ name, time, location })
 
-        setText('')
-        setDay('')
-        setReminder(false)
+        setName('')
+        setTime('')
+        setLocation('')
+        setMinUsers(0)
+        setMaxUsers(0)
+        setPrice(0)
     }
 
     return (
         <form className='add-form' onSubmit={onSubmit}>
             <div className='form-control'>
                 <label>Event</label>
-                <input type='text' placeholder='Add Event'
-                    value={text} onChange={(e) => setText(e.target.value)} />
+                <input type='text' placeholder='Event Name'
+                    value={name} onChange={(e) => setName(e.target.value)} />
             </div>
             <div className='form-control'>
                 <label>Date & Time</label>
-                <input type='text' placeholder='Add Date & Time'
-                    value={day} onChange={(e) => setDay(e.target.value)} />
+                <input type='text' placeholder='Monday Jan 1st at 7pm'
+                    value={time} onChange={(e) => setTime(e.target.value)} />
             </div>
-            <div className='form-control form-control-check'>
-                <label>Set Reminder</label>
-                <input type='checkbox'
-                    checked={reminder}
-                    value={reminder} onChange={(e) => setReminder(e.currentTarget.checked)} />
+            <div className='form-control'>
+                <label>Location</label>
+                <input type='text' placeholder='Location'
+                    value={location} onChange={(e) => setLocation(e.target.value)} />
+            </div>
+            <div className='form-control'>
+                <label>Min Attendees</label>
+                <input type='number' placeholder='1'
+                    value={minUsers} onChange={(e) => setMinUsers(e.target.value)} />
+            </div>
+            <div className='form-control'>
+                <label>Max Attendees</label>
+                <input type='number' placeholder='100'
+                    value={maxUsers} onChange={(e) => setMaxUsers(e.target.value)} />
+            </div>
+            <div className='form-control'>
+                <label>Price</label>
+                <input type='number' step="0.01" placeholder='10.50'
+                    value={price} onChange={(e) => setPrice(e.target.value)} />
             </div>
 
             <input type='submit' value='Save Event' className='btn btn-block' />
