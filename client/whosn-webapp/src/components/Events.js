@@ -4,8 +4,8 @@ import EventSingle from "./EventSingle"
 const Events = ({ events, includeDeleteButton, onDelete }) => {
     return (
         <>
-            {events.map((event) => (
-                <EventSingle key={event.id} event={event}
+            {events.map((event, index) => (
+                <EventSingle key={index} event={event}
                     includeDeleteButton={includeDeleteButton}
                     onDelete={onDelete} />
             ))}

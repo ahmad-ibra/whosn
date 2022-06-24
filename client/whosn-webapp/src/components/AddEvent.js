@@ -4,20 +4,20 @@ const AddEvent = ({ onAdd }) => {
     const [name, setName] = useState('')
     const [time, setTime] = useState('')
     const [location, setLocation] = useState('')
-    const [minUsers, setMinUsers] = useState('')
-    const [maxUsers, setMaxUsers] = useState('')
+    const [min_users, setMinUsers] = useState('')
+    const [max_users, setMaxUsers] = useState('')
     const [price, setPrice] = useState('')
 
     const onSubmit = (e) => {
         e.preventDefault()
 
-        if (!name || !time || !location || !minUsers || !maxUsers || !price) {
+        if (!name || !time || !location || !min_users || !max_users || !price) {
             alert('Please fill out missing event fields')
             return
         }
 
         // call the function which will write to the backend
-        onAdd({ name, time, location })
+        onAdd({ name, time, location, min_users, max_users, price })
 
         setName('')
         setTime('')
@@ -47,17 +47,17 @@ const AddEvent = ({ onAdd }) => {
             <div className='form-control'>
                 <label>Min Attendees</label>
                 <input type='number' placeholder='1'
-                    value={minUsers} onChange={(e) => setMinUsers(e.target.value)} />
+                    value={min_users} onChange={(e) => setMinUsers(Number(e.target.value))} />
             </div>
             <div className='form-control'>
                 <label>Max Attendees</label>
                 <input type='number' placeholder='100'
-                    value={maxUsers} onChange={(e) => setMaxUsers(e.target.value)} />
+                    value={max_users} onChange={(e) => setMaxUsers(Number(e.target.value))} />
             </div>
             <div className='form-control'>
                 <label>Price</label>
                 <input type='number' step="0.01" placeholder='10.50'
-                    value={price} onChange={(e) => setPrice(e.target.value)} />
+                    value={price} onChange={(e) => setPrice(Number(e.target.value))} />
             </div>
 
             <input type='submit' value='Save Event' className='btn btn-block' />

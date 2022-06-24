@@ -3,7 +3,10 @@ import Events from './components/Events'
 import AddEvent from './components/AddEvent'
 import { useState, useEffect } from 'react'
 
+const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
+
 function App() {
+
   const [showAddEvent, setShowAddEvent] = useState(false)
   const [ownedEvents, setOwnedEvents] = useState([])
   const [joinedEvents, setJoinedEvents] = useState([])
@@ -26,21 +29,21 @@ function App() {
   // Fetch Owned Events
   const fetchOwnedEvents = async () => {
     // TODO: update this to call the backend GET /api/v1/secured/events/owned
-    const res = await fetch('http://localhost:8080/api/v1/secured/events')
+    const res = await fetch(`http://${backendAddress}/api/v1/secured/events`)
     const data = await res.json()
     return data || []
   }
 
   // Fetch Joined Events
   const fetchJoinedEvents = async () => {
-    const res = await fetch('http://localhost:8080/api/v1/secured/events/joined')
+    const res = await fetch(`http://${backendAddress}/api/v1/secured/events/joined`)
     const data = await res.json()
     return data || []
   }
 
   // Add Event
   const addEvent = async (singleEvent) => {
-    const res = await fetch('http://localhost:8080/api/v1/secured/event', {
+    const res = await fetch(`http://${backendAddress}/api/v1/secured/event`, {
       method: 'POST',
       headers: { 'Content-type': 'application/json' },
       body: JSON.stringify(singleEvent)
@@ -48,19 +51,11 @@ function App() {
 
     const data = await res.json()
     setOwnedEvents([...ownedEvents, data])
-
-
-
-    // TODO: have this call the backend POST   /api/v1/secured/event
-    // const id = Math.floor(Math.random() * 10000) + 1
-    // const newEvent = { id, ...singleEvent }
-    // console.log(newEvent)
-    // setOwnedEvents([...ownedEvents, newEvent])
   }
 
   // Delete Event
   const deleteEvent = async (id) => {
-    await fetch(`http://localhost:8080/api/v1/secured/event/${id}`, {
+    await fetch(`http://${backendAddress}/api/v1/secured/event/${id}`, {
       method: 'DELETE'
     })
 
