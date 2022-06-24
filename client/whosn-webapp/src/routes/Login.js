@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const Login = ({ onAdd }) => {
     const [user_name, setUserName] = useState('')
@@ -20,7 +21,7 @@ const Login = ({ onAdd }) => {
     }
 
     return (
-        <div>
+        <div className="container">
             <form className='add-form' onSubmit={onSubmit}>
                 <div className='form-control'>
                     <label>Username</label>
@@ -36,7 +37,7 @@ const Login = ({ onAdd }) => {
                 <input type='submit' value='Login' className='btn btn-block' />
             </form>
             <footer>
-                <a href='/register'>Create new account</a>
+                <Link to='/register'>Create new account</Link>
             </footer>
         </div>
     )

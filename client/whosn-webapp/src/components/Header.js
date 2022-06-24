@@ -1,28 +1,11 @@
-import PropTypes from 'prop-types'
-import Button from './Button'
+// TODO: create header component that will be added to each page
 
-const Header = ({ title, canAddEvent, showAdd, onAdd }) => {
+const Header = () => {
     return (
-        <header className='header'>
-            <h1>{title}</h1>
-            {canAddEvent &&
-                <Button
-                    color={showAdd ? 'red' : 'steelblue'}
-                    text={showAdd ? 'Close' : 'Add'} onClick={onAdd}
-                />
-            }
-        </header>
+        <div>
+
+        </div>
     )
-}
-
-Header.defaultProps = {
-    title: 'Whosn?',
-    canAddEvent: false
-}
-
-Header.propTypes = {
-    title: PropTypes.string.isRequired,
-    canAddEvent: PropTypes.bool,
 }
 
 export default Header
