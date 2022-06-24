@@ -16,7 +16,7 @@ const loginUser = async (credentials) => {
 }
 
 const setToken = (userToken) => {
-    localStorage.setItem('jwt', JSON.stringify(userToken));
+    localStorage.setItem('jwt', userToken);
 }
 
 const Login = () => {
@@ -40,7 +40,10 @@ const Login = () => {
                 alert('Error logging in')
                 return
             }
-            setToken(data)
+
+            console.log(data)
+
+            setToken(data.token)
             navigate('/');
         })
     }

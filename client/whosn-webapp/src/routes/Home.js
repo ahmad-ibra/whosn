@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import EventHeader from '../components/EventHeader'
 import Events from '../components/Events'
 import AddEvent from '../components/AddEvent'
+import { auth } from '../auth/Authorization'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
@@ -23,19 +24,24 @@ const Home = () => {
 
         getOwnedEvents()
         getJoinedEvents()
-    }, [/* any dependency that we want to cause useEffect to run on its change*/])
+    }, [])
 
     // Fetch Owned Events
     const fetchOwnedEvents = async () => {
         // TODO: update this to call the backend GET /api/v1/secured/events/owned
-        const res = await fetch(`http://${backendAddress}/api/v1/secured/events`)
+        const res = await fetch(`http://${backendAddress}/api/v1/secured/events/owned`, {
+            headers: { 'Content-type': 'application/json', 'Authorization': auth() },
+        })
+
         const data = await res.json()
         return data || []
     }
 
     // Fetch Joined Events
     const fetchJoinedEvents = async () => {
-        const res = await fetch(`http://${backendAddress}/api/v1/secured/events/joined`)
+        const res = await fetch(`http://${backendAddress}/api/v1/secured/events/joined`, {
+            headers: { 'Content-type': 'application/json', 'Authorization': auth() },
+        })
         const data = await res.json()
         return data || []
     }
@@ -44,7 +50,7 @@ const Home = () => {
     const addEvent = async (singleEvent) => {
         const res = await fetch(`http://${backendAddress}/api/v1/secured/event`, {
             method: 'POST',
-            headers: { 'Content-type': 'application/json' },
+            headers: { 'Content-type': 'application/json', 'Authorization': auth() },
             body: JSON.stringify(singleEvent)
         })
 
@@ -55,7 +61,8 @@ const Home = () => {
     // Delete Event
     const deleteEvent = async (id) => {
         await fetch(`http://${backendAddress}/api/v1/secured/event/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: { 'Content-type': 'application/json', 'Authorization': auth() },
         })
 
         setOwnedEvents(ownedEvents.filter((event) => event.id !== id))

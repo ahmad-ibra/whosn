@@ -4,7 +4,7 @@ import Home from './routes/Home';
 import Register from './routes/Register';
 import DetailedEvent from './routes/DetailedEvent';
 import NotFound from './routes/NotFound';
-import PrivateRoute from './routes/PrivateRoute';
+import PrivateRoute from './auth/PrivateRoute';
 
 function App() {
   return (
