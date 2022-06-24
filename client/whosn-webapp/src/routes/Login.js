@@ -1,7 +1,21 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+// import PropTypes from 'prop-types'
 
-const Login = ({ onAdd }) => {
+const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
+
+const loginUser = async (credentials) => {
+    const res = await fetch(`http://${backendAddress}/api/v1/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials)
+    })
+
+    const data = await res.json()
+    return data
+}
+
+const Login = () => {
     const [user_name, setUserName] = useState('')
     const [password, setPassWord] = useState('')
 
@@ -13,11 +27,10 @@ const Login = ({ onAdd }) => {
             return
         }
 
-        // call the function which will write to the backend
-        onAdd({ user_name, password })
-
-        setUserName('')
-        setPassWord('')
+        // call the function which will auth with backend
+        const token = loginUser({ user_name, password })
+        console.log(`token: ${token}`)
+        // setToken(token);
     }
 
     return (
@@ -42,5 +55,9 @@ const Login = ({ onAdd }) => {
         </div>
     )
 }
+
+// Login.propTypes = {
+//     setToken: PropTypes.func.isRequired
+// }
 
 export default Login

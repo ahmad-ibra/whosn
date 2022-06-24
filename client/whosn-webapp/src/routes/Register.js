@@ -1,13 +1,30 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 
-const Register = ({ onAdd }) => {
+const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
+
+// Register User
+const registerUser = async (user) => {
+    const res = await fetch(`http://${backendAddress}/api/v1/user`, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify(user)
+    })
+
+    await res.json()
+    return res.ok
+}
+
+const Register = () => {
     const [name, setName] = useState('')
     const [user_name, setUserName] = useState('')
     const [password, setPassWord] = useState('')
     const [email, setEmail] = useState('')
     const [phone_number, setPhoneNumber] = useState()
+
+    const navigate = useNavigate();
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -18,13 +35,15 @@ const Register = ({ onAdd }) => {
         }
 
         // call the function which will write to the backend
-        onAdd({ name, user_name, password, email, phone_number })
+        const success = registerUser({ name, user_name, password, email, phone_number })
+        if (!success) {
+            alert('Error registering')
+            return
+        }
 
-        setName('')
-        setUserName('')
-        setPassWord('')
-        setEmail('')
-        setPhoneNumber()
+        console.log("success, go to login page")
+        navigate('/login');
+
     }
 
     return (
