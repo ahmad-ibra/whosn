@@ -1,2 +1,2 @@
-web: node server.js
+web: cd client/whosn-webapp && node server.js
 
