@@ -4,8 +4,8 @@
   "private": true,
   "main": "server.js",
   "engines": {
-    "npm": ">= 8.12.1",
-    "node": ">= 18.4.0"
+    "npm": "8.x",
+    "node": "18.x"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
