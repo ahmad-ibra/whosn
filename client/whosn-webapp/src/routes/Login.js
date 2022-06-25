@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom'
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
 const loginUser = async (credentials) => {
-    console.log(backendAddress)
     const res = await fetch(`http://${backendAddress}/api/v1/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,12 +36,9 @@ const Login = () => {
         // call the function which will auth with backend
         loginUser({ user_name, password }).then(data => {
             if ('error' in data) {
-                console.log(data)
                 alert('Error logging in')
                 return
             }
-
-            console.log(data)
 
             setToken(data.token)
             navigate('/');

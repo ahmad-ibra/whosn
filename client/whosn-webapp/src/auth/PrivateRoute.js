@@ -15,14 +15,12 @@ const PrivateRoute = ({ children }) => {
 
     // check not expired (we consider it expired 5 minutes early)
     if (decodedToken.exp - 300 < now) {
-        console.log("expired")
         localStorage.removeItem('jwt')
         return <Navigate to='/login' />
     }
 
     // check issuer
     if (decodedToken.iss !== "whosn-core") {
-        console.log("wrong issuer")
         localStorage.removeItem('jwt')
         return <Navigate to='/login' />
     }
