@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
 const loginUser = async (credentials) => {
+    console.log(backendAddress)
     const res = await fetch(`http://${backendAddress}/api/v1/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
