@@ -19,7 +19,8 @@ const setToken = (userToken) => {
     localStorage.setItem('jwt', userToken);
 }
 
-const Login = () => {
+const Login = ({ dest }) => {
+    console.log("dest is " + dest)
     const [user_name, setUserName] = useState('')
     const [password, setPassWord] = useState('')
 
