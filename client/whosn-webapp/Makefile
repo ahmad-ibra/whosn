@@ -1,7 +1,9 @@
 exec:
+	cp .env_dev .env
 	npm run start
 
 build:
+	cp .env_prod .env
 	npm run build
 
 deploy:

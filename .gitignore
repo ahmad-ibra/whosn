@@ -1,3 +1,5 @@
 .idea
 .env
+.env_prod
+.env_dev
 node_modules
