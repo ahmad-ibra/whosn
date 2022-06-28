@@ -28,7 +28,6 @@ const Home = () => {
 
     // Fetch Owned Events
     const fetchOwnedEvents = async () => {
-        // TODO: update this to call the backend GET /api/v1/secured/events/owned
         const res = await fetch(`http://${backendAddress}/api/v1/secured/events/owned`, {
             headers: { 'Content-type': 'application/json', 'Authorization': auth() },
         })
