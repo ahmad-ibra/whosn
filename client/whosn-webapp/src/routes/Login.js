@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-// import PropTypes from 'prop-types'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
@@ -20,6 +19,7 @@ const setToken = (userToken) => {
 }
 
 const Login = () => {
+    const [searchParams] = useSearchParams()
     const [user_name, setUserName] = useState('')
     const [password, setPassWord] = useState('')
 
@@ -41,7 +41,7 @@ const Login = () => {
             }
 
             setToken(data.token)
-            navigate('/')
+            navigate(searchParams.get('redirectTo'))
         })
     }
 

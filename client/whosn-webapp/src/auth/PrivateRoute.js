@@ -1,10 +1,19 @@
-import { Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
 import jwt from 'jwt-decode'
 
 const PrivateRoute = ({ children }) => {
+    const location = useLocation()
+
+    const [path, setPath] = useState('/')
+    useEffect(() => {
+        const path = `/login?redirectTo=${location.pathname}`
+        setPath(path)
+    }, [location.pathname])
+
     const jwtToken = localStorage.getItem('jwt')
     if (jwtToken == null) {
-        return <Navigate to="/login" />
+        return <Navigate to={path} />
     }
 
     const decodedToken = jwt(jwtToken)
@@ -15,7 +24,7 @@ const PrivateRoute = ({ children }) => {
     // check not expired (we consider it expired 5 minutes early) and check issuer
     if (decodedToken.exp - 300 < now || decodedToken.iss !== 'whosn-core') {
         localStorage.removeItem('jwt')
-        return <Navigate to="/login" />
+        return <Navigate to={path} />
     }
 
     return children
