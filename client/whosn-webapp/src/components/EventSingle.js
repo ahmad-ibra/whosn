@@ -1,16 +1,19 @@
 import PropTypes from 'prop-types'
-import { FaTimes } from 'react-icons/fa'
+import { BiEdit, BiTrash } from 'react-icons/bi'
+import { useNavigate } from 'react-router-dom'
 
 const EventSingle = ({ event, includeDeleteButton, onDelete }) => {
+    const navigate = useNavigate();
     return (
         <div className='event'>
-            <h3>
+            <h2>
                 {event.name}
                 {includeDeleteButton &&
-                    <FaTimes style={{ color: 'red', cursor: 'pointer' }}
+                    <BiTrash style={{ color: 'red', cursor: 'pointer', float: 'right' }}
                         onClick={() => onDelete(event.id)} />
                 }
-            </h3>
+                {<BiEdit style={{ float: 'right' }} onClick={() => { navigate(`/event/${event.id}`) }} />}
+            </h2>
             <p>{event.location}</p>
             <p>{event.time}</p>
         </div>

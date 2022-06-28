@@ -1,6 +1,6 @@
 exec:
 	cp .env_dev .env
-	npm run start
+	npm run start-dev
 
 build:
 	cp .env_prod .env
