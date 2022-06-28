@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { auth } from '../auth/Authorization'
+import NotFound from './NotFound'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
@@ -31,20 +32,25 @@ const DetailedEvent = () => {
             }
         )
 
-        const data = await res.json()
-
-        return data || {}
+        return await res.json()
     }
 
+    const found = !(event.error != null)
+
     return (
-        <div className="container">
-            <h2>{event.name}</h2>
-            <p>time: {event.time}</p>
-            <p>location: {event.location}</p>
-            <p>min participants: {event.min_users}</p>
-            <p>max participants: {event.max_users}</p>
-            <p>price: {event.price}</p>
-            <p>link: {event.link}</p>
+        <div>
+            {!found && <NotFound />}
+            {found && (
+                <div className="container">
+                    <h2>{event.name}</h2>
+                    <p>time: {event.time}</p>
+                    <p>location: {event.location}</p>
+                    <p>min participants: {event.min_users}</p>
+                    <p>max participants: {event.max_users}</p>
+                    <p>price: {event.price}</p>
+                    <p>link: {event.link}</p>
+                </div>
+            )}
         </div>
         // TODO: add join/leave event button (depends on if they've joined event or not)
         // TODO: add delete event button (depends on if they're the owner of the event or not)
