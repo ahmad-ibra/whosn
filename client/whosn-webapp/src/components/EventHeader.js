@@ -3,21 +3,22 @@ import Button from './Button'
 
 const EventHeader = ({ title, canAddEvent, showAdd, onAdd }) => {
     return (
-        <header className='header'>
+        <header className="header">
             <h1>{title}</h1>
-            {canAddEvent &&
+            {canAddEvent && (
                 <Button
                     color={showAdd ? 'red' : 'steelblue'}
-                    text={showAdd ? 'Close' : 'Add'} onClick={onAdd}
+                    text={showAdd ? 'Close' : 'Add'}
+                    onClick={onAdd}
                 />
-            }
+            )}
         </header>
     )
 }
 
 EventHeader.defaultProps = {
     title: 'Whosn?',
-    canAddEvent: false
+    canAddEvent: false,
 }
 
 EventHeader.propTypes = {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useLocation } from "react-router-dom"
+import { useLocation } from 'react-router-dom'
 import { auth } from '../auth/Authorization'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
@@ -21,9 +21,15 @@ const DetailedEvent = () => {
 
     // Fetch Owned Events
     const fetchEvent = async (id) => {
-        const res = await fetch(`http://${backendAddress}/api/v1/secured/event/${id}`, {
-            headers: { 'Content-type': 'application/json', 'Authorization': auth() },
-        })
+        const res = await fetch(
+            `http://${backendAddress}/api/v1/secured/event/${id}`,
+            {
+                headers: {
+                    'Content-type': 'application/json',
+                    Authorization: auth(),
+                },
+            }
+        )
 
         const data = await res.json()
 
@@ -31,7 +37,6 @@ const DetailedEvent = () => {
     }
 
     return (
-
         <div className="container">
             <h2>{event.name}</h2>
             <p>time: {event.time}</p>

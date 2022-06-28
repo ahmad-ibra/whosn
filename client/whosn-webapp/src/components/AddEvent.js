@@ -28,39 +28,64 @@ const AddEvent = ({ onAdd }) => {
     }
 
     return (
-        <form className='add-form' onSubmit={onSubmit}>
-            <div className='form-control'>
+        <form className="add-form" onSubmit={onSubmit}>
+            <div className="form-control">
                 <label>Event</label>
-                <input type='text' placeholder='Event Name'
-                    value={name} onChange={(e) => setName(e.target.value)} />
+                <input
+                    type="text"
+                    placeholder="Event Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
             </div>
-            <div className='form-control'>
+            <div className="form-control">
                 <label>Date & Time</label>
-                <input type='text' placeholder='Monday Jan 1st at 7pm'
-                    value={time} onChange={(e) => setTime(e.target.value)} />
+                <input
+                    type="text"
+                    placeholder="Monday Jan 1st at 7pm"
+                    value={time}
+                    onChange={(e) => setTime(e.target.value)}
+                />
             </div>
-            <div className='form-control'>
+            <div className="form-control">
                 <label>Location</label>
-                <input type='text' placeholder='Location'
-                    value={location} onChange={(e) => setLocation(e.target.value)} />
+                <input
+                    type="text"
+                    placeholder="Location"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                />
             </div>
-            <div className='form-control'>
+            <div className="form-control">
                 <label>Min Attendees</label>
-                <input type='number' placeholder='1'
-                    value={min_users} onChange={(e) => setMinUsers(Number(e.target.value))} />
+                <input
+                    type="number"
+                    placeholder="1"
+                    value={min_users}
+                    onChange={(e) => setMinUsers(Number(e.target.value))}
+                />
             </div>
-            <div className='form-control'>
+            <div className="form-control">
                 <label>Max Attendees</label>
-                <input type='number' placeholder='100'
-                    value={max_users} onChange={(e) => setMaxUsers(Number(e.target.value))} />
+                <input
+                    type="number"
+                    placeholder="100"
+                    value={max_users}
+                    onChange={(e) => setMaxUsers(Number(e.target.value))}
+                />
             </div>
-            <div className='form-control'>
+            <div className="form-control">
                 <label>Price</label>
-                <input type='number' step="0.01" placeholder='10.50'
-                    value={price} onChange={(e) => setPrice(Number(e.target.value))} />
+                <input
+                    type="number"
+                    step="0.01"
+                    placeholder="10.50"
+                    value={price}
+                    onChange={(e) => setPrice(Number(e.target.value))}
+                />
             </div>
 
-            <input type='submit' value='Save Event' className='btn btn-block' />
+            <input type="submit" value="Save Event" className="btn btn-block" />
         </form>
     )
 }

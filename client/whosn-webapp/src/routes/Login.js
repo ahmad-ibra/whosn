@@ -9,21 +9,21 @@ const loginUser = async (credentials) => {
     const res = await fetch(`http://${backendAddress}/api/v1/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(credentials),
     })
 
     return await res.json()
 }
 
 const setToken = (userToken) => {
-    localStorage.setItem('jwt', userToken);
+    localStorage.setItem('jwt', userToken)
 }
 
 const Login = () => {
     const [user_name, setUserName] = useState('')
     const [password, setPassWord] = useState('')
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -34,35 +34,43 @@ const Login = () => {
         }
 
         // call the function which will auth with backend
-        loginUser({ user_name, password }).then(data => {
+        loginUser({ user_name, password }).then((data) => {
             if ('error' in data) {
                 alert('Error logging in')
                 return
             }
 
             setToken(data.token)
-            navigate('/');
+            navigate('/')
         })
     }
 
     return (
         <div className="container">
-            <form className='add-form' onSubmit={onSubmit}>
-                <div className='form-control'>
+            <form className="add-form" onSubmit={onSubmit}>
+                <div className="form-control">
                     <label>Username</label>
-                    <input type='text' placeholder='Username'
-                        value={user_name} onChange={(e) => setUserName(e.target.value)} />
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        value={user_name}
+                        onChange={(e) => setUserName(e.target.value)}
+                    />
                 </div>
-                <div className='form-control'>
+                <div className="form-control">
                     <label>Password</label>
-                    <input type='password' placeholder='Password'
-                        value={password} onChange={(e) => setPassWord(e.target.value)} />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassWord(e.target.value)}
+                    />
                 </div>
 
-                <input type='submit' value='Login' className='btn btn-block' />
+                <input type="submit" value="Login" className="btn btn-block" />
             </form>
             <footer>
-                <Link to='/register'>Create new account</Link>
+                <Link to="/register">Create new account</Link>
             </footer>
         </div>
     )

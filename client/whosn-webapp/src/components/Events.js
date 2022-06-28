@@ -1,20 +1,23 @@
 import PropTypes from 'prop-types'
-import EventSingle from "./EventSingle"
+import EventSingle from './EventSingle'
 
 const Events = ({ events, includeDeleteButton, onDelete }) => {
     return (
         <>
             {events.map((event, index) => (
-                <EventSingle key={index} event={event}
+                <EventSingle
+                    key={index}
+                    event={event}
                     includeDeleteButton={includeDeleteButton}
-                    onDelete={onDelete} />
+                    onDelete={onDelete}
+                />
             ))}
         </>
     )
 }
 
 Events.defaultProps = {
-    includeDeleteButton: false
+    includeDeleteButton: false,
 }
 
 Events.propTypes = {

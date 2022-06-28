@@ -3,16 +3,29 @@ import { BiEdit, BiTrash } from 'react-icons/bi'
 import { useNavigate } from 'react-router-dom'
 
 const EventSingle = ({ event, includeDeleteButton, onDelete }) => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
     return (
-        <div className='event'>
+        <div className="event">
             <h2>
                 {event.name}
-                {includeDeleteButton &&
-                    <BiTrash style={{ color: 'red', cursor: 'pointer', float: 'right' }}
-                        onClick={() => onDelete(event.id)} />
+                {includeDeleteButton && (
+                    <BiTrash
+                        style={{
+                            color: 'red',
+                            cursor: 'pointer',
+                            float: 'right',
+                        }}
+                        onClick={() => onDelete(event.id)}
+                    />
+                )}
+                {
+                    <BiEdit
+                        style={{ float: 'right' }}
+                        onClick={() => {
+                            navigate(`/event/${event.id}`)
+                        }}
+                    />
                 }
-                {<BiEdit style={{ float: 'right' }} onClick={() => { navigate(`/event/${event.id}`) }} />}
             </h2>
             <p>{event.location}</p>
             <p>{event.time}</p>
@@ -21,7 +34,7 @@ const EventSingle = ({ event, includeDeleteButton, onDelete }) => {
 }
 
 EventSingle.defaultProps = {
-    includeDeleteButton: false
+    includeDeleteButton: false,
 }
 
 EventSingle.propTypes = {

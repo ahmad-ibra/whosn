@@ -10,7 +10,7 @@ const registerUser = async (user) => {
     const res = await fetch(`http://${backendAddress}/api/v1/user`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
-        body: JSON.stringify(user)
+        body: JSON.stringify(user),
     })
 
     return await res.json()
@@ -23,7 +23,7 @@ const Register = () => {
     const [email, setEmail] = useState('')
     const [phone_number, setPhoneNumber] = useState()
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -34,48 +34,72 @@ const Register = () => {
         }
 
         // call the function which will register user on the backend
-        registerUser({ name, user_name, password, email, phone_number }).then(data => {
-            if ('error' in data) {
-                alert('Error registering')
-                return
-            }
+        registerUser({ name, user_name, password, email, phone_number }).then(
+            (data) => {
+                if ('error' in data) {
+                    alert('Error registering')
+                    return
+                }
 
-            navigate('/login');
-        })
+                navigate('/login')
+            }
+        )
     }
 
     return (
         <div className="container">
-            <form className='add-form' onSubmit={onSubmit}>
-                <div className='form-control'>
+            <form className="add-form" onSubmit={onSubmit}>
+                <div className="form-control">
                     <label>Name</label>
-                    <input type='text' placeholder='Name'
-                        value={name} onChange={(e) => setName(e.target.value)} />
+                    <input
+                        type="text"
+                        placeholder="Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
                 </div>
-                <div className='form-control'>
+                <div className="form-control">
                     <label>Username</label>
-                    <input type='text' placeholder='Username'
-                        value={user_name} onChange={(e) => setUserName(e.target.value)} />
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        value={user_name}
+                        onChange={(e) => setUserName(e.target.value)}
+                    />
                 </div>
-                <div className='form-control'>
+                <div className="form-control">
                     <label>Password</label>
-                    <input type='password' placeholder='Password'
-                        value={password} onChange={(e) => setPassWord(e.target.value)} />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassWord(e.target.value)}
+                    />
                 </div>
-                <div className='form-control'>
+                <div className="form-control">
                     <label>Email</label>
-                    <input type='email' placeholder='email@foo.com'
-                        value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input
+                        type="email"
+                        placeholder="email@foo.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
                 </div>
-                <div className='form-control'>
+                <div className="form-control">
                     <label>Phone Number</label>
                     <PhoneInput
-                        defaultCountry='CA'
+                        defaultCountry="CA"
                         placeholder="Enter phone number"
-                        value={phone_number} onChange={setPhoneNumber} />
+                        value={phone_number}
+                        onChange={setPhoneNumber}
+                    />
                 </div>
 
-                <input type='submit' value='Register' className='btn btn-block' />
+                <input
+                    type="submit"
+                    value="Register"
+                    className="btn btn-block"
+                />
             </form>
         </div>
     )
