@@ -41,7 +41,8 @@ const Login = () => {
             }
 
             setToken(data.token)
-            navigate(searchParams.get('redirectTo'))
+            const redirectTo = searchParams.get('redirectTo') || '/'
+            navigate(redirectTo)
         })
     }
 
