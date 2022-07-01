@@ -13,7 +13,7 @@ type Event struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
 	OwnerID   string    `json:"owner_id"`
-	Time      string    `json:"time"`
+	Time      time.Time `json:"time"`
 	Location  string    `json:"location"`
 	MinUsers  uint64    `json:"min_users"`
 	MaxUsers  uint64    `json:"max_users"`
@@ -34,5 +34,5 @@ func (event *Event) Construct(ownerID string) {
 
 func generateEventLink(eventID string) string {
 	cfg := config.GetConfig()
-	return "https://" + cfg.FrontendDomain + "/event/" + eventID
+	return "http://" + cfg.FrontendDomain + "/event/" + eventID
 }

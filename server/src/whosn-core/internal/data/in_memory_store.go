@@ -97,7 +97,8 @@ func (d *inMemoryStore) UpdateEventByID(eventUpdate models.Event, eventID string
 			if eventUpdate.Name != "" {
 				event.Name = eventUpdate.Name
 			}
-			if eventUpdate.Time != "" {
+			// TODO: verify this
+			if !eventUpdate.Time.IsZero() {
 				event.Time = eventUpdate.Time
 			}
 			if eventUpdate.Location != "" {
