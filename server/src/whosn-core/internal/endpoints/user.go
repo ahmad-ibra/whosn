@@ -49,7 +49,6 @@ func CreateUser(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
-	user.Construct()
 
 	ds, ok := ctx.Value("DB").(*data.PGStore)
 	if !ok {
@@ -58,14 +57,14 @@ func CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	insertedUser, err := ds.InsertUser(user)
+	err := ds.InsertUser(&user)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		ctx.Abort()
 		return
 	}
 
-	ctx.JSON(http.StatusOK, *insertedUser)
+	ctx.JSON(http.StatusOK, user)
 }
 
 func UpdateUser(ctx *gin.Context) {

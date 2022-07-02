@@ -8,7 +8,7 @@ import (
 type Storer interface {
 	GetUserByID(userID string) (*models.User, error)
 	GetUserByUsername(username string) (*models.User, error)
-	InsertUser(user models.User) (*models.User, error)
+	InsertUser(user *models.User) error
 	UpdateUserByID(userUpdate models.User, userID string) (*models.User, error)
 	DeleteUserByID(userID string) error
 

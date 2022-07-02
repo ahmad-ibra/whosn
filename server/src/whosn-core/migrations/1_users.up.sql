@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
      password text NOT NULL,
      email text NOT NULL UNIQUE,
      phone_number text NOT NULL,
-     created_at timestamp NOT NULL,
-     updated_at timestamp NOT NULL,
+     created_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
+     updated_at timestamp NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
      PRIMARY KEY (id)
 );

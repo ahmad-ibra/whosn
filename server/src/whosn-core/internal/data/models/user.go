@@ -33,9 +33,3 @@ func (user *User) CheckPassword(providedPassword string) error {
 	}
 	return nil
 }
-
-func (user *User) Construct() {
-	curTime := time.Now()
-	user.CreatedAt = curTime
-	user.UpdatedAt = curTime
-}

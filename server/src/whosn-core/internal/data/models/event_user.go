@@ -2,8 +2,6 @@ package models
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 // EventUser holds data coming from the event_users table
@@ -16,10 +14,6 @@ type EventUser struct {
 }
 
 func (eventUser *EventUser) Construct(eventID string, userID string) {
-	curTime := time.Now()
-	eventUser.CreatedAt = curTime
-	eventUser.UpdatedAt = curTime
-	eventUser.ID = uuid.New().String()
 	eventUser.EventID = eventID
 	eventUser.UserID = userID
 }
