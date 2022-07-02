@@ -18,6 +18,21 @@ func init() {
 }
 
 func TestInsertUser(t *testing.T) {
+	duplicateUser := &models.User{
+		Name:        "dup name",
+		UserName:    "dupUserName",
+		Password:    "password",
+		Email:       "dupEmail@foo.bar",
+		PhoneNumber: "604-155-5555",
+	}
+
+	user := &models.User{
+		Name:        "some name",
+		UserName:    "someUserName",
+		Password:    "password",
+		Email:       "email@foo.bar",
+		PhoneNumber: "604-555-5555",
+	}
 
 	var tests = []struct {
 		title string
@@ -25,20 +40,76 @@ func TestInsertUser(t *testing.T) {
 		fail  bool
 	}{
 		{
-			title: "successfully creates a user",
+			title: "fails to insert user with no Name",
 			user: &models.User{
-				Name:        "some name",
 				UserName:    "someUserName",
 				Password:    "password",
 				Email:       "email@foo.bar",
 				PhoneNumber: "604-555-5555",
 			},
-			fail: false,
+			fail: true,
+		},
+		{
+			title: "fails to insert user with no UserName",
+			user: &models.User{
+				Name:        "some name",
+				Password:    "password",
+				Email:       "email@foo.bar",
+				PhoneNumber: "604-555-5555",
+			},
+			fail: true,
+		},
+		{
+			title: "fails to insert user with no Password",
+			user: &models.User{
+				Name:        "some name",
+				UserName:    "someUserName",
+				Email:       "email@foo.bar",
+				PhoneNumber: "604-555-5555",
+			},
+			fail: true,
+		},
+		{
+			title: "fails to insert user with no Email",
+			user: &models.User{
+				Name:        "some name",
+				UserName:    "someUserName",
+				Password:    "password",
+				PhoneNumber: "604-555-5555",
+			},
+			fail: true,
+		},
+		{
+			title: "fails to insert user with no PhoneNumber",
+			user: &models.User{
+				Name:     "some name",
+				UserName: "someUserName",
+				Password: "password",
+				Email:    "email@foo.bar",
+			},
+			fail: true,
+		},
+		{
+			title: "fails to inserts a duplicate user",
+			user:  duplicateUser,
+			fail:  true,
+		},
+		{
+			title: "successfully inserts a user",
+			user:  user,
+			fail:  false,
 		},
 	}
 
-	db, err := NewDB()
-	assert.Nil(t, err)
+	// setup db
+	db, _ := NewDB()
+
+	// clean table
+	db.Conn.Model(user).Where("user_name = ?", user.UserName).Delete()
+	db.Conn.Model(user).Where("user_name = ?", duplicateUser.UserName).Delete()
+
+	// insert duplicate
+	db.Conn.Model(duplicateUser).Insert()
 
 	for _, tt := range tests {
 		t.Run(tt.title, func(t *testing.T) {
