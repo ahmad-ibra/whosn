@@ -10,7 +10,7 @@ import (
 )
 
 type TokenRequest struct {
-	Username string `json:"user_name"`
+	UserName string `json:"user_name"`
 	Password string `json:"password"`
 }
 
@@ -29,7 +29,7 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	user, err := ds.GetUserByUsername(request.Username)
+	user, err := ds.GetUserByUserName(request.UserName)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		ctx.Abort()

@@ -66,17 +66,14 @@ func (p PGStore) GetUserByID(userID string) (*models.User, error) {
 	panic("implement me")
 }
 
-func (p PGStore) GetUserByUsername(username string) (*models.User, error) {
-	//TODO implement me
-	panic("implement me")
+func (p PGStore) GetUserByUserName(userName string) (*models.User, error) {
+	user := &models.User{}
+	err := p.Conn.Model(user).Where("user_name = ?", userName).Select()
+	if err != nil {
+		return nil, err
+	}
 
-	//insertedUser := &models.User{}
-	//err = p.Conn.Model(insertedUser).Where("user_name = ?", user.UserName).Select()
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//return insertedUser, nil
+	return user, nil
 }
 
 func (p PGStore) InsertUser(user *models.User) error {
