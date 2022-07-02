@@ -21,7 +21,7 @@ type Event struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (event *Event) Construct(ownerID string) {
+func (event *Event) ConstructCreate(ownerID string) {
 	event.OwnerID = ownerID
 	event.Link = generateEventLink(event.ID)
 }

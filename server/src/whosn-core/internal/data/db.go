@@ -112,9 +112,9 @@ func (p PGStore) GetEventByID(eventID string) (*models.Event, error) {
 	panic("implement me")
 }
 
-func (p PGStore) InsertEvent(event models.Event) error {
-	//TODO implement me
-	panic("implement me")
+func (p PGStore) InsertEvent(event *models.Event) error {
+	_, err := p.Conn.Model(event).Insert()
+	return err
 }
 
 func (p PGStore) UpdateEventByID(eventUpdate models.Event, eventID string) (*models.Event, error) {

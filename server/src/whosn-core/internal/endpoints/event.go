@@ -3,6 +3,7 @@ package endpoints
 import (
 	"net/http"
 
+	"github.com/Ahmad-Ibra/whosn-core/internal/data"
 	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -63,7 +64,7 @@ func CreateEvent(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
-	event.Construct(actorID)
+	event.ConstructCreate(actorID)
 
 	if event.MinUsers > event.MaxUsers {
 		ll.Warn("MinUsers must be less than MaxUser")
@@ -72,14 +73,21 @@ func CreateEvent(ctx *gin.Context) {
 		return
 	}
 
-	//err := ds.InsertEvent(event)
-	//if err != nil {
-	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	ctx.Abort()
-	//	return
-	//}
-	//
-	//ctx.JSON(http.StatusOK, event)
+	ds, ok := ctx.Value("DB").(*data.PGStore)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not get database from context"})
+		ctx.Abort()
+		return
+	}
+
+	err := ds.InsertEvent(&event)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	ctx.JSON(http.StatusOK, event)
 }
 
 func UpdateEvent(ctx *gin.Context) {

@@ -19,10 +19,14 @@ func init() {
 	os.Setenv("POSTGRES_DBNAME", "whosn")
 }
 
-func cleanUsers(db *pg.DB) {
+func cleanTables(db *pg.DB) {
 	var users []models.User
 	db.Model(&users).Select()
 	db.Model(&users).Delete()
+
+	var events []models.Event
+	db.Model(&events).Select()
+	db.Model(&events).Delete()
 }
 
 func TestInsertUser(t *testing.T) {
@@ -111,7 +115,7 @@ func TestInsertUser(t *testing.T) {
 
 	// setup db
 	db, _ := NewDB()
-	cleanUsers(db.Conn)
+	cleanTables(db.Conn)
 
 	// insert duplicate
 	db.Conn.Model(duplicateUser).Insert()
@@ -157,7 +161,7 @@ func TestGetUserByUserName(t *testing.T) {
 
 	// setup db
 	db, _ := NewDB()
-	cleanUsers(db.Conn)
+	cleanTables(db.Conn)
 
 	// insert user
 	db.Conn.Model(user).Insert()
@@ -209,7 +213,7 @@ func TestGetUserByID(t *testing.T) {
 
 	// setup db
 	db, _ := NewDB()
-	cleanUsers(db.Conn)
+	cleanTables(db.Conn)
 
 	// insert user
 	db.Conn.Model(user).Insert()
@@ -261,7 +265,7 @@ func TestDeleteUserByID(t *testing.T) {
 
 	// setup db
 	db, _ := NewDB()
-	cleanUsers(db.Conn)
+	cleanTables(db.Conn)
 
 	// insert user
 	db.Conn.Model(user).Insert()
@@ -332,7 +336,7 @@ func TestUpdateUserByID(t *testing.T) {
 
 	// setup db
 	db, _ := NewDB()
-	cleanUsers(db.Conn)
+	cleanTables(db.Conn)
 
 	// insert user
 	db.Conn.Model(user).Insert()
@@ -347,6 +351,151 @@ func TestUpdateUserByID(t *testing.T) {
 			}
 			upUser, _ := db.GetUserByID(user.ID)
 			assert.Equal(t, tt.expUser, upUser)
+		})
+	}
+}
+
+func TestInsertEvent(t *testing.T) {
+	user := &models.User{
+		ID:          "f1777653-0378-4b75-b8a2-4305b170917d",
+		Name:        "some name",
+		UserName:    "username",
+		Password:    "password",
+		Email:       "email@foo.bar",
+		PhoneNumber: "604-555-5555",
+	}
+
+	event := &models.Event{
+		Name:     "event name",
+		OwnerID:  user.ID,
+		Time:     time.Now(),
+		Location: "over there!",
+		MinUsers: 1,
+		MaxUsers: 4,
+		Price:    10.23,
+		Link:     "http://somelink.com",
+	}
+
+	var tests = []struct {
+		title string
+		event *models.Event
+		fail  bool
+	}{
+		{
+			title: "fails to insert event with no Name",
+			event: &models.Event{
+				OwnerID:  user.ID,
+				Time:     time.Now(),
+				Location: "over there!",
+				MinUsers: 1,
+				MaxUsers: 4,
+				Price:    10.23,
+				Link:     "http://somelink.com",
+			},
+			fail: true,
+		},
+		{
+			title: "fails to insert event with no OwnerID",
+			event: &models.Event{
+				Name:     "event name",
+				Time:     time.Now(),
+				Location: "over there!",
+				MinUsers: 1,
+				MaxUsers: 4,
+				Price:    10.23,
+				Link:     "http://somelink.com",
+			},
+			fail: true,
+		},
+		{
+			title: "fails to insert event with no Time",
+			event: &models.Event{
+				Name:     "event name",
+				OwnerID:  user.ID,
+				Location: "over there!",
+				MinUsers: 1,
+				MaxUsers: 4,
+				Price:    10.23,
+				Link:     "http://somelink.com",
+			},
+			fail: true,
+		},
+		{
+			title: "fails to insert event with no Location",
+			event: &models.Event{
+				Name:     "event name",
+				OwnerID:  user.ID,
+				Time:     time.Now(),
+				MinUsers: 1,
+				MaxUsers: 4,
+				Price:    10.23,
+				Link:     "http://somelink.com",
+			},
+			fail: true,
+		},
+		{
+			title: "fails to insert event with MinUsers > MaxUsers",
+			event: &models.Event{
+				Name:     "event name",
+				OwnerID:  user.ID,
+				Time:     time.Now(),
+				Location: "over there!",
+				MinUsers: 6,
+				MaxUsers: 2,
+				Price:    10.23,
+				Link:     "http://somelink.com",
+			},
+			fail: true,
+		},
+		{
+			title: "fails to insert event with no Link",
+			event: &models.Event{
+				Name:     "event name",
+				OwnerID:  user.ID,
+				Time:     time.Now(),
+				Location: "over there!",
+				MinUsers: 3,
+				MaxUsers: 7,
+				Price:    10.23,
+			},
+			fail: true,
+		},
+		{
+			title: "successfully inserts event with no Price",
+			event: &models.Event{
+				Name:     "event name",
+				OwnerID:  user.ID,
+				Time:     time.Now(),
+				Location: "over there!",
+				MinUsers: 3,
+				MaxUsers: 7,
+				Link:     "http://somelink.com",
+			},
+			fail: false,
+		},
+		{
+			title: "successfully inserts an event",
+			event: event,
+			fail:  false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	cleanTables(db.Conn)
+
+	// insert duplicate
+	db.Conn.Model(user).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			err := db.InsertEvent(tt.event)
+			if tt.fail {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+				db.Conn.Model(tt.event).Where("id = ?", tt.event.ID).Delete()
+			}
 		})
 	}
 }
