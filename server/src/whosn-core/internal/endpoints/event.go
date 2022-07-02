@@ -96,43 +96,45 @@ func UpdateEvent(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "UpdateEvent", "actorID": actorID, "eventID": eventID})
 	ll.Info("Endpoint Hit")
 
-	//event, err := ds.GetEventByID(eventID)
-	//if err != nil {
-	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	ctx.Abort()
-	//	return
-	//}
-	//
-	//if event.OwnerID != actorID {
-	//	ll.Warn("Unauthorized")
-	//	ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to update event"})
-	//	ctx.Abort()
-	//	return
-	//}
-	//
-	//var eventUpdate models.Event
-	//if err := ctx.BindJSON(&eventUpdate); err != nil {
-	//	ll.Warn("Failed to unmarshall request body")
-	//	ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	//	ctx.Abort()
-	//	return
-	//}
-	//
-	//if eventUpdate.MinUsers > eventUpdate.MaxUsers {
-	//	ll.Warn("MinUsers must be less than MaxUser")
-	//	ctx.JSON(http.StatusBadRequest, gin.H{"error": "MinUsers must be less than MaxUser"})
-	//	ctx.Abort()
-	//	return
-	//}
-	//
-	//event, err = ds.UpdateEventByID(eventUpdate, eventID)
-	//if err != nil {
-	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	ctx.Abort()
-	//	return
-	//}
-	//
-	//ctx.JSON(http.StatusOK, event)
+	var event models.Event
+	if err := ctx.BindJSON(&event); err != nil {
+		ll.Warn("Failed to unmarshall request body")
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	ds, ok := ctx.Value("DB").(*data.PGStore)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not get database from context"})
+		ctx.Abort()
+		return
+	}
+
+	originalEvent, err := ds.GetEventByID(eventID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	if originalEvent.OwnerID != actorID {
+		ll.Warn("Unauthorized")
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to update event"})
+		ctx.Abort()
+		return
+	}
+
+	event.ConstructUpdate(originalEvent)
+
+	err = ds.UpdateEventByID(&event, eventID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	ctx.JSON(http.StatusOK, event)
 }
 
 func DeleteEvent(ctx *gin.Context) {

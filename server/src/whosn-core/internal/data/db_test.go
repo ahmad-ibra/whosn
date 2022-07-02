@@ -628,3 +628,92 @@ func TestDeleteEventByID(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdateEventByID(t *testing.T) {
+	createTime := time.Now().UTC()
+	updateTime := time.Now().UTC().Add(time.Hour * time.Duration(5))
+
+	user := &models.User{
+		ID:          "f1777653-0378-4b75-b8a2-4305b170917d",
+		Name:        "some name",
+		UserName:    "username",
+		Password:    "password",
+		Email:       "email@foo.bar",
+		PhoneNumber: "604-555-5555",
+	}
+
+	event := &models.Event{
+		ID:        "9b73daa3-c8e5-4a94-b638-4877f5edcc4f",
+		Name:      "event name",
+		OwnerID:   user.ID,
+		Time:      createTime,
+		Location:  "over there!",
+		MinUsers:  1,
+		MaxUsers:  4,
+		Price:     10.23,
+		Link:      "http://somelink.com",
+		CreatedAt: createTime,
+		UpdatedAt: createTime,
+	}
+
+	updatedEvent := &models.Event{
+		ID:        "9b73daa3-c8e5-4a94-b638-4877f5edcc4f",
+		Name:      "event name",
+		OwnerID:   user.ID,
+		Time:      createTime,
+		Location:  "over there!",
+		MinUsers:  1,
+		MaxUsers:  4,
+		Price:     10.23,
+		Link:      "http://somelink.com",
+		CreatedAt: createTime,
+		UpdatedAt: updateTime,
+	}
+
+	var tests = []struct {
+		title    string
+		id       string
+		expEvent *models.Event
+		fail     bool
+	}{
+		{
+			title:    "fails to update user if ID is not a uuid",
+			id:       "notInDB",
+			expEvent: event,
+			fail:     true,
+		},
+		{
+			title:    "returns no error if ID is not in db",
+			id:       "8d5db8fa-85bb-44e1-9a93-4fdd3c866ccc",
+			expEvent: event,
+			fail:     false,
+		},
+		{
+			title:    "successfully updates user in db",
+			id:       event.ID,
+			expEvent: updatedEvent,
+			fail:     false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	cleanTables(db.Conn)
+
+	// insert user
+	db.Conn.Model(user).Insert()
+	db.Conn.Model(event).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			err := db.UpdateEventByID(updatedEvent, tt.id)
+			if tt.fail {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+			}
+			upEvent, _ := db.GetEventByID(event.ID)
+			assert.Equal(t, tt.expEvent, upEvent)
+		})
+	}
+}
