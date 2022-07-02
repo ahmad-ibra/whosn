@@ -225,3 +225,54 @@ func TestGetUserByID(t *testing.T) {
 		})
 	}
 }
+
+func TestDeleteUserByID(t *testing.T) {
+	user := &models.User{
+		ID:          "f1777653-0378-4b75-b8a2-4305b170917d",
+		Name:        "some name",
+		UserName:    "testGetUserByUserName",
+		Password:    "password",
+		Email:       "email@foo.bar",
+		PhoneNumber: "604-555-5555",
+	}
+
+	var tests = []struct {
+		title string
+		id    string
+		fail  bool
+	}{
+		{
+			title: "fails to delete user if ID is not a uuid",
+			id:    "notInDB",
+			fail:  true,
+		},
+		{
+			title: "returns no error if user if ID is not in db",
+			id:    "8d5db8fa-85bb-44e1-9a93-4fdd3c866ccc",
+			fail:  false,
+		},
+		{
+			title: "successfully deletes user in db",
+			id:    user.ID,
+			fail:  false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	cleanUsers(db.Conn)
+
+	// insert user
+	db.Conn.Model(user).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			err := db.DeleteUserByID(tt.id)
+			if tt.fail {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+			}
+		})
+	}
+}
