@@ -113,13 +113,60 @@ func TestInsertUser(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.title, func(t *testing.T) {
-
 			err := db.InsertUser(tt.user)
 			if tt.fail {
 				assert.NotNil(t, err)
 			} else {
 				assert.Nil(t, err)
 				db.Conn.Model(tt.user).Where("id = ?", tt.user.ID).Delete()
+			}
+		})
+	}
+}
+
+func TestGetUserByUserName(t *testing.T) {
+	user := &models.User{
+		Name:        "some name",
+		UserName:    "testGetUserByUserName",
+		Password:    "password",
+		Email:       "email@foo.bar",
+		PhoneNumber: "604-555-5555",
+	}
+
+	var tests = []struct {
+		title    string
+		userName string
+		fail     bool
+	}{
+		{
+			title:    "fails to find user not in db",
+			userName: "notInDB",
+			fail:     true,
+		},
+		{
+			title:    "successfully finds user in db",
+			userName: user.UserName,
+			fail:     false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+
+	// clean table
+	db.Conn.Model(user).Where("user_name = ?", user.UserName).Delete()
+
+	// insert user
+	db.Conn.Model(user).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			foundUser, err := db.GetUserByUserName(tt.userName)
+			if tt.fail {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+				assert.Equal(t, tt.userName, foundUser.UserName)
 			}
 		})
 	}
