@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
+
 	"github.com/Ahmad-Ibra/whosn-core/internal/config"
+	"github.com/Ahmad-Ibra/whosn-core/internal/data"
 	"github.com/Ahmad-Ibra/whosn-core/internal/endpoints"
 	"github.com/Ahmad-Ibra/whosn-core/internal/middleware"
 
@@ -9,9 +12,19 @@ import (
 )
 
 func main() {
-	cfg := config.GetConfig()
+	// start db and run migrations
+	db, err := data.NewDB()
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.Ping(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
 	router := initRouter()
-	router.Run(":" + cfg.Port)
+	router.Run(":" + config.GetConfig().Port)
 }
 
 func initRouter() *gin.Engine {

@@ -7,6 +7,7 @@ test:
 	go test ./...
 
 exec:
+	docker-compose down && docker-compose up --build -d
 	go run cmd/main.go
 
 build:

@@ -14,6 +14,12 @@ type Config struct {
 	Port           string
 	JWTKey         string
 	FrontendDomain string
+
+	DBHost     string
+	DBPort     string
+	DBUser     string
+	DBPassword string
+	DBName     string
 }
 
 // SvcName returns the service name
@@ -49,5 +55,11 @@ func initConfig() *Config {
 		Port:           os.Getenv("PORT"),
 		JWTKey:         os.Getenv("JWT_KEY"),
 		FrontendDomain: os.Getenv("FRONTEND_DOMAIN"),
+
+		DBHost:     os.Getenv("POSTGRES_HOST"),
+		DBPort:     os.Getenv("POSTGRES_PORT"),
+		DBUser:     os.Getenv("POSTGRES_USER"),
+		DBPassword: os.Getenv("POSTGRES_PASSWORD"),
+		DBName:     os.Getenv("POSTGRES_DBNAME"),
 	}
 }
