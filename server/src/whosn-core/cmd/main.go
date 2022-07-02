@@ -19,7 +19,6 @@ const (
 func main() {
 	// start db and run migrations
 	pg, err := data.NewDB()
-
 	if err != nil {
 		// TODO: handle this properly
 		panic(err)

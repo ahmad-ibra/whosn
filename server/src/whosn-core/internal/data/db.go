@@ -30,7 +30,13 @@ func NewDB() (*PGStore, error) {
 
 	// run migrations
 	collections := migrations.NewCollection()
-	err := collections.DiscoverSQLMigrations("migrations")
+
+	migrationsDir := "migrations"
+	if cfg.Env == "test" {
+		migrationsDir = "../../migrations"
+	}
+
+	err := collections.DiscoverSQLMigrations(migrationsDir)
 	if err != nil {
 		return nil, err
 	}

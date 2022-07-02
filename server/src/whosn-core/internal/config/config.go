@@ -41,7 +41,7 @@ func GetConfig() *Config {
 // Remember to update .env_example if more env vars have been added
 func initConfig() *Config {
 	env := os.Getenv("ENV")
-	if env != "prod" {
+	if env != "prod" && env != "test" {
 		err := godotenv.Load(".env")
 		if err != nil {
 			ll := log.WithFields(log.Fields{"function": "InitConfig", "error": err})
