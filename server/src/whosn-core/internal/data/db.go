@@ -86,9 +86,9 @@ func (p PGStore) InsertUser(user *models.User) error {
 	return err
 }
 
-func (p PGStore) UpdateUserByID(userUpdate models.User, userID string) (*models.User, error) {
-	//TODO implement me
-	panic("implement me")
+func (p PGStore) UpdateUserByID(user *models.User, userID string) error {
+	_, err := p.Conn.Model(user).Where("id = ?", userID).Update()
+	return err
 }
 
 func (p PGStore) DeleteUserByID(userID string) error {

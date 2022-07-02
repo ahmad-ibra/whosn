@@ -3,6 +3,7 @@ package data
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
 	"github.com/go-pg/pg/v10"
@@ -273,6 +274,79 @@ func TestDeleteUserByID(t *testing.T) {
 			} else {
 				assert.Nil(t, err)
 			}
+		})
+	}
+}
+
+func TestUpdateUserByID(t *testing.T) {
+	createTime := time.Now().UTC()
+	updateTime := time.Now().UTC().Add(time.Hour * time.Duration(5))
+
+	user := &models.User{
+		ID:          "f1777653-0378-4b75-b8a2-4305b170917d",
+		Name:        "some name",
+		UserName:    "username",
+		Password:    "password",
+		Email:       "email@foo.bar",
+		PhoneNumber: "604-555-5555",
+		CreatedAt:   createTime,
+		UpdatedAt:   createTime,
+	}
+
+	updatedUser := &models.User{
+		ID:          "f1777653-0378-4b75-b8a2-4305b170917d",
+		Name:        "new name",
+		UserName:    "updatedUsername",
+		Password:    "newPassword",
+		Email:       "newEmail@foo.bar",
+		PhoneNumber: "604-555-9999",
+		CreatedAt:   createTime,
+		UpdatedAt:   updateTime,
+	}
+
+	var tests = []struct {
+		title   string
+		id      string
+		expUser *models.User
+		fail    bool
+	}{
+		{
+			title:   "fails to update user if ID is not a uuid",
+			id:      "notInDB",
+			expUser: user,
+			fail:    true,
+		},
+		{
+			title:   "returns no error if ID is not in db",
+			id:      "8d5db8fa-85bb-44e1-9a93-4fdd3c866ccc",
+			expUser: user,
+			fail:    false,
+		},
+		{
+			title:   "successfully updates user in db",
+			id:      user.ID,
+			expUser: updatedUser,
+			fail:    false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	cleanUsers(db.Conn)
+
+	// insert user
+	db.Conn.Model(user).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			err := db.UpdateUserByID(updatedUser, tt.id)
+			if tt.fail {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+			}
+			upUser, _ := db.GetUserByID(user.ID)
+			assert.Equal(t, tt.expUser, upUser)
 		})
 	}
 }

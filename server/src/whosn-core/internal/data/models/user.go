@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -31,5 +32,33 @@ func (user *User) CheckPassword(providedPassword string) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (user *User) ConstructUpdate(original *User) error {
+	user.ID = original.ID
+	if user.Name == "" {
+		user.Name = original.Name
+	}
+	if user.UserName == "" {
+		user.UserName = original.UserName
+	}
+	if user.Password == "" {
+		user.Password = original.Password
+	} else {
+		if err := user.HashPassword(user.Password); err != nil {
+			log.Warn("Failed to hash password")
+			return err
+		}
+	}
+	if user.Email == "" {
+		user.Email = original.Email
+	}
+	if user.PhoneNumber == "" {
+		user.PhoneNumber = original.PhoneNumber
+	}
+	user.CreatedAt = original.CreatedAt
+	user.UpdatedAt = time.Now().UTC()
+
 	return nil
 }

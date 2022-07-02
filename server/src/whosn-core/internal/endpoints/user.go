@@ -87,22 +87,43 @@ func UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	var userUpdate models.User
-	if err := ctx.BindJSON(&userUpdate); err != nil {
+	var user models.User
+	if err := ctx.BindJSON(&user); err != nil {
 		ll.Warn("Failed to unmarshall request body")
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		ctx.Abort()
 		return
 	}
 
-	//user, err := ds.UpdateUserByID(userUpdate, userID)
-	//if err != nil {
-	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	ctx.Abort()
-	//	return
-	//}
-	//
-	//ctx.JSON(http.StatusOK, user)
+	ds, ok := ctx.Value("DB").(*data.PGStore)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not get database from context"})
+		ctx.Abort()
+		return
+	}
+
+	originalUser, err := ds.GetUserByID(userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	err = user.ConstructUpdate(originalUser)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	err = ds.UpdateUserByID(&user, userID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
 }
 
 func DeleteUser(ctx *gin.Context) {

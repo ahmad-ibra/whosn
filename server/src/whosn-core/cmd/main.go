@@ -32,7 +32,6 @@ func main() {
 		time.Sleep(sleepTime)
 	}
 	if err != nil {
-		// TODO: handle this properly
 		panic(err)
 	}
 

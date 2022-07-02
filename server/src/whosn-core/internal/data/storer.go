@@ -9,7 +9,7 @@ type Storer interface {
 	GetUserByID(userID string) (*models.User, error)
 	GetUserByUserName(userName string) (*models.User, error)
 	InsertUser(user *models.User) error
-	UpdateUserByID(userUpdate models.User, userID string) (*models.User, error)
+	UpdateUserByID(user *models.User, userID string) error
 	DeleteUserByID(userID string) error
 
 	ListJoinedEvents(userID string) (*[]models.Event, error)
