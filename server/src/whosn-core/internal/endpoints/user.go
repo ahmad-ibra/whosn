@@ -22,13 +22,13 @@ func GetUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := ds.GetUserByID(userID)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		ctx.Abort()
-		return
-	}
-	ctx.JSON(http.StatusOK, user)
+	//user, err := ds.GetUserByID(userID)
+	//if err != nil {
+	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	//	ctx.Abort()
+	//	return
+	//}
+	//ctx.JSON(http.StatusOK, user)
 	return
 }
 
@@ -51,15 +51,21 @@ func CreateUser(ctx *gin.Context) {
 	}
 	user.Construct()
 
-	db := ctx.MustGet("DB").(*data.PGStore)
-	err := db.InsertUser(user)
+	ds, ok := ctx.Value("DB").(*data.PGStore)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not get database from context"})
+		ctx.Abort()
+		return
+	}
+
+	insertedUser, err := ds.InsertUser(user)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		ctx.Abort()
 		return
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, *insertedUser)
 }
 
 func UpdateUser(ctx *gin.Context) {
@@ -83,14 +89,14 @@ func UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := ds.UpdateUserByID(userUpdate, userID)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		ctx.Abort()
-		return
-	}
-
-	ctx.JSON(http.StatusOK, user)
+	//user, err := ds.UpdateUserByID(userUpdate, userID)
+	//if err != nil {
+	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	//	ctx.Abort()
+	//	return
+	//}
+	//
+	//ctx.JSON(http.StatusOK, user)
 }
 
 func DeleteUser(ctx *gin.Context) {
@@ -106,12 +112,12 @@ func DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	err := ds.DeleteUserByID(userID)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		ctx.Abort()
-		return
-	}
-
-	ctx.JSON(http.StatusOK, "{}")
+	//err := ds.DeleteUserByID(userID)
+	//if err != nil {
+	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	//	ctx.Abort()
+	//	return
+	//}
+	//
+	//ctx.JSON(http.StatusOK, "{}")
 }

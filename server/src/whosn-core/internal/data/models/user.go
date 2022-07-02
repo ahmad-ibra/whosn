@@ -3,7 +3,6 @@ package models
 import (
 	"time"
 
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -11,7 +10,7 @@ import (
 type User struct {
 	ID          string    `json:"id"`
 	Name        string    `json:"name"`
-	Username    string    `json:"user_name"`
+	UserName    string    `json:"user_name"`
 	Password    string    `json:"password"`
 	Email       string    `json:"email"`
 	PhoneNumber string    `json:"phone_number"`
@@ -39,5 +38,4 @@ func (user *User) Construct() {
 	curTime := time.Now()
 	user.CreatedAt = curTime
 	user.UpdatedAt = curTime
-	user.ID = uuid.New().String()
 }

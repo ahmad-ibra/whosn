@@ -26,7 +26,7 @@ func Auth() gin.HandlerFunc {
 			return
 		}
 
-		db := ctx.MustGet("DB").(*data.PGStore)
+		db := ctx.Value("DB").(*data.PGStore)
 		_, err = db.GetUserByID(actorID)
 		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})

@@ -9,8 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var ds = data.GetInMemoryStore()
-
 type TokenRequest struct {
 	Username string `json:"user_name"`
 	Password string `json:"password"`
@@ -24,8 +22,14 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	db := ctx.MustGet("DB").(*data.PGStore)
-	user, err := db.GetUserByUsername(request.Username)
+	ds, ok := ctx.Value("DB").(*data.PGStore)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not get database from context"})
+		ctx.Abort()
+		return
+	}
+
+	user, err := ds.GetUserByUsername(request.Username)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		ctx.Abort()

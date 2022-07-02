@@ -23,7 +23,7 @@ var (
 type inMemoryStore struct{}
 
 // Compile time check that DataStore implements the Storer interface
-var _ Storer = (*inMemoryStore)(nil)
+//var _ Storer = (*inMemoryStore)(nil)
 
 var lock = &sync.Mutex{}
 var dataStore *inMemoryStore
@@ -138,7 +138,7 @@ func (d *inMemoryStore) GetUserByID(userID string) (*models.User, error) {
 // GetUserByUsername gets a single user in our datasource
 func (d *inMemoryStore) GetUserByUsername(username string) (*models.User, error) {
 	for _, user := range users {
-		if user.Username == username {
+		if user.UserName == username {
 			return &user, nil
 		}
 	}
@@ -166,8 +166,8 @@ func (d *inMemoryStore) UpdateUserByID(userUpdate models.User, userID string) (*
 			if userUpdate.PhoneNumber != "" {
 				user.PhoneNumber = userUpdate.PhoneNumber
 			}
-			if userUpdate.Username != "" {
-				user.Username = userUpdate.Username
+			if userUpdate.UserName != "" {
+				user.UserName = userUpdate.UserName
 			}
 			if userUpdate.Password != "" {
 				user.Password = userUpdate.Password
