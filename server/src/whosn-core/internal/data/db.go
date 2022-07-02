@@ -128,8 +128,9 @@ func (p PGStore) UpdateEventByID(eventUpdate models.Event, eventID string) (*mod
 }
 
 func (p PGStore) DeleteEventByID(eventID string) error {
-	//TODO implement me
-	panic("implement me")
+	event := &models.Event{}
+	_, err := p.Conn.Model(event).Where("id = ?", eventID).Delete()
+	return err
 }
 
 func (p PGStore) GetEventUserByEventIDUserID(eventID string, userID string) (*models.EventUser, error) {

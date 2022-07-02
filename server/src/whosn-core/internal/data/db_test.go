@@ -252,7 +252,7 @@ func TestDeleteUserByID(t *testing.T) {
 			fail:  true,
 		},
 		{
-			title: "returns no error if user if ID is not in db",
+			title: "returns no error if ID is not in db",
 			id:    "8d5db8fa-85bb-44e1-9a93-4fdd3c866ccc",
 			fail:  false,
 		},
@@ -560,6 +560,70 @@ func TestGetEventByID(t *testing.T) {
 			} else {
 				assert.Nil(t, err)
 				assert.Equal(t, tt.id, foundEvent.ID)
+			}
+		})
+	}
+}
+
+func TestDeleteEventByID(t *testing.T) {
+	user := &models.User{
+		ID:          "f1777653-0378-4b75-b8a2-4305b170917d",
+		Name:        "some name",
+		UserName:    "testGetUserByUserName",
+		Password:    "password",
+		Email:       "email@foo.bar",
+		PhoneNumber: "604-555-5555",
+	}
+
+	event := &models.Event{
+		ID:       "9b73daa3-c8e5-4a94-b638-4877f5edcc4f",
+		Name:     "event name",
+		OwnerID:  user.ID,
+		Time:     time.Now(),
+		Location: "over there!",
+		MinUsers: 1,
+		MaxUsers: 4,
+		Price:    10.23,
+		Link:     "http://somelink.com",
+	}
+
+	var tests = []struct {
+		title string
+		id    string
+		fail  bool
+	}{
+		{
+			title: "fails to delete event if ID is not a uuid",
+			id:    "notInDB",
+			fail:  true,
+		},
+		{
+			title: "returns no error if ID is not in db",
+			id:    "8d5db8fa-85bb-44e1-9a93-4fdd3c866ccc",
+			fail:  false,
+		},
+		{
+			title: "successfully deletes event in db",
+			id:    event.ID,
+			fail:  false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	cleanTables(db.Conn)
+
+	// insert user
+	db.Conn.Model(user).Insert()
+	db.Conn.Model(event).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			err := db.DeleteEventByID(tt.id)
+			if tt.fail {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
 			}
 		})
 	}

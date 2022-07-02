@@ -141,28 +141,35 @@ func DeleteEvent(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "DeleteEvent", "actorID": actorID, "eventID": eventID})
 	ll.Info("Endpoint Hit")
 
-	//event, err := ds.GetEventByID(eventID)
-	//if err != nil {
-	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	ctx.Abort()
-	//	return
-	//}
-	//
-	//if event.OwnerID != actorID {
-	//	ll.Warn("Unauthorized")
-	//	ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to update event"})
-	//	ctx.Abort()
-	//	return
-	//}
-	//
-	//err = ds.DeleteEventByID(eventID)
-	//if err != nil {
-	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	ctx.Abort()
-	//	return
-	//}
-	//
-	//ctx.JSON(http.StatusOK, "{}")
+	ds, ok := ctx.Value("DB").(*data.PGStore)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not get database from context"})
+		ctx.Abort()
+		return
+	}
+
+	event, err := ds.GetEventByID(eventID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	if event.OwnerID != actorID {
+		ll.Warn("Unauthorized")
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to update event"})
+		ctx.Abort()
+		return
+	}
+
+	err = ds.DeleteEventByID(eventID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	ctx.JSON(http.StatusOK, "{}")
 }
 
 func JoinEvent(ctx *gin.Context) {
