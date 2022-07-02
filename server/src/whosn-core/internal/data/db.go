@@ -134,13 +134,18 @@ func (p PGStore) DeleteEventByID(eventID string) error {
 }
 
 func (p PGStore) GetEventUserByEventIDUserID(eventID string, userID string) (*models.EventUser, error) {
-	//TODO implement me
-	panic("implement me")
+	eventUser := &models.EventUser{}
+	err := p.Conn.Model(eventUser).Where("event_id = ? AND user_id = ?", eventID, userID).Select()
+	if err != nil {
+		return nil, err
+	}
+
+	return eventUser, nil
 }
 
-func (p PGStore) InsertEventUser(eventUser models.EventUser) error {
-	//TODO implement me
-	panic("implement me")
+func (p PGStore) InsertEventUser(eventUser *models.EventUser) error {
+	_, err := p.Conn.Model(eventUser).Insert()
+	return err
 }
 
 func (p PGStore) DeleteEventUserByID(eventUserID string) error {

@@ -13,7 +13,7 @@ type EventUser struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (eventUser *EventUser) Construct(eventID string, userID string) {
+func (eventUser *EventUser) ConstructCreate(eventID string, userID string) {
 	eventUser.EventID = eventID
 	eventUser.UserID = userID
 }

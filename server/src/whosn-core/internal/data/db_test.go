@@ -27,6 +27,10 @@ func cleanTables(db *pg.DB) {
 	var events []models.Event
 	db.Model(&events).Select()
 	db.Model(&events).Delete()
+
+	var eventUsers []models.EventUser
+	db.Model(&eventUsers).Select()
+	db.Model(&eventUsers).Delete()
 }
 
 func TestInsertUser(t *testing.T) {
@@ -714,6 +718,93 @@ func TestUpdateEventByID(t *testing.T) {
 			}
 			upEvent, _ := db.GetEventByID(event.ID)
 			assert.Equal(t, tt.expEvent, upEvent)
+		})
+	}
+}
+
+func TestGetEventUserByEventIDUserID(t *testing.T) {
+	user := &models.User{
+		ID:          "f1777653-0378-4b75-b8a2-4305b170917d",
+		Name:        "some name",
+		UserName:    "testGetUserByUserName",
+		Password:    "password",
+		Email:       "email@foo.bar",
+		PhoneNumber: "604-555-5555",
+	}
+
+	event := &models.Event{
+		ID:       "9b73daa3-c8e5-4a94-b638-4877f5edcc4f",
+		Name:     "event name",
+		OwnerID:  user.ID,
+		Time:     time.Now(),
+		Location: "over there!",
+		MinUsers: 1,
+		MaxUsers: 4,
+		Price:    10.23,
+		Link:     "http://somelink.com",
+	}
+
+	eventUser := &models.EventUser{
+		ID:      "8693b1eb-96b9-4cc7-bd22-55130a98588d",
+		EventID: event.ID,
+		UserID:  user.ID,
+	}
+
+	var tests = []struct {
+		title   string
+		eventID string
+		userID  string
+		fail    bool
+	}{
+		{
+			title:   "fails to find event_user if userID is not a uuid",
+			eventID: "notInDB",
+			userID:  user.ID,
+			fail:    true,
+		},
+		{
+			title:   "fails to find event_user if eventID is not a uuid",
+			eventID: event.ID,
+			userID:  "notInDB",
+			fail:    true,
+		},
+		{
+			title:   "fails to find event_user if eventID is not in db",
+			eventID: "8d5db8fa-85bb-44e1-9a93-4fdd3c866ccc",
+			userID:  user.ID,
+			fail:    true,
+		},
+		{
+			title:   "fails to find event_user if userID is not in db",
+			eventID: event.ID,
+			userID:  "8d5db8fa-85bb-44e1-9a93-4fdd3c866ccc",
+			fail:    true,
+		},
+		{
+			title:   "successfully finds user in db",
+			eventID: event.ID,
+			userID:  user.ID,
+			fail:    false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	cleanTables(db.Conn)
+	db.Conn.Model(user).Insert()
+	db.Conn.Model(event).Insert()
+	db.Conn.Model(eventUser).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			foundEventUser, err := db.GetEventUserByEventIDUserID(tt.eventID, tt.userID)
+			if tt.fail {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+				assert.Equal(t, tt.userID, foundEventUser.UserID)
+				assert.Equal(t, tt.eventID, foundEventUser.EventID)
+			}
 		})
 	}
 }

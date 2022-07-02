@@ -5,6 +5,7 @@ import (
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/data"
 	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
+	wnerr "github.com/Ahmad-Ibra/whosn-core/internal/errors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
@@ -180,34 +181,41 @@ func JoinEvent(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "JoinEvent", "actorID": actorID, "eventID": eventID})
 	ll.Info("Endpoint Hit")
 
+	ds, ok := ctx.Value("DB").(*data.PGStore)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not get database from context"})
+		ctx.Abort()
+		return
+	}
+
 	// check that event exists
-	//_, err := ds.GetEventByID(eventID)
-	//if err != nil {
-	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	ctx.Abort()
-	//	return
-	//}
-	//
-	//// check that actor hasn't already joined the event
-	//eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
-	//if err != nil {
-	//	if err, ok := err.(*wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
-	//		// actor hasn't joined the event
-	//		eventUser.Construct(eventID, actorID)
-	//		insErr := ds.InsertEventUser(*eventUser)
-	//		if insErr != nil {
-	//			ctx.JSON(http.StatusInternalServerError, gin.H{"error": insErr.Error()})
-	//			ctx.Abort()
-	//			return
-	//		}
-	//	} else {
-	//		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//		ctx.Abort()
-	//		return
-	//	}
-	//}
-	//
-	//ctx.JSON(http.StatusOK, eventUser)
+	_, err := ds.GetEventByID(eventID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	// check that actor hasn't already joined the event
+	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
+	if err != nil {
+		if err, ok := err.(*wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
+			// actor hasn't joined the event
+			eventUser.ConstructCreate(eventID, actorID)
+			insErr := ds.InsertEventUser(eventUser)
+			if insErr != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": insErr.Error()})
+				ctx.Abort()
+				return
+			}
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			ctx.Abort()
+			return
+		}
+	}
+
+	ctx.JSON(http.StatusOK, eventUser)
 }
 
 func LeaveEvent(ctx *gin.Context) {

@@ -20,6 +20,6 @@ type Storer interface {
 	DeleteEventByID(eventID string) error
 
 	GetEventUserByEventIDUserID(eventID string, userID string) (*models.EventUser, error)
-	InsertEventUser(eventUser models.EventUser) error
+	InsertEventUser(eventUser *models.EventUser) error
 	DeleteEventUserByID(eventUserID string) error
 }
