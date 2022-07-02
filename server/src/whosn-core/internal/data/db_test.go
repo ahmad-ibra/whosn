@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
+	"github.com/go-pg/pg/v10"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,6 +16,12 @@ func init() {
 	os.Setenv("POSTGRES_USER", "dev")
 	os.Setenv("POSTGRES_PASSWORD", "pass")
 	os.Setenv("POSTGRES_DBNAME", "whosn")
+}
+
+func cleanUsers(db *pg.DB) {
+	var users []models.User
+	db.Model(&users).Select()
+	db.Model(&users).Delete()
 }
 
 func TestInsertUser(t *testing.T) {
@@ -103,10 +110,7 @@ func TestInsertUser(t *testing.T) {
 
 	// setup db
 	db, _ := NewDB()
-
-	// clean table
-	db.Conn.Model(user).Where("user_name = ?", user.UserName).Delete()
-	db.Conn.Model(user).Where("user_name = ?", duplicateUser.UserName).Delete()
+	cleanUsers(db.Conn)
 
 	// insert duplicate
 	db.Conn.Model(duplicateUser).Insert()
@@ -152,9 +156,7 @@ func TestGetUserByUserName(t *testing.T) {
 
 	// setup db
 	db, _ := NewDB()
-
-	// clean table
-	db.Conn.Model(user).Where("user_name = ?", user.UserName).Delete()
+	cleanUsers(db.Conn)
 
 	// insert user
 	db.Conn.Model(user).Insert()
@@ -167,6 +169,58 @@ func TestGetUserByUserName(t *testing.T) {
 			} else {
 				assert.Nil(t, err)
 				assert.Equal(t, tt.userName, foundUser.UserName)
+			}
+		})
+	}
+}
+
+func TestGetUserByID(t *testing.T) {
+	user := &models.User{
+		ID:          "f1777653-0378-4b75-b8a2-4305b170917d",
+		Name:        "some name",
+		UserName:    "testGetUserByUserName",
+		Password:    "password",
+		Email:       "email@foo.bar",
+		PhoneNumber: "604-555-5555",
+	}
+
+	var tests = []struct {
+		title string
+		id    string
+		fail  bool
+	}{
+		{
+			title: "fails to find user if ID is not a uuid",
+			id:    "notInDB",
+			fail:  true,
+		},
+		{
+			title: "fails to find user if ID is not in db",
+			id:    "8d5db8fa-85bb-44e1-9a93-4fdd3c866ccc",
+			fail:  true,
+		},
+		{
+			title: "successfully finds user in db",
+			id:    user.ID,
+			fail:  false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	cleanUsers(db.Conn)
+
+	// insert user
+	db.Conn.Model(user).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			foundUser, err := db.GetUserByID(tt.id)
+			if tt.fail {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+				assert.Equal(t, tt.id, foundUser.ID)
 			}
 		})
 	}
