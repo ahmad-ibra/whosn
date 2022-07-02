@@ -24,7 +24,8 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	user, err := ds.GetUserByUsername(request.Username)
+	db := ctx.MustGet("DB").(*data.PGStore)
+	user, err := db.GetUserByUsername(request.Username)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		ctx.Abort()

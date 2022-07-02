@@ -3,31 +3,17 @@ package endpoints
 import (
 	"net/http"
 
+	"github.com/Ahmad-Ibra/whosn-core/internal/data"
 	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
-// ListUsers is a temporary endpoint created for dev purposes. It will eventually be removed
-func ListUsers(ctx *gin.Context) {
-	actorID := ctx.GetString("actorID")
-	ll := log.WithFields(log.Fields{"endpoint": "ListUsers", "actorID": actorID})
-	ll.Println("Endpoint Hit")
-
-	users, err := ds.ListAllUsers()
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		ctx.Abort()
-		return
-	}
-	ctx.JSON(http.StatusOK, users)
-}
-
 func GetUser(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
 	userID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "GetUser", "actorID": actorID, "userID": userID})
-	ll.Println("Endpoint Hit")
+	ll.Info("Endpoint Hit")
 
 	if actorID != userID {
 		ll.Warn("Unauthorized")
@@ -48,7 +34,7 @@ func GetUser(ctx *gin.Context) {
 
 func CreateUser(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "CreateUser"})
-	ll.Println("Endpoint Hit")
+	ll.Info("Endpoint Hit")
 
 	var user models.User
 	if err := ctx.BindJSON(&user); err != nil {
@@ -65,7 +51,8 @@ func CreateUser(ctx *gin.Context) {
 	}
 	user.Construct()
 
-	err := ds.InsertUser(user)
+	db := ctx.MustGet("DB").(*data.PGStore)
+	err := db.InsertUser(user)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		ctx.Abort()
@@ -79,7 +66,7 @@ func UpdateUser(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
 	userID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "UpdateUser", "actorID": actorID, "userID": userID})
-	ll.Println("Endpoint Hit")
+	ll.Info("Endpoint Hit")
 
 	if actorID != userID {
 		ll.Warn("Unauthorized")
@@ -110,7 +97,7 @@ func DeleteUser(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
 	userID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "actorID": actorID, "userID": userID})
-	ll.Println("Endpoint Hit")
+	ll.Info("Endpoint Hit")
 
 	if actorID != userID {
 		ll.Warn("Unauthorized")

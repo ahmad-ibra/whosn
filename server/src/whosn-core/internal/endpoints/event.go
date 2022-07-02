@@ -4,29 +4,16 @@ import (
 	"net/http"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
+	wnerr "github.com/Ahmad-Ibra/whosn-core/internal/errors"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
-func ListEvents(ctx *gin.Context) {
-	actorID := ctx.GetString("actorID")
-	ll := log.WithFields(log.Fields{"endpoint": "ListEvents", "actorID": actorID})
-	ll.Println("Endpoint Hit")
-
-	events, err := ds.ListAllEvents()
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		ctx.Abort()
-		return
-	}
-	ctx.JSON(http.StatusOK, events)
-}
-
 func ListJoinedEvents(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
 	ll := log.WithFields(log.Fields{"endpoint": "ListJoinedEvents", "actorID": actorID})
-	ll.Println("Endpoint Hit")
+	ll.Info("Endpoint Hit")
 
 	events, err := ds.ListJoinedEvents(actorID)
 	if err != nil {
@@ -40,7 +27,7 @@ func ListJoinedEvents(ctx *gin.Context) {
 func ListOwnedEvents(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
 	ll := log.WithFields(log.Fields{"endpoint": "ListOwnedEvents", "actorID": actorID})
-	ll.Println("Endpoint Hit")
+	ll.Info("Endpoint Hit")
 
 	events, err := ds.ListOwnedEvents(actorID)
 	if err != nil {
@@ -55,7 +42,7 @@ func GetEvent(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
 	eventID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "GetEvent", "actorID": actorID, "eventID": eventID})
-	ll.Println("Endpoint Hit")
+	ll.Info("Endpoint Hit")
 
 	event, err := ds.GetEventByID(eventID)
 	if err != nil {
@@ -70,7 +57,7 @@ func GetEvent(ctx *gin.Context) {
 func CreateEvent(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
 	ll := log.WithFields(log.Fields{"endpoint": "CreateEvent", "actorID": actorID})
-	ll.Println("Endpoint Hit")
+	ll.Info("Endpoint Hit")
 
 	var event models.Event
 	if err := ctx.BindJSON(&event); err != nil {
@@ -101,7 +88,7 @@ func UpdateEvent(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
 	eventID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "UpdateEvent", "actorID": actorID, "eventID": eventID})
-	ll.Println("Endpoint Hit")
+	ll.Info("Endpoint Hit")
 
 	event, err := ds.GetEventByID(eventID)
 	if err != nil {
@@ -146,7 +133,7 @@ func DeleteEvent(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
 	eventID := ctx.Param("id")
 	ll := log.WithFields(log.Fields{"endpoint": "DeleteEvent", "actorID": actorID, "eventID": eventID})
-	ll.Println("Endpoint Hit")
+	ll.Info("Endpoint Hit")
 
 	event, err := ds.GetEventByID(eventID)
 	if err != nil {
@@ -169,5 +156,70 @@ func DeleteEvent(ctx *gin.Context) {
 		return
 	}
 
+	ctx.JSON(http.StatusOK, "{}")
+}
+
+func JoinEvent(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
+	eventID := ctx.Param("id")
+	ll := log.WithFields(log.Fields{"endpoint": "JoinEvent", "actorID": actorID, "eventID": eventID})
+	ll.Info("Endpoint Hit")
+
+	// check that event exists
+	_, err := ds.GetEventByID(eventID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	// check that actor hasn't already joined the event
+	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
+	if err != nil {
+		if err, ok := err.(*wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
+			// actor hasn't joined the event
+			eventUser.Construct(eventID, actorID)
+			insErr := ds.InsertEventUser(*eventUser)
+			if insErr != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": insErr.Error()})
+				ctx.Abort()
+				return
+			}
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			ctx.Abort()
+			return
+		}
+	}
+
+	ctx.JSON(http.StatusOK, eventUser)
+}
+
+func LeaveEvent(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
+	eventID := ctx.Param("id")
+	ll := log.WithFields(log.Fields{"endpoint": "LeaveEvent", "actorID": actorID, "eventID": eventID})
+	ll.Info("Endpoint Hit")
+
+	// check that actor has joined the event
+	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
+	if err != nil {
+		if err, ok := err.(*wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
+			// actor not in event, no need to leave
+			ctx.JSON(http.StatusOK, "{}")
+			ctx.Abort()
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			ctx.Abort()
+			return
+		}
+	}
+
+	err = ds.DeleteEventUserByID(eventUser.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
 	ctx.JSON(http.StatusOK, "{}")
 }

@@ -39,11 +39,6 @@ func GetInMemoryStore() *inMemoryStore {
 
 // TODO: Ensure all db changing functions are thread safe
 
-// ListAllEvents gets every event in our datasource
-func (d *inMemoryStore) ListAllEvents() (*[]models.Event, error) {
-	return &events, nil
-}
-
 // ListJoinedEvents gets every joined event in our datasource
 func (d *inMemoryStore) ListJoinedEvents(userID string) (*[]models.Event, error) {
 	var joinedEvents []models.Event
@@ -130,11 +125,6 @@ func (d *inMemoryStore) DeleteEventByID(eventID string) error {
 	return wnerr.NewError(http.StatusNotFound, "event not found")
 }
 
-// ListAllUsers gets every event in our datasource
-func (d *inMemoryStore) ListAllUsers() (*[]models.User, error) {
-	return &users, nil
-}
-
 // GetUserByID gets a single user in our datasource
 func (d *inMemoryStore) GetUserByID(userID string) (*models.User, error) {
 	for _, user := range users {
@@ -197,11 +187,6 @@ func (d *inMemoryStore) DeleteUserByID(userID string) error {
 		}
 	}
 	return wnerr.NewError(http.StatusNotFound, "user not found")
-}
-
-// ListAllEventUsers gets every eventUser in our datasource
-func (d *inMemoryStore) ListAllEventUsers() (*[]models.EventUser, error) {
-	return &eventUsers, nil
 }
 
 // GetEventUserByEventIDUserID gets a single eventUser in our datasource
