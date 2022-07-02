@@ -4,6 +4,7 @@ mocks:
 	mockery --case underscore --name=Storer --dir ./internal/data --output ./internal/data/mocks
 
 test:
+	docker-compose down && docker-compose up --build -d
 	go test ./...
 
 exec:

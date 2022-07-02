@@ -6,11 +6,8 @@ import (
 	"github.com/Ahmad-Ibra/whosn-core/internal/auth"
 	"github.com/Ahmad-Ibra/whosn-core/internal/config"
 	"github.com/Ahmad-Ibra/whosn-core/internal/data"
-
 	"github.com/gin-gonic/gin"
 )
-
-var ds = data.GetInMemoryStore()
 
 func Auth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -29,7 +26,8 @@ func Auth() gin.HandlerFunc {
 			return
 		}
 
-		_, err = ds.GetUserByID(actorID)
+		db := ctx.Value("DB").(*data.PGStore)
+		_, err = db.GetUserByID(actorID)
 		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			ctx.Abort()

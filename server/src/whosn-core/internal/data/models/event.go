@@ -4,8 +4,6 @@ import (
 	"time"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/config"
-
-	"github.com/google/uuid"
 )
 
 // Event holds data coming from the events table
@@ -24,10 +22,6 @@ type Event struct {
 }
 
 func (event *Event) Construct(ownerID string) {
-	event.ID = uuid.New().String()
-	curTime := time.Now()
-	event.CreatedAt = curTime
-	event.UpdatedAt = curTime
 	event.OwnerID = ownerID
 	event.Link = generateEventLink(event.ID)
 }

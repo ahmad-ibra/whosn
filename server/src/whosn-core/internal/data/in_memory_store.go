@@ -23,7 +23,7 @@ var (
 type inMemoryStore struct{}
 
 // Compile time check that DataStore implements the Storer interface
-var _ Storer = (*inMemoryStore)(nil)
+//var _ Storer = (*inMemoryStore)(nil)
 
 var lock = &sync.Mutex{}
 var dataStore *inMemoryStore
@@ -38,11 +38,6 @@ func GetInMemoryStore() *inMemoryStore {
 }
 
 // TODO: Ensure all db changing functions are thread safe
-
-// ListAllEvents gets every event in our datasource
-func (d *inMemoryStore) ListAllEvents() (*[]models.Event, error) {
-	return &events, nil
-}
 
 // ListJoinedEvents gets every joined event in our datasource
 func (d *inMemoryStore) ListJoinedEvents(userID string) (*[]models.Event, error) {
@@ -130,11 +125,6 @@ func (d *inMemoryStore) DeleteEventByID(eventID string) error {
 	return wnerr.NewError(http.StatusNotFound, "event not found")
 }
 
-// ListAllUsers gets every event in our datasource
-func (d *inMemoryStore) ListAllUsers() (*[]models.User, error) {
-	return &users, nil
-}
-
 // GetUserByID gets a single user in our datasource
 func (d *inMemoryStore) GetUserByID(userID string) (*models.User, error) {
 	for _, user := range users {
@@ -148,7 +138,7 @@ func (d *inMemoryStore) GetUserByID(userID string) (*models.User, error) {
 // GetUserByUsername gets a single user in our datasource
 func (d *inMemoryStore) GetUserByUsername(username string) (*models.User, error) {
 	for _, user := range users {
-		if user.Username == username {
+		if user.UserName == username {
 			return &user, nil
 		}
 	}
@@ -176,8 +166,8 @@ func (d *inMemoryStore) UpdateUserByID(userUpdate models.User, userID string) (*
 			if userUpdate.PhoneNumber != "" {
 				user.PhoneNumber = userUpdate.PhoneNumber
 			}
-			if userUpdate.Username != "" {
-				user.Username = userUpdate.Username
+			if userUpdate.UserName != "" {
+				user.UserName = userUpdate.UserName
 			}
 			if userUpdate.Password != "" {
 				user.Password = userUpdate.Password
@@ -197,11 +187,6 @@ func (d *inMemoryStore) DeleteUserByID(userID string) error {
 		}
 	}
 	return wnerr.NewError(http.StatusNotFound, "user not found")
-}
-
-// ListAllEventUsers gets every eventUser in our datasource
-func (d *inMemoryStore) ListAllEventUsers() (*[]models.EventUser, error) {
-	return &eventUsers, nil
 }
 
 // GetEventUserByEventIDUserID gets a single eventUser in our datasource
