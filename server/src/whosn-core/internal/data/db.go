@@ -62,8 +62,13 @@ func NewDB() (*PGStore, error) {
 }
 
 func (p PGStore) GetUserByID(userID string) (*models.User, error) {
-	//TODO implement me
-	panic("implement me")
+	user := &models.User{}
+	err := p.Conn.Model(user).Where("id = ?", userID).Select()
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (p PGStore) GetUserByUserName(userName string) (*models.User, error) {
@@ -87,8 +92,9 @@ func (p PGStore) UpdateUserByID(userUpdate models.User, userID string) (*models.
 }
 
 func (p PGStore) DeleteUserByID(userID string) error {
-	//TODO implement me
-	panic("implement me")
+	user := &models.User{}
+	_, err := p.Conn.Model(user).Where("id = ?", userID).Delete()
+	return err
 }
 
 func (p PGStore) ListJoinedEvents(userID string) (*[]models.Event, error) {
