@@ -3,7 +3,6 @@ package data
 import (
 	"fmt"
 	"net/http"
-	"path/filepath"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/config"
 	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
@@ -25,12 +24,15 @@ func NewDB() (*PGStore, error) {
 
 	var opts *pg.Options
 	var err error
+	var migrationsDir string
 
 	if cfg.Env == "prod" {
 		opts, err = pg.ParseURL(cfg.DBUrl)
 		if err != nil {
 			return nil, err
 		}
+		migrationsDir = "/app/server/src/whosn-core/migrations"
+
 	} else {
 		opts = &pg.Options{
 			Addr:     fmt.Sprintf("%s:%s", cfg.DBHost, cfg.DBPort),
@@ -38,45 +40,31 @@ func NewDB() (*PGStore, error) {
 			Password: cfg.DBPassword,
 			Database: cfg.DBName,
 		}
+		if cfg.Env == "test" {
+			migrationsDir = "../../migrations"
+		} else if cfg.Env == "dev" {
+			migrationsDir = "migrations"
+		}
 	}
+
 	// connect to db
 	db := pg.Connect(opts)
 
 	// run migrations
 	collections := migrations.NewCollection()
 
-	migrationsDir := "migrations"
-	if cfg.Env == "test" {
-		migrationsDir = "../../migrations"
-	} else if cfg.Env == "prod" {
-		migrationsDir = "/app/server/src/whosn-core/migrations"
-		log.Info(fmt.Sprintf("Supposed to setup proper migrationsDir here, for now using %v\n", migrationsDir))
-	}
-
-	// testing stuff--------
-	dir, err := filepath.Abs(migrationsDir)
-	if err != nil {
-		log.Error(fmt.Sprintf("error reading dir: %v\n", migrationsDir))
-	}
-
-	log.Info(fmt.Sprintf("absolute filepath is: %v\n", dir))
-	//----------------------
-
 	err = collections.DiscoverSQLMigrations(migrationsDir)
 	if err != nil {
-		log.Error(fmt.Sprintf("error discovering SQL migrations: %v\n", err))
 		return nil, err
 	}
 
 	_, _, err = collections.Run(db, "init")
 	if err != nil {
-		log.Error(fmt.Sprintf("error running init migration: %v\n", err))
 		return nil, err
 	}
 
 	oldV, newV, err := collections.Run(db, "up")
 	if err != nil {
-		log.Error(fmt.Sprintf("error running up migration: %v\n", err))
 		return nil, err
 	}
 
