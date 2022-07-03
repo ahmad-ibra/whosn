@@ -49,6 +49,7 @@ func NewDB() (*PGStore, error) {
 	if cfg.Env == "test" {
 		migrationsDir = "../../migrations"
 	} else if cfg.Env == "prod" {
+		migrationsDir = "/app/server/src/whosn-core/migrations"
 		log.Info(fmt.Sprintf("Supposed to setup proper migrationsDir here, for now using %v\n", migrationsDir))
 	}
 
