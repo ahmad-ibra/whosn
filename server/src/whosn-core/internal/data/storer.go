@@ -15,11 +15,11 @@ type Storer interface {
 	ListJoinedEvents(userID string) (*[]models.Event, error)
 	ListOwnedEvents(userID string) (*[]models.Event, error)
 	GetEventByID(eventID string) (*models.Event, error)
-	InsertEvent(event models.Event) error
-	UpdateEventByID(eventUpdate models.Event, eventID string) (*models.Event, error)
+	InsertEvent(event *models.Event) error
+	UpdateEventByID(event *models.Event, eventID string) error
 	DeleteEventByID(eventID string) error
 
 	GetEventUserByEventIDUserID(eventID string, userID string) (*models.EventUser, error)
-	InsertEventUser(eventUser models.EventUser) error
-	DeleteEventUserByID(eventUserID string) error
+	InsertEventUser(eventUser *models.EventUser) error
+	DeleteEventUserByEventIDUserID(eventID string, userID string) error
 }

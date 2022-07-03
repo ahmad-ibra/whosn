@@ -2,9 +2,11 @@ package data
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/config"
 	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
+	wnerr "github.com/Ahmad-Ibra/whosn-core/internal/errors"
 	"github.com/go-pg/migrations/v8"
 	"github.com/go-pg/pg/v10"
 	log "github.com/sirupsen/logrus"
@@ -98,46 +100,80 @@ func (p PGStore) DeleteUserByID(userID string) error {
 }
 
 func (p PGStore) ListJoinedEvents(userID string) (*[]models.Event, error) {
-	//TODO implement me
-	panic("implement me")
+	var eventUsers []models.EventUser
+	err := p.Conn.Model(&eventUsers).Where("user_id = ?", userID).Select()
+	if err != nil {
+		return nil, err
+	}
+
+	var events []models.Event
+	for _, eu := range eventUsers {
+		curEvent, err := p.GetEventByID(eu.EventID)
+		if err != nil {
+			return nil, err
+		}
+		events = append(events, *curEvent)
+	}
+
+	return &events, nil
+
 }
 
 func (p PGStore) ListOwnedEvents(userID string) (*[]models.Event, error) {
-	//TODO implement me
-	panic("implement me")
+	var events []models.Event
+	err := p.Conn.Model(&events).Where("owner_id = ?", userID).Select()
+	if err != nil {
+		return nil, err
+	}
+	return &events, nil
 }
 
 func (p PGStore) GetEventByID(eventID string) (*models.Event, error) {
-	//TODO implement me
-	panic("implement me")
+	event := &models.Event{}
+	err := p.Conn.Model(event).Where("id = ?", eventID).Select()
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
 }
 
-func (p PGStore) InsertEvent(event models.Event) error {
-	//TODO implement me
-	panic("implement me")
+func (p PGStore) InsertEvent(event *models.Event) error {
+	_, err := p.Conn.Model(event).Insert()
+	return err
 }
 
-func (p PGStore) UpdateEventByID(eventUpdate models.Event, eventID string) (*models.Event, error) {
-	//TODO implement me
-	panic("implement me")
+func (p PGStore) UpdateEventByID(event *models.Event, eventID string) error {
+	_, err := p.Conn.Model(event).Where("id = ?", eventID).Update()
+	return err
 }
 
 func (p PGStore) DeleteEventByID(eventID string) error {
-	//TODO implement me
-	panic("implement me")
+	event := &models.Event{}
+	_, err := p.Conn.Model(event).Where("id = ?", eventID).Delete()
+	return err
 }
 
 func (p PGStore) GetEventUserByEventIDUserID(eventID string, userID string) (*models.EventUser, error) {
-	//TODO implement me
-	panic("implement me")
+	eventUser := &models.EventUser{}
+	err := p.Conn.Model(eventUser).Where("event_id = ? AND user_id = ?", eventID, userID).Select()
+	if err != nil {
+		if err.Error() == "pg: no rows in result set" {
+			return nil, wnerr.NewError(http.StatusNotFound, "event not found")
+		}
+		return nil, err
+	}
+
+	return eventUser, nil
 }
 
-func (p PGStore) InsertEventUser(eventUser models.EventUser) error {
-	//TODO implement me
-	panic("implement me")
+func (p PGStore) InsertEventUser(eventUser *models.EventUser) error {
+	_, err := p.Conn.Model(eventUser).Insert()
+	return err
 }
 
-func (p PGStore) DeleteEventUserByID(eventUserID string) error {
-	//TODO implement me
-	panic("implement me")
+func (p PGStore) DeleteEventUserByEventIDUserID(eventID string, userID string) error {
+	eventUser := &models.EventUser{}
+	_, err := p.Conn.Model(eventUser).Where("event_id = ? AND user_id = ?", eventID, userID).Delete()
+	return err
 }

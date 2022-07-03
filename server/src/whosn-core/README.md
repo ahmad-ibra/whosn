@@ -41,20 +41,17 @@ Finally, run the following command to deploy the app:
 Below is a list of all the available endpoints:
 ```
 GET    /_hc
-POST   /api/v1/login
 POST   /api/v1/user
-GET    /api/v1/secured/users
+POST   /api/v1/login
 DELETE /api/v1/secured/user/:id
 PUT    /api/v1/secured/user/:id
 GET    /api/v1/secured/user/:id
-GET    /api/v1/secured/events
 GET    /api/v1/secured/events/owned
 GET    /api/v1/secured/events/joined
 DELETE /api/v1/secured/event/:id
 PUT    /api/v1/secured/event/:id
 GET    /api/v1/secured/event/:id
 POST   /api/v1/secured/event
-GET    /api/v1/secured/event_users
 GET    /api/v1/secured/event/:id/join
 GET    /api/v1/secured/event/:id/leave
 ```

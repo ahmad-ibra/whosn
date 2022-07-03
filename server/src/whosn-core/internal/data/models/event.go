@@ -21,9 +21,35 @@ type Event struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (event *Event) Construct(ownerID string) {
+func (event *Event) ConstructCreate(ownerID string) {
 	event.OwnerID = ownerID
 	event.Link = generateEventLink(event.ID)
+}
+
+func (event *Event) ConstructUpdate(original *Event) {
+	event.ID = original.ID
+	if event.Name == "" {
+		event.Name = original.Name
+	}
+	event.OwnerID = original.OwnerID
+	if event.Time.IsZero() {
+		event.Time = original.Time
+	}
+	if event.Location == "" {
+		event.Location = original.Location
+	}
+	if event.MinUsers == 0 {
+		event.MinUsers = original.MinUsers
+	}
+	if event.MaxUsers == 0 {
+		event.MaxUsers = original.MaxUsers
+	}
+	if event.Price == 0 {
+		event.Price = original.Price
+	}
+	event.Link = original.Link
+	event.CreatedAt = original.CreatedAt
+	event.UpdatedAt = time.Now().UTC()
 }
 
 func generateEventLink(eventID string) string {
