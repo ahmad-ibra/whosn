@@ -15,6 +15,7 @@ type Config struct {
 	JWTKey         string
 	FrontendDomain string
 
+	DBUrl      string
 	DBHost     string
 	DBPort     string
 	DBUser     string
@@ -56,6 +57,7 @@ func initConfig() *Config {
 		JWTKey:         os.Getenv("JWT_KEY"),
 		FrontendDomain: os.Getenv("FRONTEND_DOMAIN"),
 
+		DBUrl:      os.Getenv("DATABASE_URL"),
 		DBHost:     os.Getenv("POSTGRES_HOST"),
 		DBPort:     os.Getenv("POSTGRES_PORT"),
 		DBUser:     os.Getenv("POSTGRES_USER"),

@@ -22,13 +22,24 @@ var _ Storer = (*PGStore)(nil)
 func NewDB() (*PGStore, error) {
 	cfg := config.GetConfig()
 
+	var opts *pg.Options
+	var err error
+
+	if cfg.Env == "prod" {
+		opts, err = pg.ParseURL(cfg.DBUrl)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		opts = &pg.Options{
+			Addr:     fmt.Sprintf("%s:%s", cfg.DBHost, cfg.DBPort),
+			User:     cfg.DBUser,
+			Password: cfg.DBPassword,
+			Database: cfg.DBName,
+		}
+	}
 	// connect to db
-	db := pg.Connect(&pg.Options{
-		Addr:     fmt.Sprintf("%s:%s", cfg.DBHost, cfg.DBPort),
-		User:     cfg.DBUser,
-		Password: cfg.DBPassword,
-		Database: cfg.DBName,
-	})
+	db := pg.Connect(opts)
 
 	// run migrations
 	collections := migrations.NewCollection()
@@ -38,7 +49,7 @@ func NewDB() (*PGStore, error) {
 		migrationsDir = "../../migrations"
 	}
 
-	err := collections.DiscoverSQLMigrations(migrationsDir)
+	err = collections.DiscoverSQLMigrations(migrationsDir)
 	if err != nil {
 		return nil, err
 	}
