@@ -62,7 +62,7 @@ func initRouter(db *data.PGStore) *gin.Engine {
 			apiV1Secured.GET("/user/:id", endpoints.GetUser)
 
 			// event endpoints
-			apiV1Secured.GET("/events/owned", endpoints.ListOwnedEvents)   // TODO
+			apiV1Secured.GET("/events/owned", endpoints.ListOwnedEvents)
 			apiV1Secured.GET("/events/joined", endpoints.ListJoinedEvents) // TODO
 			apiV1Secured.DELETE("event/:id", endpoints.DeleteEvent)
 			apiV1Secured.PUT("/event/:id", endpoints.UpdateEvent)

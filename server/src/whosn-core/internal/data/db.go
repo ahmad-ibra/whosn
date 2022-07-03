@@ -105,8 +105,12 @@ func (p PGStore) ListJoinedEvents(userID string) (*[]models.Event, error) {
 }
 
 func (p PGStore) ListOwnedEvents(userID string) (*[]models.Event, error) {
-	//TODO implement me
-	panic("implement me")
+	var events []models.Event
+	err := p.Conn.Model(&events).Where("owner_id = ?", userID).Select()
+	if err != nil {
+		return nil, err
+	}
+	return &events, nil
 }
 
 func (p PGStore) GetEventByID(eventID string) (*models.Event, error) {

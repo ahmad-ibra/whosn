@@ -29,13 +29,20 @@ func ListOwnedEvents(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "ListOwnedEvents", "actorID": actorID})
 	ll.Info("Endpoint Hit")
 
-	//events, err := ds.ListOwnedEvents(actorID)
-	//if err != nil {
-	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	ctx.Abort()
-	//	return
-	//}
-	//ctx.JSON(http.StatusOK, events)
+	ds, ok := ctx.Value("DB").(*data.PGStore)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not get database from context"})
+		ctx.Abort()
+		return
+	}
+
+	events, err := ds.ListOwnedEvents(actorID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+	ctx.JSON(http.StatusOK, events)
 }
 
 func GetEvent(ctx *gin.Context) {
