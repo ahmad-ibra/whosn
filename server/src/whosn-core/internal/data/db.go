@@ -2,9 +2,11 @@ package data
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/config"
 	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
+	wnerr "github.com/Ahmad-Ibra/whosn-core/internal/errors"
 	"github.com/go-pg/migrations/v8"
 	"github.com/go-pg/pg/v10"
 	log "github.com/sirupsen/logrus"
@@ -137,6 +139,9 @@ func (p PGStore) GetEventUserByEventIDUserID(eventID string, userID string) (*mo
 	eventUser := &models.EventUser{}
 	err := p.Conn.Model(eventUser).Where("event_id = ? AND user_id = ?", eventID, userID).Select()
 	if err != nil {
+		if err.Error() == "pg: no rows in result set" {
+			return nil, wnerr.NewError(http.StatusNotFound, "event not found")
+		}
 		return nil, err
 	}
 

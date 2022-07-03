@@ -201,6 +201,7 @@ func JoinEvent(ctx *gin.Context) {
 	if err != nil {
 		if err, ok := err.(*wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
 			// actor hasn't joined the event
+			eventUser = &models.EventUser{}
 			eventUser.ConstructCreate(eventID, actorID)
 			insErr := ds.InsertEventUser(eventUser)
 			if insErr != nil {
