@@ -190,6 +190,29 @@ func (_m *Storer) InsertUser(user *models.User) error {
 	return r0
 }
 
+// ListEventUsers provides a mock function with given fields: eventID
+func (_m *Storer) ListEventUsers(eventID string) (*[]models.EventUsersIn, error) {
+	ret := _m.Called(eventID)
+
+	var r0 *[]models.EventUsersIn
+	if rf, ok := ret.Get(0).(func(string) *[]models.EventUsersIn); ok {
+		r0 = rf(eventID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]models.EventUsersIn)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(eventID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // ListJoinedEvents provides a mock function with given fields: userID
 func (_m *Storer) ListJoinedEvents(userID string) (*[]models.Event, error) {
 	ret := _m.Called(userID)
