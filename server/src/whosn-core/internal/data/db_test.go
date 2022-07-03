@@ -1094,3 +1094,232 @@ func TestListJoinedEvents(t *testing.T) {
 		})
 	}
 }
+
+func TestListEventUsers(t *testing.T) {
+	userID1 := uuid.New().String()
+	userID2 := uuid.New().String()
+	userID3 := uuid.New().String()
+	userID4 := uuid.New().String()
+	userID5 := uuid.New().String()
+	eventID1 := uuid.New().String()
+	eventID2 := uuid.New().String()
+	eventID3 := uuid.New().String()
+
+	user1 := &models.User{
+		ID:          userID1,
+		Name:        "TestListEventUsers - joined second name",
+		UserName:    "TestListEventUsers-username",
+		Password:    "TestListEventUserspassword",
+		Email:       "TestListEventUsers@foo.bar",
+		PhoneNumber: "604-655-8678",
+	}
+
+	user2 := &models.User{
+		ID:          userID2,
+		Name:        "TestListEventUsers - joined first name2",
+		UserName:    "TestListEventUsers-username2",
+		Password:    "TestListEventUserspassword2",
+		Email:       "TestListEventUsers@foo.bar2",
+		PhoneNumber: "604-655-8678",
+	}
+
+	user3 := &models.User{
+		ID:          userID3,
+		Name:        "TestListEventUsers - joined first name3",
+		UserName:    "TestListEventUsers-username3",
+		Password:    "TestListEventUserspassword3",
+		Email:       "TestListEventUsers@foo.bar3",
+		PhoneNumber: "604-655-8678",
+	}
+
+	user4 := &models.User{
+		ID:          userID4,
+		Name:        "TestListEventUsers - joined first name4",
+		UserName:    "TestListEventUsers-username4",
+		Password:    "TestListEventUserspassword4",
+		Email:       "TestListEventUsers@foo.bar4",
+		PhoneNumber: "604-655-8678",
+	}
+
+	user5 := &models.User{
+		ID:          userID5,
+		Name:        "TestListEventUsers - joined first name5",
+		UserName:    "TestListEventUsers-username5",
+		Password:    "TestListEventUserspassword5",
+		Email:       "TestListEventUsers@foo.bar5",
+		PhoneNumber: "604-655-8678",
+	}
+
+	eventNoMembers := &models.Event{
+		ID:       eventID1,
+		Name:     "TestListEventUsers - event name 1",
+		OwnerID:  user1.ID,
+		Time:     time.Now(),
+		Location: "TestListEventUsers - over there!",
+		MinUsers: 1,
+		MaxUsers: 3,
+		Price:    10.23,
+		Link:     "http://TestListEventUsers.com",
+	}
+
+	eventWithMembersNoWaitlist := &models.Event{
+		ID:       eventID2,
+		Name:     "TestListEventUsers - event name 2",
+		OwnerID:  user1.ID,
+		Time:     time.Now(),
+		Location: "TestListEventUsers - over there!",
+		MinUsers: 1,
+		MaxUsers: 3,
+		Price:    10.23,
+		Link:     "http://TestListEventUsers.com",
+	}
+
+	eventWithMembersAndWaitlist := &models.Event{
+		ID:       eventID3,
+		Name:     "TestListEventUsers - event name 3",
+		OwnerID:  user1.ID,
+		Time:     time.Now(),
+		Location: "TestListEventUsers - over there!",
+		MinUsers: 1,
+		MaxUsers: 3,
+		Price:    10.23,
+		Link:     "http://TestListEventUsers.com",
+	}
+
+	curTime := time.Now().UTC()
+	oneHours := time.Now().UTC().Add(time.Hour * time.Duration(1))
+	twoHours := time.Now().UTC().Add(time.Hour * time.Duration(2))
+	threeHours := time.Now().UTC().Add(time.Hour * time.Duration(3))
+	fourHours := time.Now().UTC().Add(time.Hour * time.Duration(4))
+	fiveHours := time.Now().UTC().Add(time.Hour * time.Duration(5))
+	eventUser1 := &models.EventUser{
+		EventID:   eventWithMembersNoWaitlist.ID,
+		UserID:    user1.ID,
+		CreatedAt: fiveHours, //joining 5 hours later
+	}
+	eventUser2 := &models.EventUser{
+		EventID:   eventWithMembersNoWaitlist.ID,
+		UserID:    user2.ID,
+		CreatedAt: curTime,
+	}
+
+	eventUserWaitlist1 := &models.EventUser{
+		EventID:   eventWithMembersAndWaitlist.ID,
+		UserID:    user1.ID,
+		CreatedAt: threeHours,
+	}
+
+	eventUserWaitlist2 := &models.EventUser{
+		EventID:   eventWithMembersAndWaitlist.ID,
+		UserID:    user2.ID,
+		CreatedAt: twoHours,
+	}
+
+	eventUserWaitlist3 := &models.EventUser{
+		EventID:   eventWithMembersAndWaitlist.ID,
+		UserID:    user3.ID,
+		CreatedAt: fourHours, //joining 5 hours later
+	}
+
+	eventUserWaitlist4 := &models.EventUser{
+		EventID:   eventWithMembersAndWaitlist.ID,
+		UserID:    user4.ID,
+		CreatedAt: oneHours, //joining 5 hours later
+	}
+
+	eventUserWaitlist5 := &models.EventUser{
+		EventID:   eventWithMembersAndWaitlist.ID,
+		UserID:    user5.ID,
+		CreatedAt: curTime, //joining 5 hours later
+	}
+
+	var tests = []struct {
+		title      string
+		eventID    string
+		resultSize int
+		inSize     int
+		fail       bool
+	}{
+		{
+			title:      "returns error when event doesnt exist",
+			eventID:    uuid.New().String(),
+			resultSize: 0,
+			inSize:     0,
+			fail:       true,
+		},
+		{
+			title:      "returns empty list when event has no members",
+			eventID:    eventNoMembers.ID,
+			resultSize: 0,
+			inSize:     0,
+			fail:       false,
+		},
+		{
+			title:      "returns list of users when event has members, none in wait list",
+			eventID:    eventWithMembersNoWaitlist.ID,
+			resultSize: 2,
+			inSize:     2,
+			fail:       false,
+		},
+		{
+			title:      "returns list of users when event has members in and out of wait list",
+			eventID:    eventWithMembersAndWaitlist.ID,
+			resultSize: 5,
+			inSize:     int(eventWithMembersAndWaitlist.MaxUsers),
+			fail:       false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	db.Conn.Model(user1).Insert()
+	db.Conn.Model(user2).Insert()
+	db.Conn.Model(user3).Insert()
+	db.Conn.Model(user4).Insert()
+	db.Conn.Model(user5).Insert()
+	db.Conn.Model(eventNoMembers).Insert()
+	db.Conn.Model(eventWithMembersNoWaitlist).Insert()
+	db.Conn.Model(eventWithMembersAndWaitlist).Insert()
+	db.Conn.Model(eventUser1).Insert()
+	db.Conn.Model(eventUser2).Insert()
+	_, err := db.Conn.Model(eventUserWaitlist1).Insert()
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.Conn.Model(eventUserWaitlist2).Insert()
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.Conn.Model(eventUserWaitlist3).Insert()
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.Conn.Model(eventUserWaitlist4).Insert()
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.Conn.Model(eventUserWaitlist5).Insert()
+	if err != nil {
+		panic(err)
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			eventUsers, err := db.ListEventUsers(tt.eventID)
+			if tt.fail {
+				assert.NotNil(t, err)
+				assert.Nil(t, eventUsers)
+			} else {
+				assert.Nil(t, err)
+				assert.Equal(t, tt.resultSize, len(*eventUsers))
+				for i, eventUser := range *eventUsers {
+					if i < tt.inSize {
+						assert.True(t, eventUser.IsIn)
+					} else {
+						assert.False(t, eventUser.IsIn)
+					}
+				}
+			}
+		})
+	}
+}
