@@ -100,8 +100,23 @@ func (p PGStore) DeleteUserByID(userID string) error {
 }
 
 func (p PGStore) ListJoinedEvents(userID string) (*[]models.Event, error) {
-	//TODO implement me
-	panic("implement me")
+	var eventUsers []models.EventUser
+	err := p.Conn.Model(&eventUsers).Where("user_id = ?", userID).Select()
+	if err != nil {
+		return nil, err
+	}
+
+	var events []models.Event
+	for _, eu := range eventUsers {
+		curEvent, err := p.GetEventByID(eu.EventID)
+		if err != nil {
+			return nil, err
+		}
+		events = append(events, *curEvent)
+	}
+
+	return &events, nil
+
 }
 
 func (p PGStore) ListOwnedEvents(userID string) (*[]models.Event, error) {
