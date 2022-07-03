@@ -868,3 +868,87 @@ func TestInsertEventUser(t *testing.T) {
 		})
 	}
 }
+
+func TestDeleteEventUserByEventIDUserID(t *testing.T) {
+	userID := uuid.New().String()
+	eventID := uuid.New().String()
+
+	user := &models.User{
+		ID:          userID,
+		Name:        "DeleteEventUserByEventIDUserID - name",
+		UserName:    "DeleteEventUserByEventIDUserID-username",
+		Password:    "DeleteEventUserByEventIDUserIDpassword",
+		Email:       "DeleteEventUserByEventIDUserID@foo.bar",
+		PhoneNumber: "604-955-5678",
+	}
+
+	event := &models.Event{
+		ID:       eventID,
+		Name:     "DeleteEventUserByEventIDUserID - event name",
+		OwnerID:  user.ID,
+		Time:     time.Now(),
+		Location: "DeleteEventUserByEventIDUserID - over there!",
+		MinUsers: 1,
+		MaxUsers: 4,
+		Price:    10.23,
+		Link:     "http://TestInsertEventUser.com",
+	}
+
+	eventUser := &models.EventUser{
+		EventID: event.ID,
+		UserID:  user.ID,
+	}
+
+	var tests = []struct {
+		title     string
+		eventUser *models.EventUser
+		fail      bool
+	}{
+		{
+			title: "fails to delete event_user with no EventID",
+			eventUser: &models.EventUser{
+				UserID: eventUser.UserID,
+			},
+			fail: true,
+		},
+		{
+			title: "fails to delete event_user with no UserID",
+			eventUser: &models.EventUser{
+				EventID: eventUser.EventID,
+			},
+			fail: true,
+		},
+		{
+			title: "returns success when deleting an event_user we are not a part of",
+			eventUser: &models.EventUser{
+				EventID: uuid.New().String(),
+				UserID:  uuid.New().String(),
+			},
+			fail: false,
+		},
+		{
+			title:     "successfully deletes an event_user",
+			eventUser: eventUser,
+			fail:      false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	db.Conn.Model(user).Insert()
+	db.Conn.Model(event).Insert()
+	db.Conn.Model(eventUser).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			err := db.DeleteEventUserByEventIDUserID(tt.eventUser.EventID, tt.eventUser.UserID)
+			if tt.fail {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+				foundEventUser, _ := db.GetEventUserByEventIDUserID(tt.eventUser.EventID, tt.eventUser.UserID)
+				assert.Nil(t, foundEventUser)
+			}
+		})
+	}
+}
