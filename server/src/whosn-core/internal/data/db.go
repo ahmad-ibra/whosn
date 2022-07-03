@@ -177,3 +177,45 @@ func (p PGStore) DeleteEventUserByEventIDUserID(eventID string, userID string) e
 	_, err := p.Conn.Model(eventUser).Where("event_id = ? AND user_id = ?", eventID, userID).Delete()
 	return err
 }
+
+func (p PGStore) ListEventUsers(eventID string) (*[]models.EventUsersIn, error) {
+	// get event so we know max participants
+	event, err := p.GetEventByID(eventID)
+	if err != nil {
+		return nil, err
+	}
+
+	// get the eventUsers sorted by created_at time
+	var eventUsers []models.EventUser
+	err = p.Conn.Model(&eventUsers).Where("event_id = ?", eventID).Order("created_at ASC").Select()
+	if err != nil {
+		return nil, err
+	}
+
+	var eventUsersIn []models.EventUsersIn
+
+	// then we iterate over the eventUsers
+	for i, eventUser := range eventUsers {
+		// get the user
+		user, err := p.GetUserByID(eventUser.UserID)
+		if err != nil {
+			return nil, err
+		}
+
+		eui := &models.EventUsersIn{
+			EventID:  eventUser.EventID,
+			UserID:   eventUser.UserID,
+			JoinedAt: eventUser.CreatedAt,
+			Name:     user.Name,
+		}
+
+		if uint64(i) < event.MaxUsers {
+			eui.IsIn = true
+		} else {
+			eui.IsIn = false
+		}
+
+		eventUsersIn = append(eventUsersIn, *eui)
+	}
+	return &eventUsersIn, nil
+}
