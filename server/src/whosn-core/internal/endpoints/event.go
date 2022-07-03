@@ -269,3 +269,25 @@ func LeaveEvent(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, "{}")
 }
+
+func ListEventUsers(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
+	eventID := ctx.Param("id")
+	ll := log.WithFields(log.Fields{"endpoint": "ListEventUsers", "actorID": actorID, "eventID": eventID})
+	ll.Info("Endpoint Hit")
+
+	ds, ok := ctx.Value("DB").(*data.PGStore)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not get database from context"})
+		ctx.Abort()
+		return
+	}
+
+	eventUsersIn, err := ds.ListEventUsers(eventID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+	ctx.JSON(http.StatusOK, eventUsersIn)
+}
