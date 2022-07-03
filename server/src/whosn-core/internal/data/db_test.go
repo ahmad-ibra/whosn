@@ -960,11 +960,81 @@ func TestListOwnedEvents(t *testing.T) {
 
 	user := &models.User{
 		ID:          userID,
-		Name:        "DeleteEventUserByEventIDUserID - name",
-		UserName:    "DeleteEventUserByEventIDUserID-username",
-		Password:    "DeleteEventUserByEventIDUserIDpassword",
-		Email:       "DeleteEventUserByEventIDUserID@foo.bar",
+		Name:        "TestListOwnedEvents - name",
+		UserName:    "TestListOwnedEvents-username",
+		Password:    "TestListOwnedEventspassword",
+		Email:       "TestListOwnedEvents@foo.bar",
 		PhoneNumber: "604-955-5678",
+	}
+
+	event := &models.Event{
+		ID:       eventID,
+		Name:     "TestListOwnedEvents - event name",
+		OwnerID:  user.ID,
+		Time:     time.Now(),
+		Location: "TestListOwnedEvents - over there!",
+		MinUsers: 1,
+		MaxUsers: 4,
+		Price:    10.23,
+		Link:     "http://TestInsertEventUser.com",
+	}
+
+	event2 := &models.Event{
+		ID:       eventID2,
+		Name:     "TestListOwnedEvents - event name2",
+		OwnerID:  user.ID,
+		Time:     time.Now(),
+		Location: "TestListOwnedEvents - over there!2",
+		MinUsers: 1,
+		MaxUsers: 4,
+		Price:    10.23,
+		Link:     "http://TestInsertEventUser2.com",
+	}
+
+	var tests = []struct {
+		title      string
+		userID     string
+		resultSize int
+	}{
+		{
+			title:      "returns empty array when no owned events",
+			userID:     uuid.New().String(),
+			resultSize: 0,
+		},
+		{
+			title:      "successfully returns all owned events",
+			userID:     user.ID,
+			resultSize: 2,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	db.Conn.Model(user).Insert()
+	db.Conn.Model(event).Insert()
+	db.Conn.Model(event2).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			events, err := db.ListOwnedEvents(tt.userID)
+			assert.Nil(t, err)
+			assert.Equal(t, tt.resultSize, len(*events))
+		})
+	}
+}
+
+func TestListJoinedEvents(t *testing.T) {
+	userID := uuid.New().String()
+	eventID := uuid.New().String()
+	eventID2 := uuid.New().String()
+
+	user := &models.User{
+		ID:          userID,
+		Name:        "TestListJoinedEvents - name",
+		UserName:    "TestListJoinedEvents-username",
+		Password:    "TestListJoinedEventspassword",
+		Email:       "TestListJoinedEvents@foo.bar",
+		PhoneNumber: "604-955-8678",
 	}
 
 	event := &models.Event{
@@ -991,6 +1061,11 @@ func TestListOwnedEvents(t *testing.T) {
 		Link:     "http://TestInsertEventUser2.com",
 	}
 
+	eventUser := &models.EventUser{
+		EventID: event.ID,
+		UserID:  user.ID,
+	}
+
 	var tests = []struct {
 		title      string
 		userID     string
@@ -998,16 +1073,9 @@ func TestListOwnedEvents(t *testing.T) {
 		fail       bool
 	}{
 		{
-			title:      "returns empty array when no owned events",
-			userID:     uuid.New().String(),
-			resultSize: 0,
-			fail:       false,
-		},
-		{
 			title:      "successfully returns all owned events",
 			userID:     user.ID,
-			resultSize: 2,
-			fail:       false,
+			resultSize: 1,
 		},
 	}
 
@@ -1016,16 +1084,13 @@ func TestListOwnedEvents(t *testing.T) {
 	db.Conn.Model(user).Insert()
 	db.Conn.Model(event).Insert()
 	db.Conn.Model(event2).Insert()
+	db.Conn.Model(eventUser).Insert()
 
 	for _, tt := range tests {
 		t.Run(tt.title, func(t *testing.T) {
-			events, err := db.ListOwnedEvents(tt.userID)
-			if tt.fail {
-				assert.NotNil(t, err)
-			} else {
-				assert.Nil(t, err)
-				assert.Equal(t, tt.resultSize, len(*events))
-			}
+			events, err := db.ListJoinedEvents(tt.userID)
+			assert.Nil(t, err)
+			assert.Equal(t, tt.resultSize, len(*events))
 		})
 	}
 }
