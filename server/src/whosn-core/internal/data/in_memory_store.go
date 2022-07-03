@@ -207,11 +207,11 @@ func (d *inMemoryStore) InsertEventUser(eventUser models.EventUser) error {
 
 // DeleteEventUserByID deletes the eventUser in the datasource
 func (d *inMemoryStore) DeleteEventUserByID(eventUserID string) error {
-	for i, eventUser := range eventUsers {
-		if eventUser.ID == eventUserID {
-			eventUsers = append(eventUsers[:i], eventUsers[i+1:]...)
-			return nil
-		}
-	}
+	//for i, eventUser := range eventUsers {
+	//	if eventUser.ID == eventUserID {
+	//		eventUsers = append(eventUsers[:i], eventUsers[i+1:]...)
+	//		return nil
+	//	}
+	//}
 	return wnerr.NewError(http.StatusNotFound, "eventUser not found")
 }
