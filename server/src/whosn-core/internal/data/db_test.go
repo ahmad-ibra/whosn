@@ -953,6 +953,119 @@ func TestDeleteEventUserByEventIDUserID(t *testing.T) {
 	}
 }
 
+func TestDeleteEventUserByEventID(t *testing.T) {
+	userID1 := uuid.New().String()
+	userID2 := uuid.New().String()
+	eventID1 := uuid.New().String()
+	eventID2 := uuid.New().String()
+
+	user1 := &models.User{
+		ID:          userID1,
+		Name:        "DeleteEventUserByEventID - name",
+		UserName:    "DeleteEventUserByEventID-username",
+		Password:    "DeleteEventUserByEventIDpassword",
+		Email:       "DeleteEventUserByEventID@foo.bar",
+		PhoneNumber: "604-955-5678",
+	}
+
+	user2 := &models.User{
+		ID:          userID2,
+		Name:        "DeleteEventUserByEventID - name 2",
+		UserName:    "DeleteEventUserByEventID-username 2",
+		Password:    "DeleteEventUserByEventIDpassword 2",
+		Email:       "DeleteEventUserByEventID@foo.bar 2",
+		PhoneNumber: "604-955-5678",
+	}
+
+	event1 := &models.Event{
+		ID:       eventID1,
+		Name:     "DeleteEventUserByEventID - event name",
+		OwnerID:  user1.ID,
+		Time:     time.Now(),
+		Location: "DeleteEventUserByEventID - over there!",
+		MinUsers: 1,
+		MaxUsers: 4,
+		Price:    10.23,
+		Link:     "http://DeleteEventUserByEventID.com",
+	}
+
+	event2 := &models.Event{
+		ID:       eventID2,
+		Name:     "DeleteEventUserByEventID - event name2",
+		OwnerID:  user1.ID,
+		Time:     time.Now(),
+		Location: "DeleteEventUserByEventID - over there!2",
+		MinUsers: 1,
+		MaxUsers: 4,
+		Price:    10.23,
+		Link:     "http://DeleteEventUserByEventID.com",
+	}
+
+	event1User1 := &models.EventUser{
+		EventID: event1.ID,
+		UserID:  user1.ID,
+	}
+
+	event1User2 := &models.EventUser{
+		EventID: event1.ID,
+		UserID:  user2.ID,
+	}
+
+	event2User1 := &models.EventUser{
+		EventID: event2.ID,
+		UserID:  user1.ID,
+	}
+
+	even2User2 := &models.EventUser{
+		EventID: event2.ID,
+		UserID:  user2.ID,
+	}
+
+	var tests = []struct {
+		title          string
+		eventID        string
+		eventUser1Size int
+		eventUser2Size int
+	}{
+		{
+			title:          "deletes nothing when no event exists",
+			eventID:        uuid.New().String(),
+			eventUser1Size: 2,
+			eventUser2Size: 2,
+		},
+		{
+			title:          "deletes only eventUsers from the passed in eventID",
+			eventID:        eventID1,
+			eventUser1Size: 0,
+			eventUser2Size: 2,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	db.Conn.Model(user1).Insert()
+	db.Conn.Model(user2).Insert()
+	db.Conn.Model(event1).Insert()
+	db.Conn.Model(event2).Insert()
+	db.Conn.Model(event1User1).Insert()
+	db.Conn.Model(event1User2).Insert()
+	db.Conn.Model(event2User1).Insert()
+	db.Conn.Model(even2User2).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			err := db.DeleteEventUserByEventID(tt.eventID)
+			assert.Nil(t, err)
+			eventUsers1, err := db.ListEventUsers(eventID1)
+			assert.Nil(t, err)
+			assert.Equal(t, tt.eventUser1Size, len(*eventUsers1))
+			eventUsers2, err := db.ListEventUsers(eventID2)
+			assert.Nil(t, err)
+			assert.Equal(t, tt.eventUser2Size, len(*eventUsers2))
+		})
+	}
+}
+
 func TestListOwnedEvents(t *testing.T) {
 	userID := uuid.New().String()
 	eventID := uuid.New().String()

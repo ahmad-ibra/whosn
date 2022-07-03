@@ -28,6 +28,20 @@ func (_m *Storer) DeleteEventByID(eventID string) error {
 	return r0
 }
 
+// DeleteEventUserByEventID provides a mock function with given fields: eventID
+func (_m *Storer) DeleteEventUserByEventID(eventID string) error {
+	ret := _m.Called(eventID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(eventID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // DeleteEventUserByEventIDUserID provides a mock function with given fields: eventID, userID
 func (_m *Storer) DeleteEventUserByEventIDUserID(eventID string, userID string) error {
 	ret := _m.Called(eventID, userID)

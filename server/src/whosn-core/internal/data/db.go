@@ -94,8 +94,20 @@ func (p PGStore) UpdateUserByID(user *models.User, userID string) error {
 }
 
 func (p PGStore) DeleteUserByID(userID string) error {
+	ownedEvents, err := p.ListOwnedEvents(userID)
+	if err != nil {
+		return err
+	}
+
+	for _, event := range *ownedEvents {
+		err = p.DeleteEventByID(event.ID)
+		if err != nil {
+			return err
+		}
+	}
+
 	user := &models.User{}
-	_, err := p.Conn.Model(user).Where("id = ?", userID).Delete()
+	_, err = p.Conn.Model(user).Where("id = ?", userID).Delete()
 	return err
 }
 
@@ -149,8 +161,13 @@ func (p PGStore) UpdateEventByID(event *models.Event, eventID string) error {
 }
 
 func (p PGStore) DeleteEventByID(eventID string) error {
+	err := p.DeleteEventUserByEventID(eventID)
+	if err != nil {
+		return err
+	}
+
 	event := &models.Event{}
-	_, err := p.Conn.Model(event).Where("id = ?", eventID).Delete()
+	_, err = p.Conn.Model(event).Where("id = ?", eventID).Delete()
 	return err
 }
 
@@ -169,6 +186,12 @@ func (p PGStore) GetEventUserByEventIDUserID(eventID string, userID string) (*mo
 
 func (p PGStore) InsertEventUser(eventUser *models.EventUser) error {
 	_, err := p.Conn.Model(eventUser).Insert()
+	return err
+}
+
+func (p PGStore) DeleteEventUserByEventID(eventID string) error {
+	eventUser := &models.EventUser{}
+	_, err := p.Conn.Model(eventUser).Where("event_id = ?", eventID).Delete()
 	return err
 }
 
