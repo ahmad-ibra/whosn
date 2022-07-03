@@ -952,3 +952,80 @@ func TestDeleteEventUserByEventIDUserID(t *testing.T) {
 		})
 	}
 }
+
+func TestListOwnedEvents(t *testing.T) {
+	userID := uuid.New().String()
+	eventID := uuid.New().String()
+	eventID2 := uuid.New().String()
+
+	user := &models.User{
+		ID:          userID,
+		Name:        "DeleteEventUserByEventIDUserID - name",
+		UserName:    "DeleteEventUserByEventIDUserID-username",
+		Password:    "DeleteEventUserByEventIDUserIDpassword",
+		Email:       "DeleteEventUserByEventIDUserID@foo.bar",
+		PhoneNumber: "604-955-5678",
+	}
+
+	event := &models.Event{
+		ID:       eventID,
+		Name:     "DeleteEventUserByEventIDUserID - event name",
+		OwnerID:  user.ID,
+		Time:     time.Now(),
+		Location: "DeleteEventUserByEventIDUserID - over there!",
+		MinUsers: 1,
+		MaxUsers: 4,
+		Price:    10.23,
+		Link:     "http://TestInsertEventUser.com",
+	}
+
+	event2 := &models.Event{
+		ID:       eventID2,
+		Name:     "DeleteEventUserByEventIDUserID - event name2",
+		OwnerID:  user.ID,
+		Time:     time.Now(),
+		Location: "DeleteEventUserByEventIDUserID - over there!2",
+		MinUsers: 1,
+		MaxUsers: 4,
+		Price:    10.23,
+		Link:     "http://TestInsertEventUser2.com",
+	}
+
+	var tests = []struct {
+		title      string
+		userID     string
+		resultSize int
+		fail       bool
+	}{
+		{
+			title:      "returns empty array when no owned events",
+			userID:     uuid.New().String(),
+			resultSize: 0,
+			fail:       false,
+		},
+		{
+			title:      "successfully returns all owned events",
+			userID:     user.ID,
+			resultSize: 2,
+			fail:       false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	db.Conn.Model(user).Insert()
+	db.Conn.Model(event).Insert()
+	db.Conn.Model(event2).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			events, err := db.ListOwnedEvents(tt.userID)
+			if tt.fail {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+				assert.Equal(t, tt.resultSize, len(*events))
+			}
+		})
+	}
+}
