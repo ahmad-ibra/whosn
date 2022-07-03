@@ -153,7 +153,8 @@ func (p PGStore) InsertEventUser(eventUser *models.EventUser) error {
 	return err
 }
 
-func (p PGStore) DeleteEventUserByID(eventUserID string) error {
-	//TODO implement me
-	panic("implement me")
+func (p PGStore) DeleteEventUserByEventIDUserID(eventID string, userID string) error {
+	eventUser := &models.EventUser{}
+	_, err := p.Conn.Model(eventUser).Where("event_id = ? AND user_id = ?", eventID, userID).Delete()
+	return err
 }

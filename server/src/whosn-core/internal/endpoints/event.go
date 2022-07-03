@@ -225,25 +225,33 @@ func LeaveEvent(ctx *gin.Context) {
 	ll := log.WithFields(log.Fields{"endpoint": "LeaveEvent", "actorID": actorID, "eventID": eventID})
 	ll.Info("Endpoint Hit")
 
+	ds, ok := ctx.Value("DB").(*data.PGStore)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not get database from context"})
+		ctx.Abort()
+		return
+	}
+
 	// check that actor has joined the event
-	//eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
-	//if err != nil {
-	//	if err, ok := err.(*wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
-	//		// actor not in event, no need to leave
-	//		ctx.JSON(http.StatusOK, "{}")
-	//		ctx.Abort()
-	//	} else {
-	//		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//		ctx.Abort()
-	//		return
-	//	}
-	//}
-	//
-	//err = ds.DeleteEventUserByID(eventUser.ID)
-	//if err != nil {
-	//	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	//	ctx.Abort()
-	//	return
-	//}
-	//ctx.JSON(http.StatusOK, "{}")
+	eventUser, err := ds.GetEventUserByEventIDUserID(eventID, actorID)
+	if err != nil {
+		if err, ok := err.(*wnerr.WnError); ok && err.StatusCode == http.StatusNotFound {
+			// actor not in event, no need to leave
+			ctx.JSON(http.StatusOK, "{}")
+			ctx.Abort()
+			return
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			ctx.Abort()
+			return
+		}
+	}
+
+	err = ds.DeleteEventUserByEventIDUserID(eventUser.EventID, eventUser.UserID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+	ctx.JSON(http.StatusOK, "{}")
 }
