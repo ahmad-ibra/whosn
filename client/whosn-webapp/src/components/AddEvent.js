@@ -13,12 +13,12 @@ const AddEvent = ({ onAdd }) => {
     const [location, setLocation] = useState('')
     const [min_users, setMinUsers] = useState('')
     const [max_users, setMaxUsers] = useState('')
-    const [price, setPrice] = useState('')
+    const [price, setPrice] = useState(0)
 
     const onSubmit = (e) => {
         e.preventDefault()
 
-        if (!name || !time || !location || !min_users || !max_users || !price) {
+        if (!name || !time || !location || !min_users || !max_users) {
             alert('Please fill out missing event fields')
             return
         }
