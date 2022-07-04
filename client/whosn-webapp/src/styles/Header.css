@@ -21,7 +21,6 @@
 .header-logo {
     color: inherit;
     text-decoration: inherit;
-    font-family: RobotoThin;
     font-size: 100px;
 }
 
@@ -81,7 +80,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: RobotoRegular;
     right: 0px;
     top: -5px;
     width: 20px;
