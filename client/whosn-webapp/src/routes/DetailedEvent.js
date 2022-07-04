@@ -4,7 +4,8 @@ import { auth } from '../auth/Authorization'
 import Button from '../components/Button'
 import Header from '../components/Header'
 import NotFound from './NotFound'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
+import { RWebShare } from 'react-web-share'
+import { BiShareAlt } from 'react-icons/bi'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
@@ -123,10 +124,21 @@ const DetailedEvent = () => {
                                     refreshPage()
                                 }}
                             />
-                            <CopyToClipboard text={window.location.href}>
-                                <Button text="Copy event link to clipboard" />
-                            </CopyToClipboard>
-                            {/* TODO: add share event button (depends on if they're the owner of the event or not) */}
+                            <RWebShare
+                                data={{
+                                    url: window.location.href,
+                                    text: `WhosN for ${curEvent.name}?`,
+                                    title: `WhosN for ${curEvent.name}?`,
+                                }}
+                            >
+                                <BiShareAlt
+                                    size={25}
+                                    style={{
+                                        cursor: 'pointer',
+                                        float: 'right',
+                                    }}
+                                />
+                            </RWebShare>
                             <h2>{curEvent.name}</h2>
                             <p>
                                 {toLocalDateTime(curEvent.time)} at{' '}
