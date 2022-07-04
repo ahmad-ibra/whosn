@@ -369,7 +369,6 @@ func TestInsertEvent(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://TestInsertEvent.com",
 	}
 
 	var tests = []struct {
@@ -386,7 +385,6 @@ func TestInsertEvent(t *testing.T) {
 				MinUsers: event.MinUsers,
 				MaxUsers: event.MaxUsers,
 				Price:    event.Price,
-				Link:     event.Link,
 			},
 			fail: true,
 		},
@@ -399,7 +397,6 @@ func TestInsertEvent(t *testing.T) {
 				MinUsers: event.MinUsers,
 				MaxUsers: event.MaxUsers,
 				Price:    event.Price,
-				Link:     event.Link,
 			},
 			fail: true,
 		},
@@ -412,7 +409,6 @@ func TestInsertEvent(t *testing.T) {
 				MinUsers: event.MinUsers,
 				MaxUsers: event.MaxUsers,
 				Price:    event.Price,
-				Link:     event.Link,
 			},
 			fail: true,
 		},
@@ -425,7 +421,6 @@ func TestInsertEvent(t *testing.T) {
 				MinUsers: event.MinUsers,
 				MaxUsers: event.MaxUsers,
 				Price:    event.Price,
-				Link:     event.Link,
 			},
 			fail: true,
 		},
@@ -439,20 +434,6 @@ func TestInsertEvent(t *testing.T) {
 				MinUsers: 10,
 				MaxUsers: 4,
 				Price:    event.Price,
-				Link:     event.Link,
-			},
-			fail: true,
-		},
-		{
-			title: "fails to insert event with no Link",
-			event: &models.Event{
-				Name:     event.Name,
-				OwnerID:  user.ID,
-				Location: event.Location,
-				Time:     event.Time,
-				MinUsers: event.MinUsers,
-				MaxUsers: event.MaxUsers,
-				Price:    event.Price,
 			},
 			fail: true,
 		},
@@ -465,7 +446,6 @@ func TestInsertEvent(t *testing.T) {
 				Time:     event.Time,
 				MinUsers: event.MinUsers,
 				MaxUsers: event.MaxUsers,
-				Link:     event.Link,
 			},
 			fail: false,
 		},
@@ -514,7 +494,6 @@ func TestGetEventByID(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://TestGetEventByID.com",
 	}
 
 	var tests = []struct {
@@ -579,7 +558,6 @@ func TestDeleteEventByID(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://TestDeleteEventByID.com",
 	}
 
 	var tests = []struct {
@@ -645,7 +623,6 @@ func TestUpdateEventByID(t *testing.T) {
 		MinUsers:  1,
 		MaxUsers:  4,
 		Price:     10.23,
-		Link:      "http://TestUpdateEventByID.com",
 		CreatedAt: createTime,
 		UpdatedAt: createTime,
 	}
@@ -659,7 +636,6 @@ func TestUpdateEventByID(t *testing.T) {
 		MinUsers:  3,
 		MaxUsers:  7,
 		Price:     12.23,
-		Link:      "http://TestUpdateEventByID.com",
 		CreatedAt: createTime,
 		UpdatedAt: updateTime,
 	}
@@ -730,7 +706,6 @@ func TestGetEventUserByEventIDUserID(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://TestGetEventUserByEventIDUserID.com",
 	}
 
 	eventUser := &models.EventUser{
@@ -818,7 +793,6 @@ func TestInsertEventUser(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://TestInsertEventUser.com",
 	}
 
 	eventUser := &models.EventUser{
@@ -891,7 +865,6 @@ func TestDeleteEventUserByEventIDUserID(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://TestInsertEventUser.com",
 	}
 
 	eventUser := &models.EventUser{
@@ -986,7 +959,6 @@ func TestDeleteEventUserByEventID(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://DeleteEventUserByEventID.com",
 	}
 
 	event2 := &models.Event{
@@ -998,7 +970,6 @@ func TestDeleteEventUserByEventID(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://DeleteEventUserByEventID.com",
 	}
 
 	event1User1 := &models.EventUser{
@@ -1089,7 +1060,6 @@ func TestListOwnedEvents(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://TestInsertEventUser.com",
 	}
 
 	event2 := &models.Event{
@@ -1101,7 +1071,6 @@ func TestListOwnedEvents(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://TestInsertEventUser2.com",
 	}
 
 	var tests = []struct {
@@ -1159,7 +1128,6 @@ func TestListJoinedEvents(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://TestInsertEventUser.com",
 	}
 
 	event2 := &models.Event{
@@ -1171,7 +1139,6 @@ func TestListJoinedEvents(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 4,
 		Price:    10.23,
-		Link:     "http://TestInsertEventUser2.com",
 	}
 
 	eventUser := &models.EventUser{
@@ -1272,7 +1239,6 @@ func TestListEventUsers(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 3,
 		Price:    10.23,
-		Link:     "http://TestListEventUsers.com",
 	}
 
 	eventWithMembersNoWaitlist := &models.Event{
@@ -1284,7 +1250,6 @@ func TestListEventUsers(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 3,
 		Price:    10.23,
-		Link:     "http://TestListEventUsers.com",
 	}
 
 	eventWithMembersAndWaitlist := &models.Event{
@@ -1296,7 +1261,6 @@ func TestListEventUsers(t *testing.T) {
 		MinUsers: 1,
 		MaxUsers: 3,
 		Price:    10.23,
-		Link:     "http://TestListEventUsers.com",
 	}
 
 	curTime := time.Now().UTC()

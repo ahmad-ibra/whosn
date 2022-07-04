@@ -3,12 +3,16 @@ whosn_dir := $(abspath $(shell git rev-parse --show-toplevel))
 mocks:
 	mockery --case underscore --name=Storer --dir ./internal/data --output ./internal/data/mocks
 
-test:
+db:
+	docker-compose up --build -d
+
+db-clean:
 	docker-compose down && docker-compose up --build -d
+
+test:
 	go test ./...
 
 exec:
-	docker-compose down && docker-compose up --build -d
 	go run cmd/main.go
 
 build:
@@ -18,4 +22,4 @@ build:
 deploy:
 	git push https://git.heroku.com/whosn-core.git HEAD:main
 
-.PHONY: test exec build deploy
+.PHONY: mocks db db-clean test exec build deploy

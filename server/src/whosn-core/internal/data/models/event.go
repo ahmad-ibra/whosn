@@ -16,14 +16,8 @@ type Event struct {
 	MinUsers  uint64    `json:"min_users"`
 	MaxUsers  uint64    `json:"max_users"`
 	Price     float64   `json:"price"`
-	Link      string    `json:"link"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-}
-
-func (event *Event) ConstructCreate(ownerID string) {
-	event.OwnerID = ownerID
-	event.Link = generateEventLink()
 }
 
 func (event *Event) ConstructUpdate(original *Event) {
@@ -47,7 +41,6 @@ func (event *Event) ConstructUpdate(original *Event) {
 	if event.Price == 0 {
 		event.Price = original.Price
 	}
-	event.Link = original.Link
 	event.CreatedAt = original.CreatedAt
 	event.UpdatedAt = time.Now().UTC()
 }

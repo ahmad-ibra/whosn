@@ -86,7 +86,7 @@ func CreateEvent(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
-	event.ConstructCreate(actorID)
+	event.ID = actorID
 
 	ds, ok := ctx.Value("DB").(*data.PGStore)
 	if !ok {
