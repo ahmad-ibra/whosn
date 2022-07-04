@@ -3,6 +3,7 @@ import EventHeader from '../components/EventHeader'
 import Events from '../components/Events'
 import AddEvent from '../components/AddEvent'
 import { auth } from '../auth/Authorization'
+import Header from '../components/Header'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
@@ -89,31 +90,34 @@ const Home = () => {
     }
 
     return (
-        <div className="container">
-            <EventHeader
-                title="My Events"
-                canAddEvent={true}
-                showAdd={showAddEvent}
-                onAdd={() => setShowAddEvent(!showAddEvent)}
-            />
-            {showAddEvent && <AddEvent onAdd={addEvent} />}
-            {ownedEvents.length > 0 ? (
-                <Events
-                    events={ownedEvents}
-                    includeDeleteButton={true}
-                    onDelete={deleteEvent}
+        <div>
+            <Header></Header>
+            <div className="container">
+                <EventHeader
+                    title="My Events"
+                    canAddEvent={true}
+                    showAdd={showAddEvent}
+                    onAdd={() => setShowAddEvent(!showAddEvent)}
                 />
-            ) : (
-                'Create an event!'
-            )}
-            <br />
-            <br />
-            <EventHeader title="Joined Events" />
-            {joinedEvents.length > 0 ? (
-                <Events events={joinedEvents} />
-            ) : (
-                'Join an event!'
-            )}
+                {showAddEvent && <AddEvent onAdd={addEvent} />}
+                {ownedEvents.length > 0 ? (
+                    <Events
+                        events={ownedEvents}
+                        includeDeleteButton={true}
+                        onDelete={deleteEvent}
+                    />
+                ) : (
+                    'Create an event!'
+                )}
+                <br />
+                <br />
+                <EventHeader title="Joined Events" />
+                {joinedEvents.length > 0 ? (
+                    <Events events={joinedEvents} />
+                ) : (
+                    'Join an event!'
+                )}
+            </div>
         </div>
     )
 }

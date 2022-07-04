@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { auth } from '../auth/Authorization'
+import Header from '../components/Header'
 import NotFound from './NotFound'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
@@ -60,36 +61,39 @@ const DetailedEvent = () => {
 
     return (
         <div>
-            {!found && <NotFound />}
-            {found && (
-                <div>
-                    <div className="container">
-                        {/* TODO: add join/leave event button (depends on if they've joined event or not) */}
-                        {/* TODO: add delete event button (depends on if they're the owner of the event or not) */}
-                        {/* TODO: add share event button (depends on if they're the owner of the event or not) */}
-                        <h2>Event Details</h2>
-                        <p>name: {event.name}</p>
-                        <p>time: {toLocalDateTime(event.time)}</p>
-                        <p>location: {event.location}</p>
-                        <p>min participants: {event.min_users}</p>
-                        <p>max participants: {event.max_users}</p>
-                        <p>price: {event.price}</p>
-                        {/* TODO: update this to event.max_users - people that are joined */}
-                        <p>spots left: {event.max_users}</p>
-                        <p>link: {event.link + event.id}</p>
+            <Header></Header>
+            <div>
+                {!found && <NotFound />}
+                {found && (
+                    <div>
+                        <div className="container">
+                            {/* TODO: add join/leave event button (depends on if they've joined event or not) */}
+                            {/* TODO: add delete event button (depends on if they're the owner of the event or not) */}
+                            {/* TODO: add share event button (depends on if they're the owner of the event or not) */}
+                            <h2>Event Details</h2>
+                            <p>name: {event.name}</p>
+                            <p>time: {toLocalDateTime(event.time)}</p>
+                            <p>location: {event.location}</p>
+                            <p>min participants: {event.min_users}</p>
+                            <p>max participants: {event.max_users}</p>
+                            <p>price: {event.price}</p>
+                            {/* TODO: update this to event.max_users - people that are joined */}
+                            <p>spots left: {event.max_users}</p>
+                            <p>link: {event.link + event.id}</p>
+                        </div>
+                        <div className="container">
+                            <h2>In</h2>
+                            <p>TODO: get people that joined</p>
+                            {/* TODO: Create UserList component which lists all users that are in from fetchJoined */}
+                        </div>
+                        <div className="container">
+                            <h2>Wait List</h2>
+                            <p>TODO: get people that are on the waitlist</p>
+                            {/* TODO: Create UserList component which lists all users that are on the waitlist from fetchJoined */}
+                        </div>
                     </div>
-                    <div className="container">
-                        <h2>In</h2>
-                        <p>TODO: get people that joined</p>
-                        {/* TODO: Create UserList component which lists all users that are in from fetchJoined */}
-                    </div>
-                    <div className="container">
-                        <h2>Wait List</h2>
-                        <p>TODO: get people that are on the waitlist</p>
-                        {/* TODO: Create UserList component which lists all users that are on the waitlist from fetchJoined */}
-                    </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     )
 }
