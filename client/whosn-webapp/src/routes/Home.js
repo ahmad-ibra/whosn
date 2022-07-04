@@ -30,7 +30,7 @@ const Home = () => {
     // Fetch Owned Events
     const fetchOwnedEvents = async () => {
         const res = await fetch(
-            `http://${backendAddress}/api/v1/secured/events/owned`,
+            `${backendAddress}/api/v1/secured/events/owned`,
             {
                 headers: {
                     'Content-type': 'application/json',
@@ -46,7 +46,7 @@ const Home = () => {
     // Fetch Joined Events
     const fetchJoinedEvents = async () => {
         const res = await fetch(
-            `http://${backendAddress}/api/v1/secured/events/joined`,
+            `${backendAddress}/api/v1/secured/events/joined`,
             {
                 headers: {
                     'Content-type': 'application/json',
@@ -60,17 +60,14 @@ const Home = () => {
 
     // Add Event
     const addEvent = async (singleEvent) => {
-        const res = await fetch(
-            `http://${backendAddress}/api/v1/secured/event`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json',
-                    Authorization: auth(),
-                },
-                body: JSON.stringify(singleEvent),
-            }
-        )
+        const res = await fetch(`${backendAddress}/api/v1/secured/event`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: auth(),
+            },
+            body: JSON.stringify(singleEvent),
+        })
 
         const data = await res.json()
         setOwnedEvents([...ownedEvents, data])
@@ -78,7 +75,7 @@ const Home = () => {
 
     // Delete Event
     const deleteEvent = async (id) => {
-        await fetch(`http://${backendAddress}/api/v1/secured/event/${id}`, {
+        await fetch(`${backendAddress}/api/v1/secured/event/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-type': 'application/json',

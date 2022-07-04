@@ -7,7 +7,7 @@ const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
 // Register User
 const registerUser = async (user) => {
-    const res = await fetch(`http://${backendAddress}/api/v1/user`, {
+    const res = await fetch(`${backendAddress}/api/v1/user`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify(user),

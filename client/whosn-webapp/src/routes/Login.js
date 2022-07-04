@@ -6,7 +6,7 @@ import Header from '../components/Header'
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
 const loginUser = async (credentials) => {
-    const res = await fetch(`http://${backendAddress}/api/v1/login`, {
+    const res = await fetch(`${backendAddress}/api/v1/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),

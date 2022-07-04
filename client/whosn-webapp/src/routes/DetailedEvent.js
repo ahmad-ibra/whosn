@@ -49,7 +49,7 @@ const DetailedEvent = () => {
 
     const fetchEvent = async (id) => {
         const res = await fetch(
-            `http://${backendAddress}/api/v1/secured/event/${id}`,
+            `${backendAddress}/api/v1/secured/event/${id}`,
             {
                 headers: {
                     'Content-type': 'application/json',
@@ -62,22 +62,19 @@ const DetailedEvent = () => {
     }
 
     const fetchUser = async () => {
-        const res = await fetch(
-            `http://${backendAddress}/api/v1/secured/user`,
-            {
-                headers: {
-                    'Content-type': 'application/json',
-                    Authorization: auth(),
-                },
-            }
-        )
+        const res = await fetch(`${backendAddress}/api/v1/secured/user`, {
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: auth(),
+            },
+        })
 
         return await res.json()
     }
 
     const fetchParticipants = async (id) => {
         const res = await fetch(
-            `http://${backendAddress}/api/v1/secured/event/${id}/users`,
+            `${backendAddress}/api/v1/secured/event/${id}/users`,
             {
                 headers: {
                     'Content-type': 'application/json',
@@ -92,8 +89,8 @@ const DetailedEvent = () => {
     const joinOrLeaveEvent = async (id, isJoined) => {
         const res = await fetch(
             isJoined
-                ? `http://${backendAddress}/api/v1/secured/event/${id}/leave`
-                : `http://${backendAddress}/api/v1/secured/event/${id}/join`,
+                ? `${backendAddress}/api/v1/secured/event/${id}/leave`
+                : `${backendAddress}/api/v1/secured/event/${id}/join`,
             {
                 headers: {
                     'Content-type': 'application/json',
