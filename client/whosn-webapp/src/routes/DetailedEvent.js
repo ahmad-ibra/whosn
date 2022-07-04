@@ -76,7 +76,7 @@ const DetailedEvent = () => {
                         <p>price: {event.price}</p>
                         {/* TODO: update this to event.max_users - people that are joined */}
                         <p>spots left: {event.max_users}</p>
-                        <p>link: {event.link}</p>
+                        <p>link: {event.link + event.id}</p>
                     </div>
                     <div className="container">
                         <h2>In</h2>

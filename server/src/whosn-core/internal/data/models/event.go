@@ -23,7 +23,7 @@ type Event struct {
 
 func (event *Event) ConstructCreate(ownerID string) {
 	event.OwnerID = ownerID
-	event.Link = generateEventLink(event.ID)
+	event.Link = generateEventLink()
 }
 
 func (event *Event) ConstructUpdate(original *Event) {
@@ -52,7 +52,7 @@ func (event *Event) ConstructUpdate(original *Event) {
 	event.UpdatedAt = time.Now().UTC()
 }
 
-func generateEventLink(eventID string) string {
+func generateEventLink() string {
 	cfg := config.GetConfig()
-	return "http://" + cfg.FrontendDomain + "/event/" + eventID
+	return "http://" + cfg.FrontendDomain + "/event/"
 }
