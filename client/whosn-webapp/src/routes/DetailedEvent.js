@@ -124,7 +124,7 @@ const DetailedEvent = () => {
                                 }}
                             />
                             {/* TODO: add share event button (depends on if they're the owner of the event or not) */}
-                            <h2>Event Details</h2>
+                            <h2>Details</h2>
                             <p>name: {curEvent.name}</p>
                             <p>time: {toLocalDateTime(curEvent.time)}</p>
                             <p>location: {curEvent.location}</p>
@@ -142,37 +142,31 @@ const DetailedEvent = () => {
                         </div>
                         <div className="container">
                             <h2>In</h2>
-                            {/* TODO: Create UserList component which lists all users that are in from fetchJoined */}
-                            {typeof participants !== 'undefined' &&
-                                participants !== 'null' &&
-                                participants
+                            <ol>
+                                {/* TODO: Create UserList component which lists all users that are in from fetchJoined */}
+                                {participants
                                     .filter(
                                         (participants) =>
                                             participants.is_in === true
                                     )
-                                    .map(({ name, joined_at }) => (
-                                        <li key={name}>
-                                            {name} -{' '}
-                                            {toLocalDateTime(joined_at)}
-                                        </li>
+                                    .map(({ name, user_id }) => (
+                                        <li key={user_id}>{name}</li>
                                     ))}
+                            </ol>
                         </div>
                         <div className="container">
                             <h2>Wait List</h2>
-                            {/* TODO: Create UserList component which lists all users that are on the waitlist from fetchJoined */}
-                            {typeof participants !== 'undefined' &&
-                                participants !== 'null' &&
-                                participants
+                            <ol>
+                                {/* TODO: Create UserList component which lists all users that are on the waitlist from fetchJoined */}
+                                {participants
                                     .filter(
                                         (participants) =>
                                             participants.is_in === false
                                     )
-                                    .map(({ name, joined_at }) => (
-                                        <li key={name}>
-                                            {name} -{' '}
-                                            {toLocalDateTime(joined_at)}
-                                        </li>
+                                    .map(({ name, user_id }) => (
+                                        <li key={user_id}>{name}</li>
                                     ))}
+                            </ol>
                         </div>
                     </div>
                 )}
