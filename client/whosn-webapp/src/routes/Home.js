@@ -97,23 +97,17 @@ const Home = () => {
                     onAdd={() => setShowAddEvent(!showAddEvent)}
                 />
                 {showAddEvent && <AddEvent onAdd={addEvent} />}
-                {ownedEvents.length > 0 ? (
+                {ownedEvents.length > 0 && (
                     <Events
                         events={ownedEvents}
                         includeDeleteButton={true}
                         onDelete={deleteEvent}
                     />
-                ) : (
-                    'Create an event!'
                 )}
                 <br />
                 <br />
                 <EventHeader title="Joined Events" />
-                {joinedEvents.length > 0 ? (
-                    <Events events={joinedEvents} />
-                ) : (
-                    'Join an event!'
-                )}
+                {joinedEvents.length > 0 && <Events events={joinedEvents} />}
             </div>
         </div>
     )
