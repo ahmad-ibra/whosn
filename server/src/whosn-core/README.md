@@ -43,9 +43,9 @@ Below is a list of all the available endpoints:
 GET    /_hc
 POST   /api/v1/user
 POST   /api/v1/login
-DELETE /api/v1/secured/user/:id
-PUT    /api/v1/secured/user/:id
-GET    /api/v1/secured/user/:id
+DELETE /api/v1/secured/user
+PUT    /api/v1/secured/user
+GET    /api/v1/secured/user
 GET    /api/v1/secured/events/owned
 GET    /api/v1/secured/events/joined
 DELETE /api/v1/secured/event/:id

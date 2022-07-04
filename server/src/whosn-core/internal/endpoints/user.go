@@ -11,16 +11,8 @@ import (
 
 func GetUser(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
-	userID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "GetUser", "actorID": actorID, "userID": userID})
+	ll := log.WithFields(log.Fields{"endpoint": "GetUser", "actorID": actorID})
 	ll.Info("Endpoint Hit")
-
-	if actorID != userID {
-		ll.Warn("Unauthorized")
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to view user"})
-		ctx.Abort()
-		return
-	}
 
 	ds, ok := ctx.Value("DB").(*data.PGStore)
 	if !ok {
@@ -29,7 +21,7 @@ func GetUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := ds.GetUserByID(userID)
+	user, err := ds.GetUserByID(actorID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		ctx.Abort()
@@ -76,16 +68,8 @@ func CreateUser(ctx *gin.Context) {
 
 func UpdateUser(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
-	userID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "UpdateUser", "actorID": actorID, "userID": userID})
+	ll := log.WithFields(log.Fields{"endpoint": "UpdateUser", "actorID": actorID})
 	ll.Info("Endpoint Hit")
-
-	if actorID != userID {
-		ll.Warn("Unauthorized")
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to view user"})
-		ctx.Abort()
-		return
-	}
 
 	var user models.User
 	if err := ctx.BindJSON(&user); err != nil {
@@ -102,7 +86,7 @@ func UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	originalUser, err := ds.GetUserByID(userID)
+	originalUser, err := ds.GetUserByID(actorID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		ctx.Abort()
@@ -116,7 +100,7 @@ func UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	err = ds.UpdateUserByID(&user, userID)
+	err = ds.UpdateUserByID(&user, actorID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		ctx.Abort()
@@ -128,16 +112,8 @@ func UpdateUser(ctx *gin.Context) {
 
 func DeleteUser(ctx *gin.Context) {
 	actorID := ctx.GetString("actorID")
-	userID := ctx.Param("id")
-	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "actorID": actorID, "userID": userID})
+	ll := log.WithFields(log.Fields{"endpoint": "DeleteUser", "actorID": actorID})
 	ll.Info("Endpoint Hit")
-
-	if actorID != userID {
-		ll.Warn("Unauthorized")
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Actor not authorized to view user"})
-		ctx.Abort()
-		return
-	}
 
 	ds, ok := ctx.Value("DB").(*data.PGStore)
 	if !ok {
@@ -146,7 +122,7 @@ func DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	err := ds.DeleteUserByID(userID)
+	err := ds.DeleteUserByID(actorID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		ctx.Abort()

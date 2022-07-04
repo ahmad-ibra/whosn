@@ -57,9 +57,9 @@ func initRouter(db *data.PGStore) *gin.Engine {
 		apiV1Secured.Use(middleware.Auth())
 		{
 			// user endpoints
-			apiV1Secured.DELETE("/user/:id", endpoints.DeleteUser)
-			apiV1Secured.PUT("/user/:id", endpoints.UpdateUser)
-			apiV1Secured.GET("/user/:id", endpoints.GetUser)
+			apiV1Secured.DELETE("/user", endpoints.DeleteUser)
+			apiV1Secured.PUT("/user", endpoints.UpdateUser)
+			apiV1Secured.GET("/user", endpoints.GetUser)
 
 			// event endpoints
 			apiV1Secured.GET("/events/owned", endpoints.ListOwnedEvents)
