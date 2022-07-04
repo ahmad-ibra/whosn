@@ -1,11 +1,5 @@
 import { useState } from 'react'
-import { DateTimePicker } from '@progress/kendo-react-dateinputs'
-import '@progress/kendo-react-intl'
-import '@progress/kendo-react-tooltip'
-import '@progress/kendo-react-common'
-import '@progress/kendo-react-popup'
-import '@progress/kendo-date-math'
-import '@progress/kendo-react-dropdowns'
+import DateTimePicker from 'react-datetime-picker'
 
 const AddEvent = ({ onAdd }) => {
     const [name, setName] = useState('')
@@ -34,8 +28,6 @@ const AddEvent = ({ onAdd }) => {
         setPrice(0)
     }
 
-    const defaultDate = new Date()
-
     return (
         <form className="add-form" onSubmit={onSubmit}>
             <div className="form-control">
@@ -49,13 +41,7 @@ const AddEvent = ({ onAdd }) => {
             </div>
             <div className="form-control">
                 <label>Date & Time</label>
-                {/* TODO: swap to a free DatTimePicker when i have time */}
-                <DateTimePicker
-                    format={'dd/MMM/yyyy hh:mm a'}
-                    defaultValue={defaultDate}
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                />
+                <DateTimePicker onChange={setTime} value={time} />
             </div>
             <div className="form-control">
                 <label>Location</label>
