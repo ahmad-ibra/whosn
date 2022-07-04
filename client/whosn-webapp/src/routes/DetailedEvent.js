@@ -12,6 +12,10 @@ const toLocalDateTime = (utcDateTime) => {
     return date.toString()
 }
 
+function refreshPage() {
+    window.location.reload(false)
+}
+
 const DetailedEvent = () => {
     const pathname = useLocation().pathname
     const eventID = pathname.substring(pathname.lastIndexOf('/') + 1)
@@ -121,11 +125,11 @@ const DetailedEvent = () => {
                             <Button
                                 color={isJoined ? 'red' : 'steelblue'}
                                 text={isJoined ? 'Leave Event' : 'Join Event'}
-                                onClick={() =>
+                                onClick={() => {
                                     joinOrLeaveEvent(curEvent.id, isJoined)
-                                }
+                                    refreshPage()
+                                }}
                             />
-                            {/* TODO: add join/leave event button (depends on if they've joined event or not) */}
                             {/* TODO: add delete event button (depends on if they're the owner of the event or not) */}
                             {/* TODO: add share event button (depends on if they're the owner of the event or not) */}
                             <h2>Event Details</h2>
@@ -136,7 +140,13 @@ const DetailedEvent = () => {
                             <p>max participants: {curEvent.max_users}</p>
                             <p>price: {curEvent.price}</p>
                             {/* TODO: update this to event.max_users - people that are joined */}
-                            <p>spots left: {curEvent.max_users}</p>
+                            <p>
+                                spots left:{' '}
+                                {Math.max(
+                                    0,
+                                    curEvent.max_users - participants.length
+                                )}
+                            </p>
                             <p>link: {curEvent.link + curEvent.id}</p>
                         </div>
                         <div className="container">
