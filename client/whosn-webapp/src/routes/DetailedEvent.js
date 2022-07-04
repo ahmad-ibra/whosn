@@ -21,8 +21,8 @@ const DetailedEvent = () => {
     const eventID = pathname.substring(pathname.lastIndexOf('/') + 1)
 
     const [curEvent, setEvent] = useState({})
-    const [participants, setParticipants] = useState([{}])
     const [curUser, setUser] = useState({})
+    const [participants, setParticipants] = useState([{}])
 
     useEffect(() => {
         const getEvent = async () => {
@@ -60,23 +60,21 @@ const DetailedEvent = () => {
     }
 
     const fetchUser = async () => {
-        // const res = await fetch(
-        //     `http://${backendAddress}/api/v1/secured/user`,
-        //     {
-        //         headers: {
-        //             'Content-type': 'application/json',
-        //             Authorization: auth(),
-        //         },
-        //     }
-        // )
+        const res = await fetch(
+            `http://${backendAddress}/api/v1/secured/user`,
+            {
+                headers: {
+                    'Content-type': 'application/json',
+                    Authorization: auth(),
+                },
+            }
+        )
 
-        // return await res.json()
-        return {}
+        return await res.json()
     }
 
     const fetchParticipants = async (id) => {
         const res = await fetch(
-            // TODO: need to implement this endpoint on the backend. ideally it returns both the joined and waitlist items
             `http://${backendAddress}/api/v1/secured/event/${id}/users`,
             {
                 headers: {
@@ -90,9 +88,7 @@ const DetailedEvent = () => {
     }
 
     const joinOrLeaveEvent = async (id, isJoined) => {
-        console.log('clicked botton')
         const res = await fetch(
-            // TODO: need to implement this endpoint on the backend. ideally it returns both the joined and waitlist items
             isJoined
                 ? `http://${backendAddress}/api/v1/secured/event/${id}/leave`
                 : `http://${backendAddress}/api/v1/secured/event/${id}/join`,
@@ -108,11 +104,8 @@ const DetailedEvent = () => {
     }
 
     const found = !(curEvent.error != null)
-
-    // const isJoined = () => {
-    // return participants.filter((p) => p.id === curUser.id).length > 0
-    // }
-    let isJoined = false
+    const isJoined =
+        participants.filter((p) => p.user_id === curUser.id).length > 0
 
     return (
         <div>
@@ -130,7 +123,6 @@ const DetailedEvent = () => {
                                     refreshPage()
                                 }}
                             />
-                            {/* TODO: add delete event button (depends on if they're the owner of the event or not) */}
                             {/* TODO: add share event button (depends on if they're the owner of the event or not) */}
                             <h2>Event Details</h2>
                             <p>name: {curEvent.name}</p>
@@ -139,7 +131,6 @@ const DetailedEvent = () => {
                             <p>min participants: {curEvent.min_users}</p>
                             <p>max participants: {curEvent.max_users}</p>
                             <p>price: {curEvent.price}</p>
-                            {/* TODO: update this to event.max_users - people that are joined */}
                             <p>
                                 spots left:{' '}
                                 {Math.max(
