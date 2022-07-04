@@ -1,14 +1,15 @@
 import '../styles/Navbar.css'
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
     return (
         <section className="navbar">
-            <a href="/" className="navbar-item">
+            <Link to="/" className="navbar-item">
                 Home
-            </a>
-            <a href="/profile" className="navbar-item">
+            </Link>
+            <Link to="/profile" className="navbar-item">
                 Profile
-            </a>
+            </Link>
         </section>
     )
 }
