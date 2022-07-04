@@ -110,3 +110,7 @@ footer {
     margin-top: 30px;
     text-align: center;
 }
+
+ul, ol, li {
+    list-style-position: inside;
+}

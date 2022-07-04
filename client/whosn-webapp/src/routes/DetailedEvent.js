@@ -4,12 +4,14 @@ import { auth } from '../auth/Authorization'
 import Button from '../components/Button'
 import Header from '../components/Header'
 import NotFound from './NotFound'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
 const toLocalDateTime = (utcDateTime) => {
-    var date = new Date(utcDateTime)
-    return date.toString()
+    let date = new Date(utcDateTime)
+    let dateString = date.toString()
+    return dateString.substring(0, dateString.indexOf('('))
 }
 
 function refreshPage() {
@@ -106,6 +108,7 @@ const DetailedEvent = () => {
     const found = !(curEvent.error != null)
     const isJoined =
         participants.filter((p) => p.user_id === curUser.id).length > 0
+    const remainingSeats = Math.max(0, curEvent.max_users - participants.length)
 
     return (
         <div>
@@ -123,22 +126,25 @@ const DetailedEvent = () => {
                                     refreshPage()
                                 }}
                             />
+                            <CopyToClipboard text={curEvent.link + curEvent.id}>
+                                <Button text="Copy event link to clipboard" />
+                            </CopyToClipboard>
                             {/* TODO: add share event button (depends on if they're the owner of the event or not) */}
-                            <h2>Details</h2>
-                            <p>name: {curEvent.name}</p>
-                            <p>time: {toLocalDateTime(curEvent.time)}</p>
-                            <p>location: {curEvent.location}</p>
-                            <p>min participants: {curEvent.min_users}</p>
-                            <p>max participants: {curEvent.max_users}</p>
-                            <p>price: {curEvent.price}</p>
+                            <h2>{curEvent.name}</h2>
                             <p>
-                                spots left:{' '}
-                                {Math.max(
-                                    0,
-                                    curEvent.max_users - participants.length
-                                )}
+                                {toLocalDateTime(curEvent.time)} at{' '}
+                                {curEvent.location}{' '}
                             </p>
-                            <p>link: {curEvent.link + curEvent.id}</p>
+                            <br />
+                            <p>minimum guests: {curEvent.min_users}</p>
+                            <p>maximum guests: {curEvent.max_users}</p>
+                            <p>price: ${curEvent.price}</p>
+                            {remainingSeats > 0 && (
+                                <p>Only {remainingSeats} spots left!</p>
+                            )}
+                            {remainingSeats <= 0 && (
+                                <p>Get on the wait list!</p>
+                            )}
                         </div>
                         <div className="container">
                             <h2>In</h2>
