@@ -5,6 +5,11 @@ import NotFound from './NotFound'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
+const toLocalDateTime = (utcDateTime) => {
+    var date = new Date(utcDateTime)
+    return date.toString()
+}
+
 const DetailedEvent = () => {
     const pathname = useLocation().pathname
     const eventID = pathname.substring(pathname.lastIndexOf('/') + 1)
@@ -64,7 +69,7 @@ const DetailedEvent = () => {
                         {/* TODO: add share event button (depends on if they're the owner of the event or not) */}
                         <h2>Event Details</h2>
                         <p>name: {event.name}</p>
-                        <p>time: {event.time}</p>
+                        <p>time: {toLocalDateTime(event.time)}</p>
                         <p>location: {event.location}</p>
                         <p>min participants: {event.min_users}</p>
                         <p>max participants: {event.max_users}</p>

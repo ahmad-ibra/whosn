@@ -2,6 +2,11 @@ import PropTypes from 'prop-types'
 import { BiEdit, BiTrash } from 'react-icons/bi'
 import { useNavigate } from 'react-router-dom'
 
+const toLocalDateTime = (utcDateTime) => {
+    var date = new Date(utcDateTime)
+    return date.toString()
+}
+
 const EventSingle = ({ event, includeDeleteButton, onDelete }) => {
     const navigate = useNavigate()
     return (
@@ -28,7 +33,7 @@ const EventSingle = ({ event, includeDeleteButton, onDelete }) => {
                 }
             </h2>
             <p>{event.location}</p>
-            <p>{event.time}</p>
+            <p>{toLocalDateTime(event.time)}</p>
         </div>
     )
 }
