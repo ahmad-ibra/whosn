@@ -126,7 +126,7 @@ const DetailedEvent = () => {
                                     refreshPage()
                                 }}
                             />
-                            <CopyToClipboard text={curEvent.link + curEvent.id}>
+                            <CopyToClipboard text={window.location.href}>
                                 <Button text="Copy event link to clipboard" />
                             </CopyToClipboard>
                             {/* TODO: add share event button (depends on if they're the owner of the event or not) */}
