@@ -133,7 +133,7 @@ func (p PGStore) ListJoinedEvents(userID string) (*[]models.Event, error) {
 		return nil, err
 	}
 
-	var events []models.Event
+	events := make([]models.Event, 0)
 	for _, eu := range eventUsers {
 		curEvent, err := p.GetEventByID(eu.EventID)
 		if err != nil {
@@ -147,7 +147,7 @@ func (p PGStore) ListJoinedEvents(userID string) (*[]models.Event, error) {
 }
 
 func (p PGStore) ListOwnedEvents(userID string) (*[]models.Event, error) {
-	var events []models.Event
+	events := make([]models.Event, 0)
 	err := p.Conn.Model(&events).Where("owner_id = ?", userID).Select()
 	if err != nil {
 		return nil, err
@@ -230,7 +230,7 @@ func (p PGStore) ListEventUsers(eventID string) (*[]models.EventUsersIn, error) 
 		return nil, err
 	}
 
-	var eventUsersIn []models.EventUsersIn
+	eventUsersIn := make([]models.EventUsersIn, 0)
 
 	// then we iterate over the eventUsers
 	for i, eventUser := range eventUsers {
