@@ -8,7 +8,7 @@ const EventHeader = ({ title, canAddEvent, showAdd, onAdd }) => {
             {canAddEvent && (
                 <Button
                     color={showAdd ? 'red' : 'steelblue'}
-                    text={showAdd ? 'Close' : 'Add'}
+                    text={showAdd ? 'Close' : 'Add Event'}
                     onClick={onAdd}
                 />
             )}
