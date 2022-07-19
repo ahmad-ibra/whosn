@@ -257,3 +257,8 @@ func (p PGStore) ListEventUsers(eventID string) (*[]models.EventUsersIn, error) 
 	}
 	return &eventUsersIn, nil
 }
+
+func (p PGStore) SetPaid(eventID string, userID string, hasPaid bool) error {
+	//TODO implement me
+	panic("implement me")
+}

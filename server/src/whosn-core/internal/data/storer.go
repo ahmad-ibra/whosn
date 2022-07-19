@@ -24,4 +24,5 @@ type Storer interface {
 	DeleteEventUserByEventID(eventID string) error
 	DeleteEventUserByEventIDUserID(eventID string, userID string) error
 	ListEventUsers(eventID string) (*[]models.EventUsersIn, error)
+	SetPaid(eventID string, userID string, hasPaid bool) error
 }

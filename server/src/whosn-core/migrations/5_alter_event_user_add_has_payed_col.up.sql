@@ -1,2 +1,2 @@
 ALTER TABLE event_users
-    ADD COLUMN has_payed boolean NOT NULL DEFAULT false;
+    ADD COLUMN has_paid boolean NOT NULL DEFAULT false;
