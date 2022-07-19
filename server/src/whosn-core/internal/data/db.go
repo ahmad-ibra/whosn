@@ -3,6 +3,7 @@ package data
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/Ahmad-Ibra/whosn-core/internal/config"
 	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
@@ -245,6 +246,7 @@ func (p PGStore) ListEventUsers(eventID string) (*[]models.EventUsersIn, error) 
 			UserID:   eventUser.UserID,
 			JoinedAt: eventUser.CreatedAt,
 			Name:     user.Name,
+			HasPaid:  eventUser.HasPaid,
 		}
 
 		if uint64(i) < event.MaxUsers {
@@ -259,6 +261,8 @@ func (p PGStore) ListEventUsers(eventID string) (*[]models.EventUsersIn, error) 
 }
 
 func (p PGStore) SetPaid(eventID string, userID string, hasPaid bool) error {
-	//TODO implement me
-	panic("implement me")
+	eventUser := models.EventUser{}
+	updatedAt := time.Now().UTC()
+	_, err := p.Conn.Model(&eventUser).Set("has_paid = ?, updated_at = ?", hasPaid, updatedAt).Where("event_id = ? AND user_id = ?", eventID, userID).Update()
+	return err
 }
