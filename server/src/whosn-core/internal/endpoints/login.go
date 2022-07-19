@@ -6,17 +6,13 @@ import (
 	"github.com/Ahmad-Ibra/whosn-core/internal/auth"
 	"github.com/Ahmad-Ibra/whosn-core/internal/config"
 	"github.com/Ahmad-Ibra/whosn-core/internal/data"
+	"github.com/Ahmad-Ibra/whosn-core/internal/data/models"
 	"github.com/gin-gonic/gin"
 )
 
-type TokenRequest struct {
-	UserName string `json:"user_name"`
-	Password string `json:"password"`
-}
-
 func Login(ctx *gin.Context) {
-	var request TokenRequest
-	if err := ctx.ShouldBindJSON(&request); err != nil {
+	var body models.CreateUserBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		ctx.Abort()
 		return
@@ -29,14 +25,14 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	user, err := ds.GetUserByUserName(request.UserName)
+	user, err := ds.GetUserByUserName(body.UserName)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		ctx.Abort()
 		return
 	}
 
-	credentialError := user.CheckPassword(request.Password)
+	credentialError := user.CheckPassword(body.Password)
 	if credentialError != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		ctx.Abort()

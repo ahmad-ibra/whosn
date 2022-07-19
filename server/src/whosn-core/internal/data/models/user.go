@@ -19,6 +19,12 @@ type User struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+// CreateUserBody holds the body of the request to create a user
+type CreateUserBody struct {
+	UserName string `json:"user_name"`
+	Password string `json:"password"`
+}
+
 func (user *User) HashPassword(password string) error {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
