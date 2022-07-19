@@ -1359,26 +1359,11 @@ func TestListEventUsers(t *testing.T) {
 	db.Conn.Model(eventWithMembersAndWaitlist).Insert()
 	db.Conn.Model(eventUser1).Insert()
 	db.Conn.Model(eventUser2).Insert()
-	_, err := db.Conn.Model(eventUserWaitlist1).Insert()
-	if err != nil {
-		panic(err)
-	}
-	_, err = db.Conn.Model(eventUserWaitlist2).Insert()
-	if err != nil {
-		panic(err)
-	}
-	_, err = db.Conn.Model(eventUserWaitlist3).Insert()
-	if err != nil {
-		panic(err)
-	}
-	_, err = db.Conn.Model(eventUserWaitlist4).Insert()
-	if err != nil {
-		panic(err)
-	}
-	_, err = db.Conn.Model(eventUserWaitlist5).Insert()
-	if err != nil {
-		panic(err)
-	}
+	db.Conn.Model(eventUserWaitlist1).Insert()
+	db.Conn.Model(eventUserWaitlist2).Insert()
+	db.Conn.Model(eventUserWaitlist3).Insert()
+	db.Conn.Model(eventUserWaitlist4).Insert()
+	db.Conn.Model(eventUserWaitlist5).Insert()
 
 	for _, tt := range tests {
 		t.Run(tt.title, func(t *testing.T) {
@@ -1394,6 +1379,115 @@ func TestListEventUsers(t *testing.T) {
 						assert.True(t, eventUser.IsIn)
 					} else {
 						assert.False(t, eventUser.IsIn)
+					}
+				}
+			}
+		})
+	}
+}
+
+func TestSetPaid(t *testing.T) {
+	userID1 := uuid.New().String()
+	userID2 := uuid.New().String()
+	eventID := uuid.New().String()
+
+	user1 := &models.User{
+		ID:          userID1,
+		Name:        "TestSetPaid1 - joined second name",
+		UserName:    "TestSetPaid1-username",
+		Password:    "TestSetPaid1password",
+		Email:       "TestSetPaid1@foo.bar",
+		PhoneNumber: "604-655-8678",
+	}
+
+	user2 := &models.User{
+		ID:          userID2,
+		Name:        "TestSetPaid2 - joined second name",
+		UserName:    "TestSetPaid2-username",
+		Password:    "TestSetPaid2password",
+		Email:       "TestSetPaid2@foo.bar",
+		PhoneNumber: "604-655-8678",
+	}
+
+	event := &models.Event{
+		ID:       eventID,
+		Name:     "TestSetPaid - event name 2",
+		OwnerID:  user1.ID,
+		Time:     time.Now(),
+		Location: "TestSetPaid - over there!",
+		MinUsers: 1,
+		MaxUsers: 3,
+		Price:    10.23,
+	}
+
+	createTime := time.Now().UTC()
+
+	eventUserHasPaid := &models.EventUser{
+		EventID:   event.ID,
+		UserID:    user1.ID,
+		HasPaid:   true,
+		CreatedAt: createTime,
+		UpdatedAt: createTime,
+	}
+
+	eventUserNotPaid := &models.EventUser{
+		EventID:   event.ID,
+		UserID:    user2.ID,
+		HasPaid:   false,
+		CreatedAt: createTime,
+		UpdatedAt: createTime,
+	}
+
+	var tests = []struct {
+		title   string
+		eventID string
+		userID  string
+		hasPaid bool
+	}{
+		{
+			title:   "returns no error when eventID doesnt exist",
+			eventID: uuid.New().String(),
+			userID:  user1.ID,
+			hasPaid: false,
+		},
+		{
+			title:   "returns no error when userID doesnt exist",
+			eventID: eventID,
+			userID:  uuid.New().String(),
+			hasPaid: false,
+		},
+		{
+			title:   "sets has_payed to true",
+			eventID: eventID,
+			userID:  eventUserNotPaid.UserID,
+			hasPaid: true,
+		},
+		{
+			title:   "sets has_payed to false",
+			eventID: eventID,
+			userID:  eventUserHasPaid.UserID,
+			hasPaid: false,
+		},
+	}
+
+	// setup db
+	db, _ := NewDB()
+	db.Conn.Model(user1).Insert()
+	db.Conn.Model(user2).Insert()
+	db.Conn.Model(event).Insert()
+	db.Conn.Model(eventUserHasPaid).Insert()
+	db.Conn.Model(eventUserNotPaid).Insert()
+
+	for _, tt := range tests {
+		t.Run(tt.title, func(t *testing.T) {
+			err := db.SetPaid(tt.eventID, tt.userID, tt.hasPaid)
+			assert.Nil(t, err)
+			eventUsers, _ := db.ListEventUsers(tt.eventID)
+			if eventUsers != nil {
+				for _, eventUser := range *eventUsers {
+					if eventUser.UserID == tt.userID {
+						assert.Equal(t, tt.hasPaid, eventUser.HasPaid)
+						assert.Equal(t, createTime, eventUser.JoinedAt)
 					}
 				}
 			}

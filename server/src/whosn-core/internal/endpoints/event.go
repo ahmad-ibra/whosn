@@ -291,3 +291,32 @@ func ListEventUsers(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, eventUsersIn)
 }
+
+func SetPaid(ctx *gin.Context) {
+	actorID := ctx.GetString("actorID")
+	eventID := ctx.Param("id")
+	ll := log.WithFields(log.Fields{"endpoint": "SetPaid", "actorID": actorID, "eventID": eventID})
+	ll.Info("Endpoint Hit")
+
+	var body models.SetPaidBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	ds, ok := ctx.Value("DB").(*data.PGStore)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "could not get database from context"})
+		ctx.Abort()
+		return
+	}
+
+	err := ds.SetPaid(eventID, actorID, body.HasPaid)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Abort()
+		return
+	}
+	ctx.JSON(http.StatusOK, "{}")
+}

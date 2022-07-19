@@ -273,6 +273,20 @@ func (_m *Storer) ListOwnedEvents(userID string) (*[]models.Event, error) {
 	return r0, r1
 }
 
+// SetPaid provides a mock function with given fields: eventID, userID, hasPaid
+func (_m *Storer) SetPaid(eventID string, userID string, hasPaid bool) error {
+	ret := _m.Called(eventID, userID, hasPaid)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string, bool) error); ok {
+		r0 = rf(eventID, userID, hasPaid)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // UpdateEventByID provides a mock function with given fields: event, eventID
 func (_m *Storer) UpdateEventByID(event *models.Event, eventID string) error {
 	ret := _m.Called(event, eventID)

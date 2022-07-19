@@ -11,4 +11,5 @@ type EventUsersIn struct {
 	JoinedAt time.Time `json:"joined_at"`
 	Name     string    `json:"name"`
 	IsIn     bool      `json:"is_in"`
+	HasPaid  bool      `json:"has_paid"`
 }
