@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types'
-import { BiEdit, BiTrash } from 'react-icons/bi'
+// import { BiEdit, BiTrash } from 'react-icons/bi'
+// import { GiHamburgerMenu } from 'react-icons/gi'
 import { useNavigate } from 'react-router-dom'
+import Dropdown from 'react-bootstrap/Dropdown'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import ListGroup from 'react-bootstrap/ListGroup'
 
 const toLocalDateTime = (utcDateTime) => {
     var date = new Date(utcDateTime)
@@ -11,29 +15,29 @@ const EventSingle = ({ event, includeDeleteButton, onDelete }) => {
     const navigate = useNavigate()
     return (
         <div className="event">
-            <h2>
-                {event.name}
+            <h2> {event.name} </h2>
+            <DropdownButton
+                align="end"
+                id="dropdown-menu-align-end"
+                style={{ float: 'right' }}
+            >
+                <Dropdown.Item
+                    onClick={() => {
+                        navigate(`/event/${event.id}`)
+                    }}
+                >
+                    View
+                </Dropdown.Item>
                 {includeDeleteButton && (
-                    <BiTrash
-                        style={{
-                            color: 'red',
-                            cursor: 'pointer',
-                            float: 'right',
-                        }}
-                        onClick={() => onDelete(event.id)}
-                    />
+                    <Dropdown.Item onClick={() => onDelete(event.id)}>
+                        Delete
+                    </Dropdown.Item>
                 )}
-                {
-                    <BiEdit
-                        style={{ float: 'right' }}
-                        onClick={() => {
-                            navigate(`/event/${event.id}`)
-                        }}
-                    />
-                }
-            </h2>
-            <p>{event.location}</p>
-            <p>{toLocalDateTime(event.time)}</p>
+            </DropdownButton>
+            <ListGroup variant="flush">
+                <ListGroup.Item>{event.location}</ListGroup.Item>
+                <ListGroup.Item>{toLocalDateTime(event.time)}</ListGroup.Item>
+            </ListGroup>
         </div>
     )
 }

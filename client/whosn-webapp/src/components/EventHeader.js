@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types'
-import Button from './Button'
+import CustomButton from './CustomButton'
 
 const EventHeader = ({ title, canAddEvent, showAdd, onAdd }) => {
     return (
         <header className="header">
             <h1>{title}</h1>
             {canAddEvent && (
-                <Button
-                    color={showAdd ? 'red' : 'steelblue'}
+                <CustomButton
+                    variant={showAdd ? 'danger' : 'primary'}
                     text={showAdd ? 'Close' : 'Add Event'}
                     onClick={onAdd}
                 />

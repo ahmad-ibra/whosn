@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import DateTimePicker from 'react-datetime-picker'
+import CustomButton from './CustomButton'
 
 const AddEvent = ({ onAdd }) => {
     const [name, setName] = useState('')
@@ -81,7 +82,13 @@ const AddEvent = ({ onAdd }) => {
                 />
             </div>
 
-            <input type="submit" value="Save Event" className="btn btn-block" />
+            <div className="d-grid gap-2">
+                <CustomButton
+                    variant="danger"
+                    text="Save Event"
+                    onClick={onSubmit}
+                />
+            </div>
         </form>
     )
 }

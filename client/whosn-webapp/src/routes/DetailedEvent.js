@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { auth } from '../auth/Authorization'
-import Button from '../components/Button'
+import CustomButton from '../components/CustomButton'
 import Header from '../components/Header'
 import NotFound from './NotFound'
 import { RWebShare } from 'react-web-share'
@@ -116,8 +116,8 @@ const DetailedEvent = () => {
                 {found && (
                     <div>
                         <div className="container">
-                            <Button
-                                color={isJoined ? 'red' : 'steelblue'}
+                            <CustomButton
+                                variant={isJoined ? 'danger' : 'primary'}
                                 text={isJoined ? 'Leave Event' : 'Join Event'}
                                 onClick={() => {
                                     joinOrLeaveEvent(curEvent.id, isJoined)
