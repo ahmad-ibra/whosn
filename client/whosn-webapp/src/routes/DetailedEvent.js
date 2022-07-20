@@ -194,7 +194,7 @@ const DetailedEvent = () => {
                                     <tr>
                                         <th>Name</th>
                                         <th>Joined At</th>
-                                        <th>In Waitlist</th>
+                                        <th>In/Waitlist</th>
                                         <th>Has Paid</th>
                                     </tr>
                                 </thead>
