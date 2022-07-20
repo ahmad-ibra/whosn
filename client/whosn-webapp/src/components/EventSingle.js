@@ -15,6 +15,7 @@ const EventSingle = ({ event, includeDeleteButton, onDelete }) => {
         <div className="event">
             <h2> {event.name} </h2>
             <DropdownButton
+                title=""
                 align="end"
                 id="dropdown-menu-align-end"
                 style={{ float: 'right' }}

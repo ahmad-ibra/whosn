@@ -89,7 +89,7 @@ const DetailedEvent = () => {
         return await res.json()
     }
 
-    const joinOrLeaveEvent = async (id, isJoined) => {
+    const joinOrLeaveEvent = async (id) => {
         const res = await fetch(
             isJoined
                 ? `${backendAddress}/api/v1/secured/event/${id}/leave`
@@ -208,19 +208,23 @@ const DetailedEvent = () => {
                                             is_in,
                                             has_paid,
                                         }) => (
-                                            <tr>
-                                                <td>{name}</td>
-                                                <td>
+                                            <tr key={user_id + event_id}>
+                                                <td key={user_id + '_name'}>
+                                                    {name}
+                                                </td>
+                                                <td
+                                                    key={user_id + '_joined_at'}
+                                                >
                                                     {toLocalDateTime(joined_at)}
                                                 </td>
-                                                <td>
+                                                <td key={user_id + '_is_in'}>
                                                     {is_in
                                                         ? 'IN!'
-                                                        : 'Waitlist :('}
+                                                        : 'Waitlisted'}
                                                 </td>
-                                                <td>
+                                                <td key={user_id + '_has_paid'}>
                                                     {has_paid
-                                                        ? 'Yes!'
+                                                        ? 'Yes! 💰'
                                                         : 'no...'}
                                                 </td>
                                             </tr>
@@ -232,7 +236,8 @@ const DetailedEvent = () => {
                                 variant={isJoined ? 'danger' : 'primary'}
                                 text={isJoined ? 'Leave Event' : 'Join Event'}
                                 onClick={() => {
-                                    joinOrLeaveEvent(curEvent.id, isJoined)
+                                    joinOrLeaveEvent(curEvent.id)
+                                    // TODO: get rid of this page refresh, reload component instead of full page
                                     refreshPage()
                                 }}
                             />
@@ -242,6 +247,7 @@ const DetailedEvent = () => {
                                     text="Toggle Payment"
                                     onClick={() => {
                                         togglePayment()
+                                        // TODO: get rid of this page refresh, reload component instead of full page
                                         refreshPage()
                                     }}
                                 />
