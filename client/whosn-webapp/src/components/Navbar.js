@@ -14,9 +14,6 @@ const Navbar = () => {
             <Link to="/" className="navbar-item">
                 Home
             </Link>
-            <Link to="/profile" className="navbar-item">
-                Profile
-            </Link>
         </section>
     )
 }
