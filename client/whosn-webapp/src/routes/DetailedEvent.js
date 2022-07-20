@@ -6,6 +6,8 @@ import Header from '../components/Header'
 import NotFound from './NotFound'
 import { RWebShare } from 'react-web-share'
 import { BiShareAlt } from 'react-icons/bi'
+import ListGroup from 'react-bootstrap/ListGroup'
+import Table from 'react-bootstrap/Table'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
@@ -103,9 +105,36 @@ const DetailedEvent = () => {
         return await res.json()
     }
 
+    const togglePayment = async () => {
+        const res = await fetch(
+            `${backendAddress}/api/v1/secured/event/${curEvent.id}/set_paid`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-type': 'application/json',
+                    Authorization: auth(),
+                },
+                body: JSON.stringify({ has_paid: !hasPaid }),
+            }
+        )
+
+        return await res.json()
+    }
+
     const found = !(curEvent.error != null)
+
     const isJoined =
         participants.filter((p) => p.user_id === curUser.id).length > 0
+
+    const isIn =
+        participants.filter((p) => p.user_id === curUser.id && p.is_in === true)
+            .length > 0
+
+    const hasPaid =
+        participants.filter(
+            (p) => p.user_id === curUser.id && p.has_paid === true
+        ).length > 0
+
     const remainingSeats = Math.max(0, curEvent.max_users - participants.length)
 
     return (
@@ -116,14 +145,6 @@ const DetailedEvent = () => {
                 {found && (
                     <div>
                         <div className="container">
-                            <CustomButton
-                                variant={isJoined ? 'danger' : 'primary'}
-                                text={isJoined ? 'Leave Event' : 'Join Event'}
-                                onClick={() => {
-                                    joinOrLeaveEvent(curEvent.id, isJoined)
-                                    refreshPage()
-                                }}
-                            />
                             <RWebShare
                                 data={{
                                     url: window.location.href,
@@ -139,49 +160,92 @@ const DetailedEvent = () => {
                                     }}
                                 />
                             </RWebShare>
+
                             <h2>{curEvent.name}</h2>
-                            <p>
-                                {toLocalDateTime(curEvent.time)} at{' '}
-                                {curEvent.location}{' '}
-                            </p>
-                            <br />
-                            <p>minimum guests: {curEvent.min_users}</p>
-                            <p>maximum guests: {curEvent.max_users}</p>
-                            <p>price: ${curEvent.price}</p>
-                            {remainingSeats > 0 && (
-                                <p>Only {remainingSeats} spots left!</p>
-                            )}
-                            {remainingSeats <= 0 && (
-                                <p>Get on the wait list!</p>
-                            )}
+                            <ListGroup variant="flush">
+                                <ListGroup.Item>
+                                    {toLocalDateTime(curEvent.time)} at{' '}
+                                    {curEvent.location}
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    minimum guests: {curEvent.min_users}
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    maximum guests: {curEvent.max_users}
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    price: ${curEvent.price}
+                                </ListGroup.Item>
+                                <ListGroup.Item>
+                                    {remainingSeats > 0 && (
+                                        <p>Only {remainingSeats} spots left!</p>
+                                    )}
+                                    {remainingSeats <= 0 && (
+                                        <p>Get on the wait list!</p>
+                                    )}
+                                </ListGroup.Item>
+                            </ListGroup>
                         </div>
+
                         <div className="container">
-                            <h2>In</h2>
-                            <ol>
-                                {/* TODO: Create UserList component which lists all users that are in from fetchJoined */}
-                                {participants
-                                    .filter(
-                                        (participants) =>
-                                            participants.is_in === true
-                                    )
-                                    .map(({ name, user_id }) => (
-                                        <li key={user_id}>{name}</li>
-                                    ))}
-                            </ol>
-                        </div>
-                        <div className="container">
-                            <h2>Wait List</h2>
-                            <ol>
-                                {/* TODO: Create UserList component which lists all users that are on the waitlist from fetchJoined */}
-                                {participants
-                                    .filter(
-                                        (participants) =>
-                                            participants.is_in === false
-                                    )
-                                    .map(({ name, user_id }) => (
-                                        <li key={user_id}>{name}</li>
-                                    ))}
-                            </ol>
+                            <h2>WhosN?</h2>
+                            <Table striped bordered hover size="sm">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Joined At</th>
+                                        <th>In Waitlist</th>
+                                        <th>Has Paid</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {participants.map(
+                                        ({
+                                            event_id,
+                                            user_id,
+                                            joined_at,
+                                            name,
+                                            is_in,
+                                            has_paid,
+                                        }) => (
+                                            <tr>
+                                                <td>{name}</td>
+                                                <td>
+                                                    {toLocalDateTime(joined_at)}
+                                                </td>
+                                                <td>
+                                                    {is_in
+                                                        ? 'IN!'
+                                                        : 'Waitlist :('}
+                                                </td>
+                                                <td>
+                                                    {has_paid
+                                                        ? 'Yes!'
+                                                        : 'no...'}
+                                                </td>
+                                            </tr>
+                                        )
+                                    )}
+                                </tbody>
+                            </Table>
+                            <CustomButton
+                                variant={isJoined ? 'danger' : 'primary'}
+                                text={isJoined ? 'Leave Event' : 'Join Event'}
+                                onClick={() => {
+                                    joinOrLeaveEvent(curEvent.id, isJoined)
+                                    refreshPage()
+                                }}
+                            />
+                            {isIn && (
+                                <CustomButton
+                                    variant="danger"
+                                    text="Toggle Payment"
+                                    onClick={() => {
+                                        togglePayment()
+                                        refreshPage()
+                                    }}
+                                />
+                            )}
                         </div>
                     </div>
                 )}
