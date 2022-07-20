@@ -71,7 +71,7 @@ func initRouter(db *data.PGStore) *gin.Engine {
 			apiV1Secured.GET("/event/:id/join", endpoints.JoinEvent)
 			apiV1Secured.GET("/event/:id/leave", endpoints.LeaveEvent)
 			apiV1Secured.GET("/event/:id/users", endpoints.ListEventUsers)
-			apiV1Secured.POST("/event/:id/set_paid", endpoints.SetPaid)
+			apiV1Secured.PUT("/event/:id/set_paid", endpoints.SetPaid)
 		}
 	}
 	return router
