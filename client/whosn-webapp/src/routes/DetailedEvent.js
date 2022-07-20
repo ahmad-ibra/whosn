@@ -14,7 +14,7 @@ const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 const toLocalDateTime = (utcDateTime) => {
     let date = new Date(utcDateTime)
     let dateString = date.toString()
-    return dateString.substring(0, dateString.indexOf('('))
+    return dateString.substring(0, dateString.indexOf('GMT'))
 }
 
 function refreshPage() {

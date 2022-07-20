@@ -1,14 +1,12 @@
 import PropTypes from 'prop-types'
-// import { BiEdit, BiTrash } from 'react-icons/bi'
-// import { GiHamburgerMenu } from 'react-icons/gi'
 import { useNavigate } from 'react-router-dom'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import ListGroup from 'react-bootstrap/ListGroup'
 
 const toLocalDateTime = (utcDateTime) => {
-    var date = new Date(utcDateTime)
-    return date.toString()
+    var date = new Date(utcDateTime).toString()
+    return date.substring(0, date.indexOf('GMT'))
 }
 
 const EventSingle = ({ event, includeDeleteButton, onDelete }) => {
