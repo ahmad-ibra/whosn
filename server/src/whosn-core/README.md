@@ -55,5 +55,6 @@ POST   /api/v1/secured/event
 GET    /api/v1/secured/event/:id/join
 GET    /api/v1/secured/event/:id/leave
 GET    /api/v1/secured/event/:id/users
+PUT    /api/v1/secured/event/:id/set_paid
 ```
 All endpoints under `/api/v1/secured/` require an `Authorization` header with a valid token. This token is provided on login.
