@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import Header from '../components/Header'
+import CustomButton from '../components/CustomButton'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
@@ -71,11 +72,13 @@ const Login = () => {
                         />
                     </div>
 
-                    <input
-                        type="submit"
-                        value="Login"
-                        className="btn btn-block"
-                    />
+                    <div className="d-grid gap-2">
+                        <CustomButton
+                            variant="primary"
+                            text="Login"
+                            onClick={onSubmit}
+                        />
+                    </div>
                 </form>
                 <footer>
                     <Link to="/register">Create new account</Link>

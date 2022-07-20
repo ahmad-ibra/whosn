@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
+import CustomButton from '../components/CustomButton'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
@@ -95,11 +96,13 @@ const Register = () => {
                     />
                 </div>
 
-                <input
-                    type="submit"
-                    value="Register"
-                    className="btn btn-block"
-                />
+                <div className="d-grid gap-2">
+                    <CustomButton
+                        variant="primary"
+                        text="Register"
+                        onClick={onSubmit}
+                    />
+                </div>
             </form>
         </div>
     )
