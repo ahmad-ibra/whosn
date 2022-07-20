@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import CustomButton from '../components/CustomButton'
+import Header from '../components/Header'
 
 const backendAddress = process.env.REACT_APP_BACKEND_ADDRESS
 
@@ -48,62 +49,65 @@ const Register = () => {
     }
 
     return (
-        <div className="container">
-            <form className="add-form" onSubmit={onSubmit}>
-                <div className="form-control">
-                    <label>Name</label>
-                    <input
-                        type="text"
-                        placeholder="Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </div>
-                <div className="form-control">
-                    <label>Username</label>
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        value={user_name}
-                        onChange={(e) => setUserName(e.target.value)}
-                    />
-                </div>
-                <div className="form-control">
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassWord(e.target.value)}
-                    />
-                </div>
-                <div className="form-control">
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        placeholder="email@foo.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
-                <div className="form-control">
-                    <label>Phone Number</label>
-                    <PhoneInput
-                        defaultCountry="CA"
-                        placeholder="Enter phone number"
-                        value={phone_number}
-                        onChange={setPhoneNumber}
-                    />
-                </div>
+        <div>
+            <Header></Header>
+            <div className="container">
+                <form className="add-form" onSubmit={onSubmit}>
+                    <div className="form-control">
+                        <label>Name</label>
+                        <input
+                            type="text"
+                            placeholder="Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-control">
+                        <label>Username</label>
+                        <input
+                            type="text"
+                            placeholder="Username"
+                            value={user_name}
+                            onChange={(e) => setUserName(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-control">
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassWord(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-control">
+                        <label>Email</label>
+                        <input
+                            type="email"
+                            placeholder="email@foo.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-control">
+                        <label>Phone Number</label>
+                        <PhoneInput
+                            defaultCountry="CA"
+                            placeholder="Enter phone number"
+                            value={phone_number}
+                            onChange={setPhoneNumber}
+                        />
+                    </div>
 
-                <div className="d-grid gap-2">
-                    <CustomButton
-                        variant="primary"
-                        text="Register"
-                        onClick={onSubmit}
-                    />
-                </div>
-            </form>
+                    <div className="d-grid gap-2">
+                        <CustomButton
+                            variant="primary"
+                            text="Register"
+                            onClick={onSubmit}
+                        />
+                    </div>
+                </form>
+            </div>
         </div>
     )
 }
