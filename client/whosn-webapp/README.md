@@ -22,3 +22,4 @@ Run the following command to deploy the app:
 ```
 ❯ make deploy
 ```
+Note, the app has been torn down from heroku, so this command might not work anymore
